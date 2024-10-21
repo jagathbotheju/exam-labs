@@ -5,29 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1728182668313,
-      "tag": "0000_neat_madripoor",
+      "when": 1729352550585,
+      "tag": "0000_little_may_parker",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1728182716274,
-      "tag": "0001_salty_cargill",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1728505359618,
-      "tag": "0002_curved_randall",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1728656977301,
-      "tag": "0003_wild_nightmare",
+      "when": 1729352950592,
+      "tag": "0001_flat_bushwacker",
       "breakpoints": true
     }
   ]

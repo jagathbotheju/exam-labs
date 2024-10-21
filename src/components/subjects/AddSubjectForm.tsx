@@ -55,7 +55,7 @@ const AddSubjectForm = () => {
               <FormItem>
                 <FormLabel>Subject Name</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input {...field} className="uppercase" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

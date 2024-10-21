@@ -1,10 +1,11 @@
 "use server";
 import { AddMcqQuestionSchema } from "@/lib/schema";
 import { db } from "../../db";
-import { questions, subjects } from "../../db/schema";
+import { examQuestions, exams, questions, subjects } from "../../db/schema";
 import { z } from "zod";
-import { eq } from "drizzle-orm";
-import { Question } from "../../db/schema/questions";
+import { and, desc, eq } from "drizzle-orm";
+import { Question, QuestionExt } from "../../db/schema/questions";
+import _ from "lodash";
 
 export const addQuestion = async ({
   questionData,
@@ -13,14 +14,12 @@ export const addQuestion = async ({
   questionData: z.infer<typeof AddMcqQuestionSchema>;
   questionId?: string;
 }) => {
-  console.log("add question **************", questionId);
   const isValid = AddMcqQuestionSchema.safeParse(questionData);
 
   if (isValid.success) {
     const validData = isValid.data;
 
     if (questionId) {
-      console.log("updating question **************");
       const updatedQuestion = await db
         .update(questions)
         .set({
@@ -39,7 +38,6 @@ export const addQuestion = async ({
         return { success: "Product updated successfully" };
       }
     } else {
-      console.log("creating question **************");
       const newQuestion = await db.insert(questions).values({
         body: validData.body,
         option1: validData.option1,
@@ -59,8 +57,51 @@ export const addQuestion = async ({
   };
 };
 
+export const addQuestionToExam = async ({
+  questionId,
+  examId,
+}: {
+  questionId: string;
+  examId: string;
+}) => {
+  console.log("examId", examId);
+  console.log("questionId", questionId);
+  try {
+    const questionExist = await db
+      .select()
+      .from(examQuestions)
+      .where(
+        and(
+          eq(examQuestions.examId, examId),
+          eq(examQuestions.questionId, questionId)
+        )
+      );
+    console.log("questionExist", questionExist);
+    if (questionExist.length) return { error: "Question already exist" };
+
+    const addedQuestion = await db
+      .insert(examQuestions)
+      .values({
+        examId,
+        questionId,
+      })
+      .returning();
+    if (addedQuestion) {
+      console.log(addedQuestion[0]);
+      return { success: "Question added Successfully" };
+    }
+    return { error: "Could not add Question to Exam" };
+  } catch (error) {
+    console.log(error);
+    return { error: "Could not add Question to Exam" };
+  }
+};
+
 export const getQuestions = async () => {
-  const allQuestions = await db.select().from(questions);
+  const allQuestions = await db
+    .select()
+    .from(questions)
+    .orderBy(desc(questions.createdAt));
   return allQuestions as Question[];
 };
 
@@ -68,8 +109,8 @@ export const getQuestionsBySubject = async (subjectId: string) => {
   const questionsBySubject = await db
     .select()
     .from(questions)
-    .where(eq(questions.subjectId, subjectId));
-  // console.log("questions server", questionsBySubject);
+    .where(eq(questions.subjectId, subjectId))
+    .orderBy(desc(questions.createdAt));
   return questionsBySubject as Question[];
 };
 

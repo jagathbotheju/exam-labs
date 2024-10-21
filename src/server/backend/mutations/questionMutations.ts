@@ -1,9 +1,38 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addQuestion, deleteQuestion } from "../actions/questionActions";
+import {
+  addQuestion,
+  addQuestionToExam,
+  deleteQuestion,
+} from "../actions/questionActions";
 import { AddMcqQuestionSchema } from "@/lib/schema";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+
+export const useAddQuestionToExam = () => {
+  return useMutation({
+    mutationFn: ({
+      examId,
+      questionId,
+    }: {
+      examId: string;
+      questionId: string;
+    }) => addQuestionToExam({ examId, questionId }),
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.success) {
+        toast.success(res.success);
+      }
+      if (res.error) {
+        toast.error(res.error);
+      }
+    },
+    onError: (res) => {
+      console.log(res);
+      toast.error("Question could not be deleted to the Exam");
+    },
+  });
+};
 
 export const useDeleteQuestion = () => {
   const queryClient = useQueryClient();

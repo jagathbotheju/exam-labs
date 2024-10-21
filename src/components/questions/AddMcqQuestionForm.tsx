@@ -37,6 +37,7 @@ import { answersMcq, grades, terms, types } from "@/lib/constants";
 import { useAddQuestion } from "@/server/backend/mutations/questionMutations";
 import { useQuestionById } from "@/server/backend/queries/questionQueries";
 import TipTap from "../Tiptap";
+import _ from "lodash";
 
 interface Props {
   questionId?: string;
@@ -69,7 +70,8 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
   const { data: question } = useQuestionById(questionId ?? "");
 
   useEffect(() => {
-    if (question) {
+    form.reset();
+    if (question && !_.isEmpty(question)) {
       form.setValue("grade", question[0].grade);
       form.setValue("term", question[0].term);
       form.setValue("subject", question[0].subjectId);
@@ -84,6 +86,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
 
   const onSubmit = (questionData: z.infer<typeof AddMcqQuestionSchema>) => {
     addQuestion({ questionData, questionId });
+    form.reset();
   };
 
   return (
@@ -426,7 +429,10 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
               {isPending && <Loader2 className="w-4 h-4" />}
             </Button>
             <Button
-              onClick={() => router.back()}
+              onClick={() => {
+                router.back();
+                form.reset();
+              }}
               type="button"
               variant="outline"
             >

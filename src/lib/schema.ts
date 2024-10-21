@@ -17,3 +17,15 @@ export const AddMcqQuestionSchema = z.object({
 export const AddSubjectSchema = z.object({
   title: z.string().min(1, "subject name is required"),
 });
+
+export const AddExamSchema = z.object({
+  name: z.string().min(1, "name is required"),
+  subject: z.string().min(1, "subject is required"),
+  duration: z.coerce
+    .number({
+      required_error: "duration is required",
+      invalid_type_error: "duration must be a number",
+    })
+    .int("please enter valid time")
+    .gt(2, "must be grater than 2 minute"),
+});

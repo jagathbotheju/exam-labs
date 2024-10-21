@@ -50,6 +50,14 @@ const AdminLayout = ({ children }: Props) => {
         >
           <Link href="/admin/subjects">Subjects</Link>
         </Button>
+
+        {/* exams */}
+        <Button
+          asChild
+          variant={pathname === "/admin/exams" ? "default" : "outline"}
+        >
+          <Link href="/admin/exams">Exams</Link>
+        </Button>
       </div>
       <div className="w-full">{children}</div>
     </div>
