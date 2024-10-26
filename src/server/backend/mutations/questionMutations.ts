@@ -3,6 +3,7 @@ import {
   addQuestion,
   addQuestionToExam,
   deleteQuestion,
+  removeQuestionFromExam,
 } from "../actions/questionActions";
 import { AddMcqQuestionSchema } from "@/lib/schema";
 import { z } from "zod";
@@ -29,7 +30,34 @@ export const useAddQuestionToExam = () => {
     },
     onError: (res) => {
       console.log(res);
-      toast.error("Question could not be deleted to the Exam");
+      toast.error("Question could not be add to the Exam");
+    },
+  });
+};
+
+export const useRemoveQuestionFromExam = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      examId,
+      questionId,
+    }: {
+      examId: string;
+      questionId: string;
+    }) => removeQuestionFromExam({ examId, questionId }),
+    onSuccess: (res) => {
+      if (res.success) {
+        toast.success(res.success);
+        queryClient.invalidateQueries({ queryKey: ["exam-by-id"] });
+      }
+      if (res.error) {
+        toast.error(res.error);
+      }
+    },
+    onError: (res) => {
+      console.log(res);
+      toast.error("Question could not be deleted from the Exam");
     },
   });
 };

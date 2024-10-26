@@ -1,6 +1,6 @@
 import { pgTable, primaryKey, text } from "drizzle-orm/pg-core";
-import { exams } from "./exams";
-import { questions } from "./questions";
+import { ExamExt, exams } from "./exams";
+import { Question, questions } from "./questions";
 import { InferSelectModel, relations } from "drizzle-orm";
 
 export const examQuestions = pgTable(
@@ -29,4 +29,7 @@ export const examQuestionsRelations = relations(examQuestions, ({ one }) => ({
   }),
 }));
 
-export type ExamQuestion = InferSelectModel<typeof examQuestions>;
+export type ExamQuestion = InferSelectModel<typeof examQuestions> & {
+  exams: ExamExt;
+  questions: Question;
+};

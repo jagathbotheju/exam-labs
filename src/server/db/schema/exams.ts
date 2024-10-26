@@ -4,6 +4,7 @@ import { InferSelectModel, relations } from "drizzle-orm";
 import { Question, QuestionExt, questions } from "./questions";
 import { Subject, subjects } from "./subjects";
 import { ExamQuestion, examQuestions } from "./examQuestions";
+import { studentExams } from "./studentExams";
 
 export const exams = pgTable("exams", {
   id: text("id")
@@ -20,6 +21,7 @@ export const exams = pgTable("exams", {
 
 export const examRelations = relations(exams, ({ one, many }) => ({
   examQuestions: many(examQuestions),
+  studentExams: many(studentExams),
   students: one(students, {
     fields: [exams.studentId],
     references: [students.id],

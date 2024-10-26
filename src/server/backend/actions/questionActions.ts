@@ -64,8 +64,6 @@ export const addQuestionToExam = async ({
   questionId: string;
   examId: string;
 }) => {
-  console.log("examId", examId);
-  console.log("questionId", questionId);
   try {
     const questionExist = await db
       .select()
@@ -76,8 +74,8 @@ export const addQuestionToExam = async ({
           eq(examQuestions.questionId, questionId)
         )
       );
-    console.log("questionExist", questionExist);
-    if (questionExist.length) return { error: "Question already exist" };
+    if (questionExist.length)
+      return { error: "Could not add, Question already exist" };
 
     const addedQuestion = await db
       .insert(examQuestions)
@@ -86,7 +84,7 @@ export const addQuestionToExam = async ({
         questionId,
       })
       .returning();
-    if (addedQuestion) {
+    if (addedQuestion.length) {
       console.log(addedQuestion[0]);
       return { success: "Question added Successfully" };
     }
@@ -94,6 +92,34 @@ export const addQuestionToExam = async ({
   } catch (error) {
     console.log(error);
     return { error: "Could not add Question to Exam" };
+  }
+};
+
+export const removeQuestionFromExam = async ({
+  questionId,
+  examId,
+}: {
+  questionId: string;
+  examId: string;
+}) => {
+  try {
+    const deletedQuestion = await db
+      .delete(examQuestions)
+      .where(
+        and(
+          eq(examQuestions.examId, examId),
+          eq(examQuestions.questionId, questionId)
+        )
+      )
+      .returning();
+    if (deletedQuestion.length) {
+      console.log(deletedQuestion[0]);
+      return { success: "Question deleted Successfully" };
+    }
+    return { error: "Could not delete Question from Exam" };
+  } catch (error) {
+    console.log(error);
+    return { error: "Could not delete Question from Exam" };
   }
 };
 

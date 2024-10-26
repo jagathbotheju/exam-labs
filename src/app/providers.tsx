@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 interface Props {
   children: React.ReactNode;
@@ -26,11 +27,18 @@ const Providers = ({ children }: Props) => {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-      <Toaster richColors />
-    </QueryClientProvider>
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <QueryClientProvider client={queryClient}>
+        {children}
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        <Toaster richColors />
+      </QueryClientProvider>
+    </NextThemesProvider>
   );
 };
 

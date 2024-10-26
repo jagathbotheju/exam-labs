@@ -46,12 +46,16 @@ export const getExamById = async (examId: string) => {
   const exam = await db.query.exams.findFirst({
     where: eq(exams.id, examId),
     with: {
-      // questions: true,
+      examQuestions: {
+        with: {
+          questions: true,
+        },
+      },
       subjects: true,
     },
   });
 
-  return exam as Exam;
+  return exam as ExamExt;
 };
 
 export const deleteExam = async (examId: string) => {
