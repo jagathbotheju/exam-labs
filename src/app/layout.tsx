@@ -30,14 +30,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased  flex flex-col min-h-screen`}
       >
-        <Navbar />
-        <main className="flex grow max-w-7xl p-10 mx-auto w-full">
-          <Providers>{children}</Providers>
-        </main>
+        <Providers>
+          <Navbar />
+          <main className="flex grow max-w-7xl p-10 mx-auto w-full">
+            {children}
+          </main>
 
-        <footer className="max-w-7xl mx-auto p-5 flex">
-          <p>ExamLabs ©️ 2024</p>
-        </footer>
+          <footer className="max-w-7xl mx-auto p-5 flex">
+            <p>ExamLabs ©️ 2024</p>
+          </footer>
+        </Providers>
       </body>
     </html>
   );

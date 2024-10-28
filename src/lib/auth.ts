@@ -42,7 +42,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
 
         if (!existStudent || existStudent.email !== email) return null;
-
         if (!existStudent || !existStudent.password) return null;
         const matchPassword = await compare(password, existStudent.password);
         if (!matchPassword) return null;
@@ -65,9 +64,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const studentDB = await db.query.students.findFirst({
           where: eq(students.id, token.sub),
         });
-        token.student = studentDB;
+        token.user = studentDB;
       }
-
       return token;
     },
   },

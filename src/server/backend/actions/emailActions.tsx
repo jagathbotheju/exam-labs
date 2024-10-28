@@ -1,4 +1,5 @@
 "use server";
+import PasswordResetTemp from "@/lib/emailTemplates/PasswordResetTem";
 import VerifyEmailTemp from "@/lib/emailTemplates/VerifyEmailTemp";
 import { Resend } from "resend";
 
@@ -21,6 +22,25 @@ export const sendVerificationEmail = async ({
     subject: "ExamLabs | Confirmation Email",
     // html: `<p>Click to <a href=${confirmLink}>Confirm your email</a></p>`,
     react: <VerifyEmailTemp url={confirmLink} />,
+  });
+  if (error) return console.log(error);
+  if (data) return data;
+};
+
+export const sendPasswordResetEmail = async ({
+  email,
+  token,
+}: {
+  email: string;
+  token: string;
+}) => {
+  const confirmLink = `${domain}/auth/new-password/?token=${token}`;
+  const { data, error } = await resend.emails.send({
+    from: "onboarding@resend.dev",
+    to: email,
+    subject: "ExamLabs | Confirmation Email",
+    // html: `<p>Click to <a href=${confirmLink}>Reset your password</a></p>`,
+    react: <PasswordResetTemp url={confirmLink} />,
   });
   if (error) return console.log(error);
   if (data) return data;

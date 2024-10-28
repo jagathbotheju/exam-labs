@@ -1,7 +1,14 @@
 "use client";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { LogIn, LogOutIcon, Settings, TruckIcon, UserPen } from "lucide-react";
+import {
+  LogIn,
+  LogOutIcon,
+  Settings,
+  TruckIcon,
+  UserPen,
+  UserRoundPen,
+} from "lucide-react";
 import { signOut } from "next-auth/react";
 import {
   DropdownMenu,
@@ -67,13 +74,13 @@ const AuthButton = ({ student }: Props) => {
                 <span className="">My Orders</span>
               </DropdownMenuItem>
 
-              {/* settings */}
+              {/* profiles */}
               <DropdownMenuItem
-                onClick={() => router.push("/dashboard/settings")}
+                onClick={() => router.push("/profile")}
                 className="font-medium transition-all duration-500 cursor-pointer group ease-in-out"
               >
-                <Settings className="mr-2 w-4 group-hover:rotate-180 transition-all duration-300 ease-in-out" />
-                <span className="">Settings</span>
+                <UserRoundPen className="mr-2 w-4 group-hover:translate-x-1 transition-all duration-300 ease-in-out" />
+                <span className="">Profile</span>
               </DropdownMenuItem>
 
               {/* theme switch */}
@@ -85,6 +92,15 @@ const AuthButton = ({ student }: Props) => {
                 }}
               >
                 <ThemeSwitcher />
+              </DropdownMenuItem>
+
+              {/* admin */}
+              <DropdownMenuItem
+                className="font-medium transition-all duration-500 cursor-pointer group ease-in-out"
+                onClick={() => router.push("/admin")}
+              >
+                <LogOutIcon className="mr-2 w-4 group-hover:rotate-180 transition-all duration-300 ease-in-out" />
+                <span>Admin</span>
               </DropdownMenuItem>
 
               {/* logout */}

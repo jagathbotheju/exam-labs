@@ -39,8 +39,8 @@ const AllQuestions = () => {
 
       {!subject && (
         <div className="flex w-full mt-20">
-          <div className="w-full rounded-md bg-red-50 p-10">
-            <h1 className="text-3xl font-semibold text-center">
+          <div className="w-full rounded-md p-10">
+            <h1 className="text-3xl font-semibold text-center text-muted-foreground">
               Please select Subject
             </h1>
           </div>

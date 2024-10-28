@@ -12,7 +12,7 @@ const AdminLayout = ({ children }: Props) => {
 
   return (
     <div className="flex gap-5 w-full">
-      <div className="flex flex-col gap-2 w-[200px] bg-slate-100 h-full p-5 rounded-md border">
+      <div className="flex flex-col gap-2 w-[200px] h-full p-5 rounded-md border">
         {/* all questions */}
         <Button
           asChild

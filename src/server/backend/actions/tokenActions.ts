@@ -1,12 +1,23 @@
 "use server";
 import { db } from "@/server/db";
-import { emailTokens, students } from "@/server/db/schema";
+import { emailTokens, passwordResetTokens, students } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export const getVerificationTokenByEmail = async (email: string) => {
   try {
     const verificationToken = await db.query.emailTokens.findFirst({
       where: eq(emailTokens.email, email),
+    });
+    return verificationToken;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getVerificationTokenByToken = async (token: string) => {
+  try {
+    const verificationToken = await db.query.emailTokens.findFirst({
+      where: eq(emailTokens.token, token),
     });
     return verificationToken;
   } catch (error) {
@@ -36,6 +47,34 @@ export const generateEmailVerificationToken = async (email: string) => {
   return verificationToken;
 };
 
+export const generatePasswordResetToken = async (email: string) => {
+  try {
+    const token = crypto.randomUUID();
+    const expires = new Date(new Date().getTime() + 3600 * 1000);
+
+    const existingToken = await db.query.passwordResetTokens.findFirst({
+      where: eq(passwordResetTokens.email, email),
+    });
+    if (existingToken) {
+      await db
+        .delete(passwordResetTokens)
+        .where(eq(passwordResetTokens.email, email));
+    }
+
+    const newPasswordResetToken = await db
+      .insert(passwordResetTokens)
+      .values({
+        email,
+        token,
+        expires,
+      })
+      .returning();
+    return newPasswordResetToken;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const verifyEmailToken = async (token: string) => {
   const existingToken = await getVerificationTokenByToken(token);
   if (!existingToken) return { error: "No token found, Unable to verify!" };
@@ -56,15 +95,4 @@ export const verifyEmailToken = async (token: string) => {
 
   // await db.delete(emailTokens).where(eq(emailTokens.id, existingToken.id));
   return { success: "Email Verified, please Login" };
-};
-
-export const getVerificationTokenByToken = async (token: string) => {
-  try {
-    const verificationToken = await db.query.emailTokens.findFirst({
-      where: eq(emailTokens.token, token),
-    });
-    return verificationToken;
-  } catch (error) {
-    return null;
-  }
 };

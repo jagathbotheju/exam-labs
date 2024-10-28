@@ -2,6 +2,7 @@ export { exams, examRelations } from "@/server/db/schema/exams";
 export { questions, questionRelations } from "@/server/db/schema/questions";
 export { subjects } from "@/server/db/schema/subjects";
 export { emailTokens } from "@/server/db/schema/emailTokens";
+export { passwordResetTokens } from "@/server/db/schema/passwordResetTokens";
 export {
   examQuestions,
   examQuestionsRelations,

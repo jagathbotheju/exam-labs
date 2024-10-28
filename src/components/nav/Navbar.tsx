@@ -9,13 +9,13 @@ const Navbar = async () => {
   const student = session?.user as Student;
 
   return (
-    <header className="border-b-[1.5px] border-b-primary">
-      <nav className="container max-w-7xl mx-auto py-4">
+    <div className="border-b-[1.5px] border-b-primary">
+      <nav className="max-w-7xl mx-auto px-10 pt-6 pb-4">
         <ul className="flex justify-between items-center">
           <li>
             <Link href="/" className="relative flex gap-2 items-center">
-              <h1 className="text-center bg-gradient-to-r from-orange-400 to-orange-500 bg-clip-text text-3xl font-bold text-transparent">
-                Exam Labs
+              <h1 className="text-center bg-gradient-to-r from-orange-400 to-red-900 bg-clip-text text-3xl font-bold text-transparent">
+                ExamLabs
               </h1>
             </Link>
           </li>
@@ -24,7 +24,7 @@ const Navbar = async () => {
           </li>
         </ul>
       </nav>
-    </header>
+    </div>
   );
 };
 export default Navbar;

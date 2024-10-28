@@ -41,26 +41,8 @@ const LoginForm = ({ callbackUrl }: Props) => {
     mode: "all",
   });
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  // const { isExecuting, execute } = useAction(emailSignIn, {
-  //   onSuccess: ({ data }) => {
-  //     console.log("response", data);
-  //     if (data?.success) {
-  //       setError("");
-  //       toast.success(data.success);
-  //       router.push("/");
-  //     }
-  //     if (data?.error) {
-  //       setError(data.error);
-  //       setSuccess("");
-  //     }
-  //     if (data?.twoFactor) {
-  //       setShowTwoFactor(true);
-  //       setSuccess(data.twoFactor);
-  //     }
-  //   },
-  // });
+  // const [error, setError] = useState("");
+  // const [success, setSuccess] = useState("");
 
   const onSubmit = (formData: z.infer<typeof LoginSchema>) => {
     startTransition(() => {
@@ -133,7 +115,6 @@ const LoginForm = ({ callbackUrl }: Props) => {
                           type={showPass ? "text" : "password"}
                           className="dark:bg-slate-600"
                           onChange={(value) => {
-                            setError("");
                             field.onChange(value);
                           }}
                         />
