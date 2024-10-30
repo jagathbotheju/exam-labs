@@ -37,7 +37,11 @@ const AuthButton = ({ student }: Props) => {
   return (
     <div className="flex items-center gap-2">
       {student ? (
-        <>
+        <div className="flex gap-4 items-center">
+          <div className="flex flex-col">
+            <h3 className="font-semibold text-xl">{student.name}</h3>
+            <p className="text-xs text-muted-foreground">{student.email}</p>
+          </div>
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger className="focus-visible:outline-none">
               <Avatar>
@@ -95,13 +99,15 @@ const AuthButton = ({ student }: Props) => {
               </DropdownMenuItem>
 
               {/* admin */}
-              <DropdownMenuItem
-                className="font-medium transition-all duration-500 cursor-pointer group ease-in-out"
-                onClick={() => router.push("/admin")}
-              >
-                <LogOutIcon className="mr-2 w-4 group-hover:rotate-180 transition-all duration-300 ease-in-out" />
-                <span>Admin</span>
-              </DropdownMenuItem>
+              {student && student.role === "admin" && (
+                <DropdownMenuItem
+                  className="font-medium transition-all duration-500 cursor-pointer group ease-in-out"
+                  onClick={() => router.push("/admin")}
+                >
+                  <LogOutIcon className="mr-2 w-4 group-hover:rotate-180 transition-all duration-300 ease-in-out" />
+                  <span>Admin</span>
+                </DropdownMenuItem>
+              )}
 
               {/* logout */}
               <DropdownMenuItem
@@ -113,7 +119,7 @@ const AuthButton = ({ student }: Props) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </>
+        </div>
       ) : (
         <>
           <Button asChild size="sm">

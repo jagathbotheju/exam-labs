@@ -2,9 +2,49 @@
 import PasswordResetTemp from "@/lib/emailTemplates/PasswordResetTem";
 import VerifyEmailTemp from "@/lib/emailTemplates/VerifyEmailTemp";
 import { Resend } from "resend";
+import nodemailer from "nodemailer";
+import _ from "lodash";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const domain = process.env.BASE_URL;
+
+export const sendMail = async ({
+  to,
+  subject,
+  body,
+}: {
+  to: string;
+  subject: string;
+  body: string;
+}) => {
+  const { SMTP_EMAIL, SMTP_GMAIL_PASS } = process.env;
+  const transport = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: SMTP_EMAIL,
+      pass: SMTP_GMAIL_PASS,
+    },
+  });
+
+  try {
+    const sendResult = await transport.sendMail({
+      from: SMTP_EMAIL,
+      to,
+      subject,
+      html: body,
+    });
+
+    console.log(sendResult);
+    if (!_.isEmpty(sendResult.accepted)) {
+      return { success: "Email Sent Successfully" };
+    }
+
+    return { error: "Could not send activation link, try again later" };
+  } catch (error) {
+    console.log(error);
+    return { error: "Internal server error ,sending email" };
+  }
+};
 
 export const sendVerificationEmail = async ({
   email,

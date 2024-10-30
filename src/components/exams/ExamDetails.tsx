@@ -27,18 +27,6 @@ const ExamDetails = ({ examId }: Props) => {
     );
   }
 
-  // if (_.isEmpty(exam?.examQuestions) || !exam) {
-  //   return (
-  //     <div className="flex items-center justify-center mt-10">
-  //       <h1 className="text-xl font-bold text-muted-foreground">
-  //         No Exams Found!, Please add one
-  //       </h1>
-  //     </div>
-  //   );
-  // }
-
-  console.log("exam", exam);
-
   return (
     <Card className="flex flex-col">
       <CardHeader>

@@ -15,8 +15,17 @@ import {
   generateEmailVerificationToken,
   generatePasswordResetToken,
 } from "./tokenActions";
-import { sendPasswordResetEmail, sendVerificationEmail } from "./emailActions";
+import {
+  sendMail,
+  sendPasswordResetEmail,
+  sendVerificationEmail,
+} from "./emailActions";
 import bcrypt from "bcryptjs";
+import { render } from "@react-email/components";
+import VerifyEmailTemp from "@/lib/emailTemplates/VerifyEmailTemp";
+import PasswordResetTemp from "@/lib/emailTemplates/PasswordResetTem";
+
+const domain = process.env.BASE_URL;
 
 /***************SOCIAL SIGN IN ***********************************************/
 export const socialSignIn = async ({
@@ -85,11 +94,35 @@ export const registerUser = async ({
   const userExist = await db.query.students.findFirst({
     where: eq(students.email, email),
   });
-  if (userExist) {
+
+  if (userExist && userExist.emailVerified !== null) {
     return {
       error: "Email already in use, please use different email address",
     };
   }
+
+  if (userExist && !userExist.emailVerified) {
+    const verificationToken = await generateEmailVerificationToken(email);
+    const confirmLink = `${domain}/auth/email-verification/?token=${verificationToken[0].token}`;
+    const emailHtml = await render(<VerifyEmailTemp url={confirmLink} />);
+    // await sendVerificationEmail({
+    //   email: verificationToken[0].email,
+    //   token: verificationToken[0].token,
+    //   name,
+    // });
+    await sendMail({
+      to: verificationToken[0].email,
+      subject: "Email address verification",
+      body: emailHtml,
+    });
+    return { success: "Confirmation Email sent" };
+  }
+
+  // if (userExist) {
+  //   return {
+  //     error: "Email already in use, please use different email address",
+  //   };
+  // }
 
   const hashedPassword = await bcrypt.hash(password, 10);
   await db.insert(students).values({
@@ -102,10 +135,17 @@ export const registerUser = async ({
   });
 
   const verificationToken = await generateEmailVerificationToken(email);
-  await sendVerificationEmail({
-    email: verificationToken[0].email,
-    token: verificationToken[0].token,
-    name,
+  const confirmLink = `${domain}/auth/email-verification/?token=${verificationToken[0].token}`;
+  const emailHtml = await render(<VerifyEmailTemp url={confirmLink} />);
+  // await sendVerificationEmail({
+  //   email: verificationToken[0].email,
+  //   token: verificationToken[0].token,
+  //   name,
+  // });
+  await sendMail({
+    to: verificationToken[0].email,
+    subject: "Email address verification",
+    body: emailHtml,
   });
 
   return { success: "Confirmation Email sent" };
@@ -126,11 +166,18 @@ export const resetPassword = async (
 
   const passwordResetToken = await generatePasswordResetToken(email);
   if (!passwordResetToken) return { error: "Could not generate token" };
-
-  await sendPasswordResetEmail({
-    email: passwordResetToken[0].email,
-    token: passwordResetToken[0].token,
+  const confirmLink = `${domain}/auth/new-password/?token=${passwordResetToken[0].token}`;
+  const emailHtml = await render(<PasswordResetTemp url={confirmLink} />);
+  await sendMail({
+    to: passwordResetToken[0].email,
+    subject: "Reset Password",
+    body: emailHtml,
   });
+
+  // await sendPasswordResetEmail({
+  //   email: passwordResetToken[0].email,
+  //   token: passwordResetToken[0].token,
+  // });
 
   return { success: "Reset password Email Sent, Please check your email" };
 };
