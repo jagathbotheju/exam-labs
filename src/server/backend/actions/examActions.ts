@@ -3,7 +3,8 @@ import { AddExamSchema } from "@/lib/schema";
 import { db } from "@/server/db";
 import { examQuestions, questions } from "@/server/db/schema";
 import { Exam, ExamExt, exams } from "@/server/db/schema/exams";
-import { eq } from "drizzle-orm";
+import { StudentExam, studentExams } from "@/server/db/schema/studentExams";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const addExam = async ({
@@ -31,6 +32,41 @@ export const addExam = async ({
   }
 };
 
+export const addExamToStudent = async ({
+  studentId,
+  examId,
+}: {
+  studentId: string;
+  examId: string;
+}) => {
+  try {
+    const examExist = await db
+      .select()
+      .from(studentExams)
+      .where(
+        and(
+          eq(studentExams.examId, examId),
+          eq(studentExams.studentId, studentId)
+        )
+      );
+    if (examExist.length) return { error: "Could not add, Exam already exist" };
+
+    const addedExam = await db
+      .insert(studentExams)
+      .values({
+        examId,
+        studentId,
+      })
+      .returning();
+    if (addedExam.length) {
+      return { success: "Exam added Successfully" };
+    }
+    return { error: "Could not assign Exam to Student" };
+  } catch (error) {
+    return { error: "Could not assign Exam to Student" };
+  }
+};
+
 export const getExams = async () => {
   const exams = await db.query.exams.findMany({
     with: {
@@ -40,6 +76,21 @@ export const getExams = async () => {
     },
   });
   return exams as ExamExt[];
+};
+
+export const getStudentExams = async (studentId: string) => {
+  // const exams1 = await db
+  //   .select()
+  //   .from(studentExams)
+  //   .where(eq(studentExams.studentId, studentId));
+  const exams = await db.query.studentExams.findMany({
+    where: eq(studentExams.studentId, studentId),
+    with: {
+      exams: true,
+    },
+  });
+
+  return exams as StudentExam[];
 };
 
 export const getExamsBySubject = async (subjectId: string) => {
@@ -87,9 +138,9 @@ export const deleteExam = async (examId: string) => {
       .returning();
 
     if (deletedExam.length) return { success: "Exam deleted successfully" };
-    return { error: "Could not delete Exam DEFAULT" };
+    return { error: "Could not delete Exam" };
   } catch (error) {
     console.log(error);
-    return { error: "Could not delete Exam SERVER" };
+    return { error: "Could not delete Exam" };
   }
 };

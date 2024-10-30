@@ -1,4 +1,8 @@
 export { exams, examRelations } from "@/server/db/schema/exams";
+export {
+  studentExams,
+  studentExamRelations,
+} from "@/server/db/schema/studentExams";
 export { questions, questionRelations } from "@/server/db/schema/questions";
 export { subjects } from "@/server/db/schema/subjects";
 export { emailTokens } from "@/server/db/schema/emailTokens";

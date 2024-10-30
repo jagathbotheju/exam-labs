@@ -10,6 +10,8 @@ import ExamQuestionCard from "./ExamQuestionCard";
 import StudentSelector from "../student/StudentSelector";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { useAddExamToStudent } from "@/server/backend/mutations/examMutations";
+import { toast } from "sonner";
 
 interface Props {
   examId: string;
@@ -18,6 +20,7 @@ interface Props {
 const ExamDetails = ({ examId }: Props) => {
   const { data: exam, isLoading } = useExamById(examId);
   const [selectedStudent, setSelectedStudent] = useState<null | string>(null);
+  const { mutate: addExamToStudent } = useAddExamToStudent();
 
   if (isLoading) {
     return (
@@ -26,6 +29,17 @@ const ExamDetails = ({ examId }: Props) => {
       </div>
     );
   }
+
+  const assignExamToStudent = () => {
+    console.log("selectedStudent", selectedStudent);
+    if (!selectedStudent) return toast.error("Please select a Student");
+    if (selectedStudent && examId) {
+      addExamToStudent({
+        studentId: selectedStudent,
+        examId,
+      });
+    }
+  };
 
   return (
     <Card className="flex flex-col">
@@ -38,7 +52,7 @@ const ExamDetails = ({ examId }: Props) => {
             <div className="flex items-center gap-2">
               <p>Assign Exam to Student</p>
               <StudentSelector setSelectedStudent={setSelectedStudent} />
-              <Button>Assign</Button>
+              <Button onClick={assignExamToStudent}>Assign</Button>
             </div>
           )}
         </CardTitle>

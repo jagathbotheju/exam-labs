@@ -1,6 +1,6 @@
 import { pgTable, primaryKey, text } from "drizzle-orm/pg-core";
 import { ExamExt, exams } from "./exams";
-import { students } from "./students";
+import { Student, students } from "./students";
 import { InferSelectModel, relations } from "drizzle-orm";
 import { Question } from "./questions";
 
@@ -15,7 +15,7 @@ export const studentExams = pgTable(
       .references(() => exams.id),
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.examId, table.studentId] }),
+    pk: primaryKey({ columns: [table.studentId, table.examId] }),
   })
 );
 
@@ -30,7 +30,7 @@ export const studentExamRelations = relations(studentExams, ({ one }) => ({
   }),
 }));
 
-export type StudentExams = InferSelectModel<typeof studentExams> & {
+export type StudentExam = InferSelectModel<typeof studentExams> & {
   exams: ExamExt;
-  questions: Question;
+  students: Student;
 };

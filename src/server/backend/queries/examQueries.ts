@@ -3,6 +3,7 @@ import {
   getExams,
   getExamById,
   getExamsBySubject,
+  getStudentExams,
 } from "../actions/examActions";
 
 export const useExamById = (examId: string) => {
@@ -16,6 +17,13 @@ export const useExams = () => {
   return useQuery({
     queryKey: ["exams"],
     queryFn: () => getExams(),
+  });
+};
+
+export const useStudentExams = (studentId: string) => {
+  return useQuery({
+    queryKey: ["student-exams"],
+    queryFn: () => getStudentExams(studentId),
   });
 };
 
