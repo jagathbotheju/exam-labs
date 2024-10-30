@@ -1,6 +1,9 @@
 "use client";
 
-import { useExams } from "@/server/backend/queries/examQueries";
+import {
+  useExams,
+  useExamsBySubject,
+} from "@/server/backend/queries/examQueries";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useState } from "react";
@@ -17,18 +20,23 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   setExam: (exam: string) => void;
+  subjectId: string;
 }
 
-const ExamSelector = ({ setExam }: Props) => {
+const ExamSelector = ({ setExam, subjectId }: Props) => {
   const [open, setOpen] = useState(false);
-  const { data: exams, isPending } = useExams();
   const [value, setValue] = useState("");
+
+  // const { data: exams, isPending } = useExams();
+  const { data: examsBySubject, isPending } = useExamsBySubject(subjectId);
+
+  // console.log("examsBySubject", examsBySubject);
 
   if (isPending) {
     return <Loader2 className="animate-spin" />;
   }
 
-  if (!exams) {
+  if (!examsBySubject) {
     return <p className="text-xl font-semibold">No Exams Found!</p>;
   }
 
@@ -42,7 +50,7 @@ const ExamSelector = ({ setExam }: Props) => {
           className="w-[200px] justify-between"
         >
           {value
-            ? exams.find((exam) => exam.id === value)?.name
+            ? examsBySubject.find((exam) => exam.id === value)?.name
             : "Select an Exam..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -53,7 +61,7 @@ const ExamSelector = ({ setExam }: Props) => {
           <CommandList>
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
-              {exams.map((exam) => (
+              {examsBySubject.map((exam) => (
                 <CommandItem
                   key={exam.id}
                   value={exam.id}

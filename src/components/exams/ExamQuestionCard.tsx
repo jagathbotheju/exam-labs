@@ -37,13 +37,21 @@ const ExamQuestionCard = ({ question, index, examId }: Props) => {
 
               {/* question */}
               <div className="flex flex-col gap-2 p-3">
-                <p className="line-clamp-3 tracking-widest text-sm underline underline-offset-2">
+                <p className="line-clamp-3 text-sm underline underline-offset-2 tracking-wide font-sinhala">
                   {parse(question.body)}
                 </p>
-                <p className="text-xs">{question.option1}</p>
-                <p className="text-xs">{question.option2}</p>
-                <p className="text-xs">{question.option3}</p>
-                <p className="text-xs">{question.option4}</p>
+                <p className="text-xs tracking-wide font-sinhala">
+                  {question.option1}
+                </p>
+                <p className="text-xs tracking-wide font-sinhala">
+                  {question.option2}
+                </p>
+                <p className="text-xs tracking-wide font-sinhala">
+                  {question.option3}
+                </p>
+                <p className="text-xs tracking-wide font-sinhala">
+                  {question.option4}
+                </p>
               </div>
             </div>
           </div>

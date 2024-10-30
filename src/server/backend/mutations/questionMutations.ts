@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export const useAddQuestionToExam = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({
       examId,
@@ -22,6 +24,7 @@ export const useAddQuestionToExam = () => {
     onSuccess: (res) => {
       console.log(res);
       if (res.success) {
+        queryClient.invalidateQueries({ queryKey: ["questions-by-subject"] });
         toast.success(res.success);
       }
       if (res.error) {
@@ -49,7 +52,12 @@ export const useRemoveQuestionFromExam = () => {
     onSuccess: (res) => {
       if (res.success) {
         toast.success(res.success);
-        queryClient.invalidateQueries({ queryKey: ["exam-by-id"] });
+        queryClient.invalidateQueries({
+          queryKey: ["exam-by-id"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["questions-by-subject"],
+        });
       }
       if (res.error) {
         toast.error(res.error);

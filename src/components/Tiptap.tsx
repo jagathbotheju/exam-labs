@@ -117,7 +117,7 @@ const TipTap = ({ value }: { value: string }) => {
           </Toggle>
         </div>
       )}
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="tracking-wide font-sinhala" />
     </div>
   );
 };

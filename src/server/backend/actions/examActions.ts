@@ -42,6 +42,22 @@ export const getExams = async () => {
   return exams as ExamExt[];
 };
 
+export const getExamsBySubject = async (subjectId: string) => {
+  const exam = await db.query.exams.findMany({
+    where: eq(exams.subjectId, subjectId),
+    with: {
+      examQuestions: {
+        with: {
+          questions: true,
+        },
+      },
+      subjects: true,
+    },
+  });
+
+  return exam as ExamExt[];
+};
+
 export const getExamById = async (examId: string) => {
   const exam = await db.query.exams.findFirst({
     where: eq(exams.id, examId),

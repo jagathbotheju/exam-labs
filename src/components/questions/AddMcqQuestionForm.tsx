@@ -307,7 +307,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
               <FormItem>
                 <FormLabel>Option 1</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea {...field} className="tracking-wide font-sinhala" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -322,7 +322,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
               <FormItem>
                 <FormLabel>Option 2</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea {...field} className="tracking-wide font-sinhala" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -337,7 +337,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
               <FormItem>
                 <FormLabel>Option 3</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea {...field} className="tracking-wide font-sinhala" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -352,7 +352,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
               <FormItem>
                 <FormLabel>Option 4</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea {...field} className="tracking-wide font-sinhala" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -6,6 +6,8 @@ import { z } from "zod";
 import { and, desc, eq } from "drizzle-orm";
 import { Question, QuestionExt } from "../../db/schema/questions";
 import _ from "lodash";
+import { auth } from "@/lib/auth";
+import { Student } from "@/server/db/schema/students";
 
 export const addQuestion = async ({
   questionData,
@@ -14,6 +16,11 @@ export const addQuestion = async ({
   questionData: z.infer<typeof AddMcqQuestionSchema>;
   questionId?: string;
 }) => {
+  const session = await auth();
+  const user = session?.user as Student;
+  if (!user) return { error: "Please LogIn" };
+  if (user.role !== "admin") return { error: "Not Authorized!" };
+
   const isValid = AddMcqQuestionSchema.safeParse(questionData);
 
   if (isValid.success) {
@@ -132,12 +139,18 @@ export const getQuestions = async () => {
 };
 
 export const getQuestionsBySubject = async (subjectId: string) => {
-  const questionsBySubject = await db
-    .select()
-    .from(questions)
-    .where(eq(questions.subjectId, subjectId))
-    .orderBy(desc(questions.createdAt));
-  return questionsBySubject as Question[];
+  const questionsBySubject = await db.query.questions.findMany({
+    with: {
+      examQuestions: true,
+    },
+    where: eq(questions.subjectId, subjectId),
+    orderBy: desc(questions.createdAt),
+  });
+  // .select()
+  // .from(questions)
+  // .where(eq(questions.subjectId, subjectId))
+  // .orderBy(desc(questions.createdAt));
+  return questionsBySubject as QuestionExt[];
 };
 
 export const getQuestionById = async (questionId: string) => {

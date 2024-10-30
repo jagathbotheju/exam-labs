@@ -7,6 +7,9 @@ import QuestionCard from "../questions/QuestionCard";
 import { Question } from "@/server/db/schema/questions";
 import { ExamQuestion } from "@/server/db/schema/examQuestions";
 import ExamQuestionCard from "./ExamQuestionCard";
+import StudentSelector from "../student/StudentSelector";
+import { useState } from "react";
+import { Button } from "../ui/button";
 
 interface Props {
   examId: string;
@@ -14,6 +17,7 @@ interface Props {
 
 const ExamDetails = ({ examId }: Props) => {
   const { data: exam, isLoading } = useExamById(examId);
+  const [selectedStudent, setSelectedStudent] = useState<null | string>(null);
 
   if (isLoading) {
     return (
@@ -23,37 +27,53 @@ const ExamDetails = ({ examId }: Props) => {
     );
   }
 
-  if (_.isEmpty(exam) || !exam) {
-    return (
-      <div className="flex items-center justify-center">
-        <h1 className="text-xl font-bold text-muted-foreground">
-          No Exams Found!, Please add one
-        </h1>
-      </div>
-    );
-  }
+  // if (_.isEmpty(exam?.examQuestions) || !exam) {
+  //   return (
+  //     <div className="flex items-center justify-center mt-10">
+  //       <h1 className="text-xl font-bold text-muted-foreground">
+  //         No Exams Found!, Please add one
+  //       </h1>
+  //     </div>
+  //   );
+  // }
 
-  // const questions = exam.examQuestions as ExamQuestion[];
-  // console.log("exam questions", questions[0].questions);
+  console.log("exam", exam);
 
   return (
     <Card className="flex flex-col">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">
-          <span className="uppercase">{exam.name}</span>, Exam Details
+        <CardTitle className="flex justify-between">
+          <div className="uppercase text-2xl font-bold">
+            <span>{exam?.name}</span>, Exam Details
+          </div>
+          {exam && exam.examQuestions && (
+            <div className="flex items-center gap-2">
+              <p>Assign Exam to Student</p>
+              <StudentSelector setSelectedStudent={setSelectedStudent} />
+              <Button>Assign</Button>
+            </div>
+          )}
         </CardTitle>
       </CardHeader>
-      <CardContent className="gap-4 flex flex-col">
-        {exam.examQuestions.map((item, index) => {
-          return (
-            <ExamQuestionCard
-              key={index}
-              index={index + 1}
-              question={item.questions}
-              examId={examId}
-            />
-          );
-        })}
+      <CardContent className="gap-4 flex flex-col h-full">
+        {exam && exam.examQuestions.length ? (
+          exam.examQuestions.map((item, index) => {
+            return (
+              <ExamQuestionCard
+                key={index}
+                index={index + 1}
+                question={item.questions}
+                examId={examId}
+              />
+            );
+          })
+        ) : (
+          <div className="flex items-center justify-center mt-10">
+            <h1 className="text-xl font-bold text-muted-foreground">
+              No Questions Found!
+            </h1>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

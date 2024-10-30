@@ -55,6 +55,7 @@ const AllQuestions = () => {
               key={question.id}
               question={question}
               index={index + 1}
+              subjectId={subject}
             />
           ))}
       </div>
