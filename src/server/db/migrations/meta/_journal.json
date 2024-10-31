@@ -5,64 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1729352550585,
-      "tag": "0000_little_may_parker",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1729352950592,
-      "tag": "0001_flat_bushwacker",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1729803875926,
-      "tag": "0002_warm_purifiers",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1729810559046,
-      "tag": "0003_young_agent_zero",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1729810732026,
-      "tag": "0004_gigantic_absorbing_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1729819378841,
-      "tag": "0005_white_yellow_claw",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1729957637077,
-      "tag": "0006_tidy_vapor",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1730047548009,
-      "tag": "0007_clean_prism",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1730364550563,
-      "tag": "0008_spotty_annihilus",
+      "when": 1730391484139,
+      "tag": "0000_sour_yellowjacket",
       "breakpoints": true
     }
   ]

@@ -12,12 +12,14 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { useAddExamToStudent } from "@/server/backend/mutations/examMutations";
 import { toast } from "sonner";
+import { Student } from "@/server/db/schema/students";
 
 interface Props {
   examId: string;
+  student: Student;
 }
 
-const ExamDetails = ({ examId }: Props) => {
+const ExamDetails = ({ examId, student }: Props) => {
   const { data: exam, isLoading } = useExamById(examId);
   const [selectedStudent, setSelectedStudent] = useState<null | string>(null);
   const { mutate: addExamToStudent } = useAddExamToStudent();
@@ -52,7 +54,9 @@ const ExamDetails = ({ examId }: Props) => {
             <div className="flex items-center gap-2">
               <p>Assign Exam to Student</p>
               <StudentSelector setSelectedStudent={setSelectedStudent} />
-              <Button onClick={assignExamToStudent}>Assign</Button>
+              <Button disabled={!selectedStudent} onClick={assignExamToStudent}>
+                Assign
+              </Button>
             </div>
           )}
         </CardTitle>
@@ -66,6 +70,7 @@ const ExamDetails = ({ examId }: Props) => {
                 index={index + 1}
                 question={item.questions}
                 examId={examId}
+                student={student}
               />
             );
           })

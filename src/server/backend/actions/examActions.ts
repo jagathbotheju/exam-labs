@@ -40,6 +40,7 @@ export const addExamToStudent = async ({
   examId: string;
 }) => {
   try {
+    console.log("adding exam to student");
     const examExist = await db
       .select()
       .from(studentExams)
@@ -63,6 +64,7 @@ export const addExamToStudent = async ({
     }
     return { error: "Could not assign Exam to Student" };
   } catch (error) {
+    console.log(error);
     return { error: "Could not assign Exam to Student" };
   }
 };
@@ -83,6 +85,8 @@ export const getStudentExams = async (studentId: string) => {
   //   .select()
   //   .from(studentExams)
   //   .where(eq(studentExams.studentId, studentId));
+  if (!studentId) return null;
+  console.log("studentID", studentId);
   const exams = await db.query.studentExams.findMany({
     where: eq(studentExams.studentId, studentId),
     with: {
@@ -98,6 +102,7 @@ export const getStudentExams = async (studentId: string) => {
               questions: true,
             },
           },
+          subjects: true,
         },
       },
     },

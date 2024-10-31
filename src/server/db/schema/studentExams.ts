@@ -1,4 +1,10 @@
-import { pgTable, primaryKey, text } from "drizzle-orm/pg-core";
+import {
+  integer,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { ExamExt, exams } from "./exams";
 import { Student, students } from "./students";
 import { InferSelectModel, relations } from "drizzle-orm";
@@ -13,6 +19,12 @@ export const studentExams = pgTable(
     examId: text("exam_id")
       .notNull()
       .references(() => exams.id),
+    createdAt: timestamp("created_at", { mode: "string" })
+      .notNull()
+      .defaultNow(),
+    completedAt: timestamp("completed_at", { mode: "string" }),
+    marks: integer("marks").default(0),
+    duration: integer("duration").default(0),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.studentId, table.examId] }),

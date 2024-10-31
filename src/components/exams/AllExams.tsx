@@ -12,22 +12,10 @@ import {
 } from "../ui/table";
 import DeleteExamDialog from "./DeleteExamDialog";
 import { useRouter } from "next/navigation";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import { useState } from "react";
-import StudentSelector from "../student/StudentSelector";
 
 const AllExams = () => {
   const router = useRouter();
   const { data: exams, isFetching } = useExams();
-  const [selectedStudent, setSelectedStudent] = useState<null | string>(null);
 
   if (isFetching) {
     return (
@@ -46,8 +34,6 @@ const AllExams = () => {
       </div>
     );
   }
-
-  const addStudentToExam = () => {};
 
   return (
     <Table className="w-full md:max-w-xl">
@@ -85,32 +71,6 @@ const AllExams = () => {
                   className="w-5 h-5 cursor-pointer"
                 />
               </TableCell>
-
-              {/* add student to exam */}
-              <AlertDialog>
-                <AlertDialogTrigger>
-                  <UserRoundPlus className="w-5 h-5" />
-                </AlertDialogTrigger>
-                <AlertDialogContent aria-describedby="add on to exam">
-                  <AlertDialogTitle className="flex justify-between">
-                    Add User to Exam
-                  </AlertDialogTitle>
-                  <div className="flex gap-2 items-center">
-                    <p>Please select Student</p>
-                    <StudentSelector setSelectedStudent={setSelectedStudent} />
-                  </div>
-
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      disabled={!exam}
-                      onClick={addStudentToExam}
-                    >
-                      Add
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
 
               {/* delete exam */}
               <TableCell className="text-left">

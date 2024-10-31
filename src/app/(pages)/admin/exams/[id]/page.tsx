@@ -14,6 +14,6 @@ const ExamDetailsPage = async ({ params }: Props) => {
 
   if (!user || user.role !== "admin") return redirect("/not-authorized");
 
-  return <ExamDetails examId={params.id} />;
+  return <ExamDetails examId={params.id} student={user} />;
 };
 export default ExamDetailsPage;

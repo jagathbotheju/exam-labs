@@ -80,7 +80,7 @@ const AuthButton = ({ student }: Props) => {
 
               {/* profiles */}
               <DropdownMenuItem
-                onClick={() => router.push("/profile")}
+                onClick={() => router.push("/student/profile")}
                 className="font-medium transition-all duration-500 cursor-pointer group ease-in-out"
               >
                 <UserRoundPen className="mr-2 w-4 group-hover:translate-x-1 transition-all duration-300 ease-in-out" />
