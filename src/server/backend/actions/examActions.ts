@@ -86,7 +86,20 @@ export const getStudentExams = async (studentId: string) => {
   const exams = await db.query.studentExams.findMany({
     where: eq(studentExams.studentId, studentId),
     with: {
-      exams: true,
+      exams: {
+        with: {
+          studentAnswers: {
+            with: {
+              answers: true,
+            },
+          },
+          examQuestions: {
+            with: {
+              questions: true,
+            },
+          },
+        },
+      },
     },
   });
 

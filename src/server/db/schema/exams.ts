@@ -5,6 +5,7 @@ import { Question, QuestionExt, questions } from "./questions";
 import { Subject, subjects } from "./subjects";
 import { ExamQuestion, examQuestions } from "./examQuestions";
 import { studentExams } from "./studentExams";
+import { StudentAnswerExt, studentAnswers } from "./studentAnswers";
 
 export const exams = pgTable("exams", {
   id: text("id")
@@ -21,6 +22,7 @@ export const exams = pgTable("exams", {
 
 export const examRelations = relations(exams, ({ one, many }) => ({
   examQuestions: many(examQuestions),
+  studentAnswers: many(studentAnswers),
   studentExams: many(studentExams),
   students: one(students, {
     fields: [exams.studentId],
@@ -35,5 +37,6 @@ export const examRelations = relations(exams, ({ one, many }) => ({
 export type Exam = InferSelectModel<typeof exams>;
 export type ExamExt = InferSelectModel<typeof exams> & {
   examQuestions: ExamQuestion[];
+  studentAnswers: StudentAnswerExt[];
   subjects: Subject;
 };

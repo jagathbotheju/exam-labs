@@ -20,3 +20,8 @@ export {
   questionsYearHistory,
   questionsYearHistoryRelations,
 } from "@/server/db/schema/questionsYearHistory";
+export {
+  studentAnswers,
+  studentAnswerRelations,
+} from "@/server/db/schema/studentAnswers";
+export { answers, answerRelations } from "@/server/db/schema/answers";
