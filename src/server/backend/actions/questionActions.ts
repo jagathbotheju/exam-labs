@@ -20,19 +20,36 @@ export const answerQuestion = async ({
   examId,
   studentId,
   questionId,
-  answer,
+  studentAnswer,
+  questionAnswer,
 }: {
   examId: string;
   studentId: string;
   questionId: string;
-  answer: string;
+  studentAnswer: string;
+  questionAnswer: string;
 }) => {
-  const newAnswer = await db.insert(studentAnswers).values({
-    examId: examId,
-    studentId: studentId,
-    questionId: questionId,
-    answer,
-  });
+  console.log(examId, studentId, questionId);
+  console.log("QUESTION ANSWER", studentAnswer);
+  const answer = await db
+    .insert(studentAnswers)
+    .values({
+      examId,
+      studentId,
+      questionId,
+      studentAnswer,
+      questionAnswer,
+    })
+    .onConflictDoUpdate({
+      target: [
+        studentAnswers.examId,
+        studentAnswers.studentId,
+        studentAnswers.questionId,
+      ],
+      set: {
+        studentAnswer,
+      },
+    });
 };
 
 //===========addQuestion================================================================================================

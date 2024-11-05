@@ -17,14 +17,19 @@ export const studentAnswers = pgTable(
   {
     studentId: text("student_id").references(() => students.id),
     examId: text("exam_id").references(() => exams.id),
-    questionId: text("question_id").references(() => questions.id),
-    answer: text("answer"),
+    questionId: text("question_id")
+      .unique()
+      .references(() => questions.id),
+    questionAnswer: text("question_answer"),
+    studentAnswer: text("student_answer"),
     createdAt: timestamp("created_at", { mode: "string" })
       .notNull()
       .defaultNow(),
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.examId, table.studentId] }),
+    pk: primaryKey({
+      columns: [table.examId, table.studentId, table.questionId],
+    }),
   })
 );
 

@@ -15,9 +15,10 @@ import {
 } from "../ui/command";
 import { cn } from "@/lib/utils";
 import { useStudents } from "@/server/backend/queries/studentQueries";
+import { StudentExt } from "@/server/db/schema/students";
 
 interface Props {
-  setSelectedStudent: (student: string | null) => void;
+  setSelectedStudent: (student: StudentExt | null) => void;
 }
 
 const StudentSelector = ({ setSelectedStudent }: Props) => {
@@ -60,9 +61,13 @@ const StudentSelector = ({ setSelectedStudent }: Props) => {
                   value={student.id}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
-                    setSelectedStudent(
-                      currentValue === value ? "" : currentValue
+                    // setSelectedStudent(
+                    //   currentValue === value ? "" : currentValue
+                    // );
+                    const selectedStudent = students.find(
+                      (student) => student.id === currentValue
                     );
+                    setSelectedStudent(selectedStudent ?? null);
                     setOpen(false);
                   }}
                 >

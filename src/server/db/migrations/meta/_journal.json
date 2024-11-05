@@ -15,6 +15,27 @@
       "when": 1730796481912,
       "tag": "0001_nosy_jack_murdock",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1730822683636,
+      "tag": "0002_lush_wrecker",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1730827344605,
+      "tag": "0003_gorgeous_brood",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1730828793304,
+      "tag": "0004_loud_frog_thor",
+      "breakpoints": true
     }
   ]
 }

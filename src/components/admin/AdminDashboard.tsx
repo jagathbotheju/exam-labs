@@ -1,55 +1,37 @@
 "use client";
-import { useStudents } from "@/server/backend/queries/studentQueries";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import MyExams from "../exams/MyExams";
-import { Loader2 } from "lucide-react";
-import { Student } from "@/server/db/schema/students";
+import { Student, StudentExt } from "@/server/db/schema/students";
+import StudentSelector from "../student/StudentSelector";
+import { useState } from "react";
+import _ from "lodash";
 
 interface Props {
   admin: Student;
 }
 
 const AdminDashboard = ({ admin }: Props) => {
-  const { data: students, isPending } = useStudents();
-  const allStudents = students?.filter((student) => student.role !== "admin");
-
-  console.log("students", allStudents);
-
-  if (isPending) {
-    return (
-      <div className="flex w-full mt-10 justify-center items-center">
-        <Loader2 className="animate-spin w-8 h-8" />
-      </div>
-    );
-  }
+  const [selectedStudent, setSelectedStudent] = useState<StudentExt | null>(
+    null
+  );
 
   return (
     <div className="flex flex-col">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-3xl font-bold">Student Exams</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col">
-            {allStudents ? (
-              allStudents.map((student) => (
-                <div key={student.id} className="flex flex-col gap-4">
-                  <h2 className="text-xl font-semibold underline">
-                    {student.name}
-                  </h2>
-                  <MyExams studentId={student.id} role={admin.role} />
-                </div>
-              ))
-            ) : (
-              <div className="w-full mt-8">
-                <h2 className="text-3xl font-semibold text-muted-foreground">
-                  No Students Found!
-                </h2>
-              </div>
-            )}
+      <div className="flex w-full items-center justify-between">
+        <p className="text-2xl font-bold">Exam Details</p>
+        <StudentSelector setSelectedStudent={setSelectedStudent} />
+      </div>
+
+      <div className="mt-8">
+        {selectedStudent ? (
+          <MyExams studentId={selectedStudent.id} role={admin.role} />
+        ) : (
+          <div className="flex justify-center mt-8">
+            <h2 className="text-3xl font-bold text-muted-foreground">
+              Please select a Student
+            </h2>
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </div>
     </div>
   );
 };

@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { format, addMinutes } from "date-fns";
 import _ from "lodash";
+import { useAnswerQuestion } from "@/server/backend/mutations/questionMutations";
 
 interface Props {
   examId: string;
@@ -24,14 +25,16 @@ interface Props {
 }
 
 const StudentExam = ({ examId, student }: Props) => {
-  const router = useRouter();
-  const { data: exam, isLoading } = useExamById(examId);
-  const [answers, setAnswers] = useState<StudentResponse[]>([]);
   const startTime = new Date();
+  const router = useRouter();
+  const [answers, setAnswers] = useState<StudentResponse[]>([]);
+
+  const { data: exam, isLoading } = useExamById(examId);
+  const { mutate: answerQuestion } = useAnswerQuestion();
 
   if (isLoading) {
     return (
-      <div className="fle w-full mt-10 justify-center items-center">
+      <div className="flex w-full mt-10 justify-center items-center">
         <Loader2 className="animate-spin w-8 h-8" />
       </div>
     );
@@ -53,6 +56,24 @@ const StudentExam = ({ examId, student }: Props) => {
     }
 
     console.log("answers", answers);
+
+    setAnswers([]);
+    router.push("/");
+  };
+
+  const answerExamQuestion = ({
+    questionId,
+    studentAnswer,
+    questionAnswer,
+  }: StudentResponse) => {
+    console.log("StudentExam****", studentAnswer);
+    answerQuestion({
+      examId,
+      studentId: student.id,
+      questionId,
+      studentAnswer,
+      questionAnswer,
+    });
   };
 
   const cancelExam = () => {
@@ -79,13 +100,13 @@ const StudentExam = ({ examId, student }: Props) => {
                 return (
                   <ExamQuestionCard
                     key={index}
-                    index={index + 1}
                     question={item.questions}
                     questionNumber={item.questionNumber}
                     examId={examId}
                     student={student}
-                    setAnswers={setAnswers}
-                    answers={answers}
+                    // setAnswers={setAnswers}
+                    // answers={answers}
+                    answerExamQuestion={answerExamQuestion}
                   />
                 );
               })

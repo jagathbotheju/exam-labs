@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   addQuestion,
   addQuestionToExam,
+  answerQuestion,
   deleteQuestion,
   removeQuestionFromExam,
 } from "../actions/questionActions";
@@ -9,6 +10,31 @@ import { AddMcqQuestionSchema } from "@/lib/schema";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+
+export const useAnswerQuestion = () => {
+  return useMutation({
+    mutationFn: ({
+      examId,
+      studentId,
+      questionId,
+      studentAnswer,
+      questionAnswer,
+    }: {
+      examId: string;
+      studentId: string;
+      questionId: string;
+      studentAnswer: string;
+      questionAnswer: string;
+    }) =>
+      answerQuestion({
+        examId,
+        studentId,
+        questionId,
+        studentAnswer,
+        questionAnswer,
+      }),
+  });
+};
 
 export const useAddQuestionToExam = () => {
   const queryClient = useQueryClient();

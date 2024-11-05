@@ -26,22 +26,22 @@ import { StudentResponse } from "@/lib/types";
 interface Props {
   question: Question;
   questionNumber: number;
-  index: number;
   examId: string;
   student: Student;
-  answers: StudentResponse[];
-  setAnswers: (answer: StudentResponse[]) => void;
+  answerExamQuestion?: (studentResponse: StudentResponse) => void;
+  // answers?: StudentResponse[];
+  // setAnswers?: (answer: StudentResponse[]) => void;
 }
 
 const ExamQuestionCard = ({
   question,
   questionNumber,
-  index,
   examId,
   student,
-  setAnswers,
-  answers,
-}: Props) => {
+  answerExamQuestion,
+}: // setAnswers,
+// answers,
+Props) => {
   const { mutate: removeQuestionFromExam } = useRemoveQuestionFromExam();
 
   // console.log("question", question);
@@ -58,17 +58,27 @@ const ExamQuestionCard = ({
 
               {/* question */}
               <RadioGroup
-                onValueChange={(value) =>
-                  setAnswers([
-                    ...answers,
-                    {
+                onValueChange={(value) => {
+                  console.log("answering question...", value);
+                  if (answerExamQuestion) {
+                    answerExamQuestion({
                       questionId: question.id,
-                      answerOption: question.answer,
-                      studentOption: value,
-                      questionNumber,
-                    },
-                  ])
-                }
+                      questionAnswer: question.answer,
+                      studentAnswer: value,
+                    });
+                  }
+                  // if (setAnswers && answers) {
+                  //   setAnswers([
+                  //     ...answers,
+                  //     {
+                  //       questionId: question.id,
+                  //       answerOption: question.answer,
+                  //       studentOption: value,
+                  //       questionNumber,
+                  //     },
+                  //   ]);
+                  // }
+                }}
               >
                 <div className="flex flex-col gap-2 p-3">
                   {/* question body */}

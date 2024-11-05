@@ -28,6 +28,8 @@ import {
 import { useRouter } from "next/navigation";
 import AppDialog from "../AppDialog";
 import { useDeleteExamFromStudent } from "@/server/backend/mutations/examMutations";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   studentId: string;
@@ -35,11 +37,15 @@ interface Props {
 }
 
 const MyExams = ({ studentId, role }: Props) => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { data: studentExams, isPending } = useStudentExams(studentId);
   const { mutate: deleteExamFromStudent } = useDeleteExamFromStudent();
 
-  console.log("studentExams", studentExams);
+  console.log("MyExams selectedStudentId", studentId);
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["student-exams"] });
+  }, [studentId, queryClient]);
 
   if (isPending) {
     return (
@@ -49,12 +55,22 @@ const MyExams = ({ studentId, role }: Props) => {
     );
   }
 
-  console.log("studentExams", studentExams);
+  if (!studentId) {
+    return (
+      <div className="flex w-full">
+        <h2 className="text-3xl font-bold text-muted-foreground">
+          Please select a Student
+        </h2>
+      </div>
+    );
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">My Exams</CardTitle>
+        <CardTitle className="text-2xl font-bold">
+          {role === "admin" ? "Student Exams" : "My Exams"}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {studentExams?.length ? (

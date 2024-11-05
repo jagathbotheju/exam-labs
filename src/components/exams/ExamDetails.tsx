@@ -12,7 +12,7 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import { useAddExamToStudent } from "@/server/backend/mutations/examMutations";
 import { toast } from "sonner";
-import { Student } from "@/server/db/schema/students";
+import { Student, StudentExt } from "@/server/db/schema/students";
 
 interface Props {
   examId: string;
@@ -21,7 +21,9 @@ interface Props {
 
 const ExamDetails = ({ examId, student }: Props) => {
   const { data: exam, isLoading } = useExamById(examId);
-  const [selectedStudent, setSelectedStudent] = useState<null | string>(null);
+  const [selectedStudent, setSelectedStudent] = useState<null | StudentExt>(
+    null
+  );
   const { mutate: addExamToStudent } = useAddExamToStudent();
 
   if (isLoading) {
@@ -37,7 +39,7 @@ const ExamDetails = ({ examId, student }: Props) => {
     if (!selectedStudent) return toast.error("Please select a Student");
     if (selectedStudent && examId) {
       addExamToStudent({
-        studentId: selectedStudent,
+        studentId: selectedStudent.id,
         examId,
       });
     }
@@ -67,8 +69,8 @@ const ExamDetails = ({ examId, student }: Props) => {
             return (
               <ExamQuestionCard
                 key={index}
-                index={index + 1}
                 question={item.questions}
+                questionNumber={item.questionNumber}
                 examId={examId}
                 student={student}
               />

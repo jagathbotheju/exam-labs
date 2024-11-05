@@ -121,11 +121,7 @@ export const getStudentExams = async (studentId: string) => {
     with: {
       exams: {
         with: {
-          studentAnswers: {
-            with: {
-              answers: true,
-            },
-          },
+          studentAnswers: true,
           examQuestions: {
             with: {
               questions: true,
