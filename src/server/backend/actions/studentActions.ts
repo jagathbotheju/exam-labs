@@ -1,13 +1,17 @@
 "use server";
 import { ProfileSchema } from "@/lib/schema";
 import { db } from "@/server/db";
-import { StudentExt, students } from "@/server/db/schema/students";
+import { Student, StudentExt, students } from "@/server/db/schema/students";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 export const getStudents = async () => {
-  const students = await db.query.students.findMany();
+  const students = await db.query.students.findMany({
+    with: {
+      exams: true,
+    },
+  });
   return students as StudentExt[];
 };
 

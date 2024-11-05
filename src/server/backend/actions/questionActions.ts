@@ -1,7 +1,13 @@
 "use server";
 import { AddMcqQuestionSchema } from "@/lib/schema";
 import { db } from "../../db";
-import { examQuestions, exams, questions, subjects } from "../../db/schema";
+import {
+  examQuestions,
+  exams,
+  questions,
+  studentAnswers,
+  subjects,
+} from "../../db/schema";
 import { z } from "zod";
 import { and, desc, eq } from "drizzle-orm";
 import { Question, QuestionExt } from "../../db/schema/questions";
@@ -9,6 +15,27 @@ import _ from "lodash";
 import { auth } from "@/lib/auth";
 import { Student } from "@/server/db/schema/students";
 
+//========answerQuestion================================================================================================
+export const answerQuestion = async ({
+  examId,
+  studentId,
+  questionId,
+  answer,
+}: {
+  examId: string;
+  studentId: string;
+  questionId: string;
+  answer: string;
+}) => {
+  const newAnswer = await db.insert(studentAnswers).values({
+    examId: examId,
+    studentId: studentId,
+    questionId: questionId,
+    answer,
+  });
+};
+
+//===========addQuestion================================================================================================
 export const addQuestion = async ({
   questionData,
   questionId,
@@ -64,11 +91,14 @@ export const addQuestion = async ({
   };
 };
 
+//===========addQuestionToExam==========================================================================================
 export const addQuestionToExam = async ({
   questionId,
+  questionNumber,
   examId,
 }: {
   questionId: string;
+  questionNumber: number;
   examId: string;
 }) => {
   try {
@@ -89,6 +119,7 @@ export const addQuestionToExam = async ({
       .values({
         examId,
         questionId,
+        questionNumber,
       })
       .returning();
     if (addedQuestion.length) {
@@ -102,6 +133,7 @@ export const addQuestionToExam = async ({
   }
 };
 
+//============removeQuestionFromExam====================================================================================
 export const removeQuestionFromExam = async ({
   questionId,
   examId,

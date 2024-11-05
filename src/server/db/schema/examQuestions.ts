@@ -1,4 +1,4 @@
-import { pgTable, primaryKey, text } from "drizzle-orm/pg-core";
+import { integer, pgTable, primaryKey, text } from "drizzle-orm/pg-core";
 import { ExamExt, exams } from "./exams";
 import { Question, questions } from "./questions";
 import { InferSelectModel, relations } from "drizzle-orm";
@@ -12,6 +12,7 @@ export const examQuestions = pgTable(
     questionId: text("question_id")
       .notNull()
       .references(() => questions.id),
+    questionNumber: integer("question_number").notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.examId, table.questionId] }),

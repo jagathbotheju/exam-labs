@@ -77,3 +77,40 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .clock-flip {
+    @apply relative w-[60px] h-[100px] m-[2px] text-7xl leading-[100px] text-center border-[1px] border-black rounded-lg shadow-2xl;
+  }
+
+  .clock-digital-before {
+    @apply before:absolute 
+        before:left-0 
+        before:right-0 
+        before:text-white 
+        before:bg-black 
+        before:overflow-hidden 
+        before:perspective-[160px]
+        before:top-0
+        before:bottom-[50%]
+        before:border-b-[1px]
+        before:border-b-[#666]
+        before:rounded-tl-lg
+        before:rounded-tr-lg;
+  }
+
+  .clock-digital-after {
+    @apply after:absolute 
+        after:left-0 
+        after:right-0 
+        after:text-white 
+        after:bg-black 
+        after:overflow-hidden 
+        after:perspective-[160px]
+        after:top-[50%]
+        after:bottom-0
+        after:leading-[0]
+        after:rounded-bl-lg
+        after:rounded-br-lg;
+  }
+}

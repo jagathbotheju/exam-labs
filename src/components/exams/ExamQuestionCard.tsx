@@ -2,7 +2,7 @@
 import { Question } from "@/server/db/schema/questions";
 import { Card, CardContent } from "../ui/card";
 import parse from "html-react-parser";
-import { Trash2 } from "lucide-react";
+import { ArrowBigUp, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,16 +16,35 @@ import {
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { useRemoveQuestionFromExam } from "@/server/backend/mutations/questionMutations";
 import { Student } from "@/server/db/schema/students";
+import { Checkbox } from "../ui/checkbox";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
+import { useState } from "react";
+import { StudentResponse } from "@/lib/types";
 
 interface Props {
   question: Question;
+  questionNumber: number;
   index: number;
   examId: string;
   student: Student;
+  answers: StudentResponse[];
+  setAnswers: (answer: StudentResponse[]) => void;
 }
 
-const ExamQuestionCard = ({ question, index, examId, student }: Props) => {
+const ExamQuestionCard = ({
+  question,
+  questionNumber,
+  index,
+  examId,
+  student,
+  setAnswers,
+  answers,
+}: Props) => {
   const { mutate: removeQuestionFromExam } = useRemoveQuestionFromExam();
+
+  // console.log("question", question);
 
   return (
     <Card>
@@ -34,27 +53,86 @@ const ExamQuestionCard = ({ question, index, examId, student }: Props) => {
           <div className="flex justify-between">
             <div className="flex gap-2 items-center">
               <div className="bg-slate-200 p-4 font-bold rounded-tl-lg rounded-bl-lg h-full flex items-center justify-center">
-                {index}
+                {questionNumber}
               </div>
 
               {/* question */}
-              <div className="flex flex-col gap-2 p-3">
-                <p className="line-clamp-3 text-sm tracking-wide font-sinhala">
-                  {parse(question.body)}
-                </p>
-                <p className="text-xs tracking-wide font-sinhala">
-                  {question.option1}
-                </p>
-                <p className="text-xs tracking-wide font-sinhala">
-                  {question.option2}
-                </p>
-                <p className="text-xs tracking-wide font-sinhala">
-                  {question.option3}
-                </p>
-                <p className="text-xs tracking-wide font-sinhala">
-                  {question.option4}
-                </p>
-              </div>
+              <RadioGroup
+                onValueChange={(value) =>
+                  setAnswers([
+                    ...answers,
+                    {
+                      questionId: question.id,
+                      answerOption: question.answer,
+                      studentOption: value,
+                      questionNumber,
+                    },
+                  ])
+                }
+              >
+                <div className="flex flex-col gap-2 p-3">
+                  {/* question body */}
+                  <p className="line-clamp-3 tracking-wide font-sinhala text-xl">
+                    {parse(question.body)}
+                  </p>
+
+                  {/* option-1 */}
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      className="w-5 h-5"
+                      value="option1"
+                      id="option1"
+                    />
+                    <Label htmlFor="option1">
+                      <p className="text-lg tracking-wide font-sinhala">
+                        {question.option1}
+                      </p>
+                    </Label>
+                  </div>
+
+                  {/* option-2 */}
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      className="w-5 h-5"
+                      value="option2"
+                      id="option2"
+                    />
+                    <Label htmlFor="option2">
+                      <p className="text-lg tracking-wide font-sinhala">
+                        {question.option2}
+                      </p>
+                    </Label>
+                  </div>
+
+                  {/* option-3 */}
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      className="w-5 h-5"
+                      value="option3"
+                      id="option3"
+                    />
+                    <Label htmlFor="option3">
+                      <p className="text-lg tracking-wide font-sinhala">
+                        {question.option3}
+                      </p>
+                    </Label>
+                  </div>
+
+                  {/* option-4 */}
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      className="w-5 h-5"
+                      value="option4"
+                      id="option4"
+                    />
+                    <Label htmlFor="option4">
+                      <p className="text-lg tracking-wide font-sinhala">
+                        {question.option4}
+                      </p>
+                    </Label>
+                  </div>
+                </div>
+              </RadioGroup>
             </div>
           </div>
 

@@ -5,7 +5,7 @@ import { Question, QuestionExt, questions } from "./questions";
 import { Subject, subjects } from "./subjects";
 import { ExamQuestion, examQuestions } from "./examQuestions";
 import { studentExams } from "./studentExams";
-import { StudentAnswerExt, studentAnswers } from "./studentAnswers";
+import { StudentAnswer, studentAnswers } from "./studentAnswers";
 
 export const exams = pgTable("exams", {
   id: text("id")
@@ -37,6 +37,6 @@ export const examRelations = relations(exams, ({ one, many }) => ({
 export type Exam = InferSelectModel<typeof exams>;
 export type ExamExt = InferSelectModel<typeof exams> & {
   examQuestions: ExamQuestion[];
-  studentAnswers: StudentAnswerExt[];
+  studentAnswers: StudentAnswer[];
   subjects: Subject;
 };

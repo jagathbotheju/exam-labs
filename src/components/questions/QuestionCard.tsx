@@ -56,6 +56,7 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
       addQuestion({
         questionId: question.id,
         examId: exam,
+        questionNumber: index,
       });
     } else {
       return toast.error("Unable to Add, not enough data...");

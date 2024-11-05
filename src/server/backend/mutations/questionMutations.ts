@@ -17,10 +17,12 @@ export const useAddQuestionToExam = () => {
     mutationFn: ({
       examId,
       questionId,
+      questionNumber,
     }: {
       examId: string;
       questionId: string;
-    }) => addQuestionToExam({ examId, questionId }),
+      questionNumber: number;
+    }) => addQuestionToExam({ examId, questionId, questionNumber }),
     onSuccess: (res) => {
       console.log(res);
       if (res.success) {

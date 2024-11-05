@@ -2,7 +2,7 @@
 import { Student } from "@/server/db/schema/students";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useStudentExams } from "@/server/backend/queries/examQueries";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -26,24 +26,30 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { useRouter } from "next/navigation";
+import AppDialog from "../AppDialog";
+import { useDeleteExamFromStudent } from "@/server/backend/mutations/examMutations";
 
 interface Props {
   studentId: string;
+  role?: string;
 }
 
-const MyExams = ({ studentId }: Props) => {
+const MyExams = ({ studentId, role }: Props) => {
   const router = useRouter();
   const { data: studentExams, isPending } = useStudentExams(studentId);
+  const { mutate: deleteExamFromStudent } = useDeleteExamFromStudent();
 
   console.log("studentExams", studentExams);
 
   if (isPending) {
     return (
-      <div className="fle w-full mt-10 justify-center">
+      <div className="flex w-full mt-10 justify-center items-center">
         <Loader2 className="animate-spin w-8 h-8" />
       </div>
     );
   }
+
+  console.log("studentExams", studentExams);
 
   return (
     <Card>
@@ -114,45 +120,64 @@ const MyExams = ({ studentId }: Props) => {
                     )}
                   </TableCell>
 
-                  {/* start exam */}
-                  {!item.completedAt && (
+                  {!item.completedAt && role === "admin" ? (
+                    // delete exam
                     <TableCell className="text-start">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button size="sm">Start Exam</Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you sure, start this Exam?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              <div className="flex flex-col gap-1">
-                                <p>You are about to start this Exam.</p>
-                                <p>
+                      <AppDialog
+                        title="Delete Exam"
+                        trigger={
+                          <Trash2 className="text-red-500 w-5 h-5 cursor-pointer" />
+                        }
+                        body={<div>You you sure, delete this Exam</div>}
+                        okDialog={() =>
+                          deleteExamFromStudent({
+                            studentId,
+                            examId: item.examId,
+                          })
+                        }
+                      />
+                    </TableCell>
+                  ) : (
+                    // start exam
+                    <TableCell className="text-start">
+                      <AppDialog
+                        title="Start Exam"
+                        body={
+                          <div className="flex flex-col gap-1 font-semibold">
+                            <div className="text-red-500 p-0 uppercase">
+                              Please read carefully
+                            </div>
+                            <div className="flex flex-col">
+                              <div className="flex gap-2 items-center">
+                                <div className="h-2 w-2 bg-red-500 animate-ping rounded-full duration-1000"></div>
+                                <span>You are about to start this Exam.</span>
+                              </div>
+                              <div className="flex gap-2 items-center">
+                                <div className="h-2 w-2 bg-red-500 animate-ping rounded-full duration-1000"></div>
+                                <span>
                                   You have 40 MCQ questions and 1 Hour to
                                   complete.
-                                </p>
-                                <p>Clock is only for reference.</p>
-                                <p>
+                                </span>
+                              </div>
+                              <div className="flex gap-2 items-center">
+                                <div className="h-2 w-2 bg-red-500 animate-ping rounded-full duration-1000"></div>
+                                <span>Clock is only for reference.</span>
+                              </div>
+                              <div className="flex gap-2 items-center">
+                                <div className="h-2 w-2 bg-red-500 animate-ping rounded-full duration-1000"></div>
+                                <span>
                                   You can continue doing Exam even after clock
                                   times up.
-                                </p>
+                                </span>
                               </div>
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() =>
-                                router.push(`/student/exam/${item.examId}`)
-                              }
-                            >
-                              Start
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                            </div>
+                          </div>
+                        }
+                        trigger={<Button size="sm">Start Exam</Button>}
+                        okDialog={() =>
+                          router.push(`/student/exam/${item.examId}`)
+                        }
+                      />
                     </TableCell>
                   )}
                 </TableRow>

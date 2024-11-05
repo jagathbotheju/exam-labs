@@ -7,6 +7,7 @@ import { StudentExam, studentExams } from "@/server/db/schema/studentExams";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
+//==========addExam=====================================================================================================
 export const addExam = async ({
   examData,
 }: {
@@ -32,6 +33,7 @@ export const addExam = async ({
   }
 };
 
+//=========addExamToStudent=============================================================================================
 export const addExamToStudent = async ({
   studentId,
   examId,
@@ -69,6 +71,32 @@ export const addExamToStudent = async ({
   }
 };
 
+//=========deleteExamFromStudent========================================================================================
+export const deleteExamFromStudent = async ({
+  examId,
+  studentId,
+}: {
+  examId: string;
+  studentId: string;
+}) => {
+  try {
+    const deletedExam = await db
+      .delete(studentExams)
+      .where(
+        and(
+          eq(studentExams.studentId, studentId),
+          eq(studentExams.examId, examId)
+        )
+      )
+      .returning();
+    if (deletedExam) return { success: "Exam deleted successfully" };
+    return { error: "Exam could not be deleted" };
+  } catch (error) {
+    return { error: "Exam could not be deleted" };
+  }
+};
+
+//=======getExams=======================================================================================================
 export const getExams = async () => {
   const exams = await db.query.exams.findMany({
     with: {
@@ -80,6 +108,7 @@ export const getExams = async () => {
   return exams as ExamExt[];
 };
 
+//=======getStudentExams================================================================================================
 export const getStudentExams = async (studentId: string) => {
   // const exams1 = await db
   //   .select()
@@ -111,6 +140,7 @@ export const getStudentExams = async (studentId: string) => {
   return exams as StudentExam[];
 };
 
+//===========getExamsBySubject==========================================================================================
 export const getExamsBySubject = async (subjectId: string) => {
   const exam = await db.query.exams.findMany({
     where: eq(exams.subjectId, subjectId),
@@ -127,6 +157,7 @@ export const getExamsBySubject = async (subjectId: string) => {
   return exam as ExamExt[];
 };
 
+//==========getExamById=================================================================================================
 export const getExamById = async (examId: string) => {
   const exam = await db.query.exams.findFirst({
     where: eq(exams.id, examId),
@@ -143,6 +174,7 @@ export const getExamById = async (examId: string) => {
   return exam as ExamExt;
 };
 
+//===========deleteExam=================================================================================================
 export const deleteExam = async (examId: string) => {
   try {
     const questionsDeleted = await db
