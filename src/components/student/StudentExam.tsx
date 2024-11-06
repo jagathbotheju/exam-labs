@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { format, addMinutes } from "date-fns";
 import _ from "lodash";
 import { useAnswerQuestion } from "@/server/backend/mutations/questionMutations";
+import { useCancelStudentExam } from "@/server/backend/mutations/examMutations";
 
 interface Props {
   examId: string;
@@ -31,6 +32,7 @@ const StudentExam = ({ examId, student }: Props) => {
 
   const { data: exam, isLoading } = useExamById(examId);
   const { mutate: answerQuestion } = useAnswerQuestion();
+  const { mutate: cancelStudentExam } = useCancelStudentExam();
 
   if (isLoading) {
     return (
@@ -78,7 +80,10 @@ const StudentExam = ({ examId, student }: Props) => {
 
   const cancelExam = () => {
     setAnswers([]);
-    toast.success("Exam Cancelled");
+    cancelStudentExam({
+      examId,
+      studentId: student.id,
+    });
     router.back();
   };
 

@@ -29,8 +29,6 @@ export const answerQuestion = async ({
   studentAnswer: string;
   questionAnswer: string;
 }) => {
-  console.log(examId, studentId, questionId);
-  console.log("QUESTION ANSWER", studentAnswer);
   const answer = await db
     .insert(studentAnswers)
     .values({

@@ -4,10 +4,37 @@ import { z } from "zod";
 import {
   addExam,
   addExamToStudent,
+  cancelStudentExam,
   deleteExam,
   deleteExamFromStudent,
 } from "../actions/examActions";
 import { toast } from "sonner";
+
+export const useCancelStudentExam = () => {
+  return useMutation({
+    mutationFn: ({
+      examId,
+      studentId,
+    }: {
+      examId: string;
+      studentId: string;
+    }) => cancelStudentExam({ examId, studentId }),
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.success) {
+        // queryClient.invalidateQueries({ queryKey: ["questions-by-subject"] });
+        toast.success(res.success);
+      }
+      if (res.error) {
+        toast.error(res.error);
+      }
+    },
+    onError: (res) => {
+      console.log(res);
+      toast.error("Exam could not be assign to Student");
+    },
+  });
+};
 
 export const useAddExamToStudent = () => {
   const queryClient = useQueryClient();

@@ -1,7 +1,7 @@
 "use server";
 import { AddExamSchema } from "@/lib/schema";
 import { db } from "@/server/db";
-import { examQuestions, questions } from "@/server/db/schema";
+import { examQuestions, questions, studentAnswers } from "@/server/db/schema";
 import { Exam, ExamExt, exams } from "@/server/db/schema/exams";
 import { StudentExam, studentExams } from "@/server/db/schema/studentExams";
 import { and, eq } from "drizzle-orm";
@@ -69,6 +69,27 @@ export const addExamToStudent = async ({
     console.log(error);
     return { error: "Could not assign Exam to Student" };
   }
+};
+
+//=========cancelStudentExam============================================================================================
+export const cancelStudentExam = async ({
+  examId,
+  studentId,
+}: {
+  examId: string;
+  studentId: string;
+}) => {
+  const deletedAnswers = await db
+    .delete(studentAnswers)
+    .where(
+      and(
+        eq(studentAnswers.examId, examId),
+        eq(studentAnswers.studentId, studentId)
+      )
+    )
+    .returning();
+  if (deletedAnswers) return { success: "Exam cancelled successfully" };
+  return { error: "Exam could not be deleted" };
 };
 
 //=========deleteExamFromStudent========================================================================================
