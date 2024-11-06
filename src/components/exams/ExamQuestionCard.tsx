@@ -22,6 +22,8 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { useState } from "react";
 import { StudentResponse } from "@/lib/types";
+import { StudentAnswer } from "@/server/db/schema/studentAnswers";
+import Image from "next/image";
 
 interface Props {
   question: Question;
@@ -29,8 +31,7 @@ interface Props {
   examId: string;
   student: Student;
   answerExamQuestion?: (studentResponse: StudentResponse) => void;
-  // answers?: StudentResponse[];
-  // setAnswers?: (answer: StudentResponse[]) => void;
+  answer?: StudentAnswer;
 }
 
 const ExamQuestionCard = ({
@@ -39,19 +40,21 @@ const ExamQuestionCard = ({
   examId,
   student,
   answerExamQuestion,
-}: // setAnswers,
-// answers,
-Props) => {
+  answer,
+}: Props) => {
   const { mutate: removeQuestionFromExam } = useRemoveQuestionFromExam();
 
-  // console.log("question", question);
+  const isAnswerCorrect = answer
+    ? answer.questionAnswer === answer.studentAnswer
+    : false;
+  // console.log("correct", isAnswerCorrect);
 
   return (
     <Card>
       <CardContent className="p-0">
         <div className="flex flex-col hover:drop-shadow-xl relative">
           <div className="flex justify-between">
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center relative">
               <div className="bg-slate-200 p-4 font-bold rounded-tl-lg rounded-bl-lg h-full flex items-center justify-center">
                 {questionNumber}
               </div>
@@ -67,17 +70,6 @@ Props) => {
                       studentAnswer: value,
                     });
                   }
-                  // if (setAnswers && answers) {
-                  //   setAnswers([
-                  //     ...answers,
-                  //     {
-                  //       questionId: question.id,
-                  //       answerOption: question.answer,
-                  //       studentOption: value,
-                  //       questionNumber,
-                  //     },
-                  //   ]);
-                  // }
                 }}
               >
                 <div className="flex flex-col gap-2 p-3">
@@ -92,6 +84,7 @@ Props) => {
                       className="w-5 h-5"
                       value="option1"
                       id="option1"
+                      checked={answer && answer.studentAnswer === "option1"}
                     />
                     <Label htmlFor="option1">
                       <p className="text-lg tracking-wide font-sinhala">
@@ -106,6 +99,7 @@ Props) => {
                       className="w-5 h-5"
                       value="option2"
                       id="option2"
+                      checked={answer && answer.studentAnswer === "option2"}
                     />
                     <Label htmlFor="option2">
                       <p className="text-lg tracking-wide font-sinhala">
@@ -120,6 +114,7 @@ Props) => {
                       className="w-5 h-5"
                       value="option3"
                       id="option3"
+                      checked={answer && answer.studentAnswer === "option3"}
                     />
                     <Label htmlFor="option3">
                       <p className="text-lg tracking-wide font-sinhala">
@@ -129,20 +124,48 @@ Props) => {
                   </div>
 
                   {/* option-4 */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 relative">
                     <RadioGroupItem
                       className="w-5 h-5"
                       value="option4"
                       id="option4"
+                      checked={answer && answer.studentAnswer === "option4"}
                     />
                     <Label htmlFor="option4">
                       <p className="text-lg tracking-wide font-sinhala">
                         {question.option4}
                       </p>
                     </Label>
+
+                    {!isAnswerCorrect && (
+                      <Image
+                        className="absolute top-2"
+                        src="/images/err-circle.png"
+                        alt="wrong answer"
+                        width={60}
+                        height={60}
+                      />
+                    )}
                   </div>
                 </div>
               </RadioGroup>
+
+              {/* answer correctness */}
+              {isAnswerCorrect ? (
+                <Image
+                  src="/images/check-icon.png"
+                  alt="correct answer"
+                  width={60}
+                  height={60}
+                />
+              ) : (
+                <Image
+                  src="/images/cross-icon.png"
+                  alt="wrong answer"
+                  width={60}
+                  height={60}
+                />
+              )}
             </div>
           </div>
 

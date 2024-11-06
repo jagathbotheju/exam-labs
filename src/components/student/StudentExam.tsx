@@ -18,21 +18,35 @@ import { useRouter } from "next/navigation";
 import { format, addMinutes } from "date-fns";
 import _ from "lodash";
 import { useAnswerQuestion } from "@/server/backend/mutations/questionMutations";
-import { useCancelStudentExam } from "@/server/backend/mutations/examMutations";
+import {
+  useCancelStudentExam,
+  useUpdateAnswerStudentExam,
+} from "@/server/backend/mutations/examMutations";
+import { useStudentAnswers } from "@/server/backend/queries/answerQueries";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   examId: string;
   student: Student;
+  completed?: boolean;
 }
 
-const StudentExam = ({ examId, student }: Props) => {
+const StudentExam = ({ examId, student, completed = false }: Props) => {
+  const queryClient = useQueryClient();
   const startTime = new Date();
   const router = useRouter();
-  const [answers, setAnswers] = useState<StudentResponse[]>([]);
+  // const [answers, setAnswers] = useState<StudentResponse[]>([]);
 
   const { data: exam, isLoading } = useExamById(examId);
   const { mutate: answerQuestion } = useAnswerQuestion();
   const { mutate: cancelStudentExam } = useCancelStudentExam();
+  const { mutate: updateAnswerStudentExam } = useUpdateAnswerStudentExam();
+  const { data: studentAnswers } = useStudentAnswers({
+    examId,
+    studentId: student.id,
+  });
+
+  // console.log("exam", exam);
 
   if (isLoading) {
     return (
@@ -42,24 +56,25 @@ const StudentExam = ({ examId, student }: Props) => {
     );
   }
 
-  // console.log("exam", exam);
-
   const completeExam = () => {
+    queryClient.invalidateQueries({ queryKey: ["student-answers"] });
     const endTime = new Date();
-    const durationMinutes =
-      Math.abs((endTime.getTime() - startTime.getTime()) / 1000) / 60;
-    // const hrsMin = (duration / 60).toFixed(2).toString().split(".");
-    // console.log("exam end", `hrs : ${hrsMin[0]}, min : ${hrsMin[1]}`);
-    const diff = _.differenceBy(exam?.examQuestions, answers, "questionId");
-    if (diff.length) {
-      return toast.error(
-        `Please answer Question number : ${diff[0]?.questionNumber}`
-      );
-    }
+    const marks = studentAnswers
+      ? studentAnswers.reduce((acc, answer) => {
+          if (answer.questionAnswer === answer.studentAnswer) return acc + 2.5;
+          return acc;
+        }, 0)
+      : 0;
+    const durationSec = (endTime.getTime() - startTime.getTime()) / 1000;
+    const durationMin = durationSec / 60;
 
-    console.log("answers", answers);
-
-    setAnswers([]);
+    updateAnswerStudentExam({
+      examId,
+      studentId: student.id,
+      marks,
+      duration: Math.round(durationMin),
+      completedAt: endTime.toISOString(),
+    });
     router.push("/");
   };
 
@@ -68,7 +83,6 @@ const StudentExam = ({ examId, student }: Props) => {
     studentAnswer,
     questionAnswer,
   }: StudentResponse) => {
-    console.log("StudentExam****", studentAnswer);
     answerQuestion({
       examId,
       studentId: student.id,
@@ -79,7 +93,7 @@ const StudentExam = ({ examId, student }: Props) => {
   };
 
   const cancelExam = () => {
-    setAnswers([]);
+    // setAnswers([]);
     cancelStudentExam({
       examId,
       studentId: student.id,
@@ -94,14 +108,19 @@ const StudentExam = ({ examId, student }: Props) => {
           <CardHeader>
             <CardTitle>
               <div className="flex justify-between items-center">
-                <p className="uppercase text-2xl font-bold">{exam.name}</p>
-                <ExamTimer examDuration={exam.duration ?? 60} />
+                <p className="uppercase text-2xl font-bold">
+                  {exam.name} {completed && ",Answer Sheet"}
+                </p>
+                {!completed && <ExamTimer examDuration={exam.duration ?? 60} />}
               </div>
             </CardTitle>
           </CardHeader>
           <CardContent className="gap-4 flex flex-col h-full">
             {exam && exam.examQuestions.length ? (
               exam.examQuestions.map((item, index) => {
+                const studentAnswer = studentAnswers?.find(
+                  (answer) => answer.questionId === item.questionId
+                );
                 return (
                   <ExamQuestionCard
                     key={index}
@@ -109,8 +128,7 @@ const StudentExam = ({ examId, student }: Props) => {
                     questionNumber={item.questionNumber}
                     examId={examId}
                     student={student}
-                    // setAnswers={setAnswers}
-                    // answers={answers}
+                    answer={studentAnswer}
                     answerExamQuestion={answerExamQuestion}
                   />
                 );
@@ -123,32 +141,38 @@ const StudentExam = ({ examId, student }: Props) => {
               </div>
             )}
 
-            {/* cancel exam */}
             <div className="mt-8 flex gap-4 self-end">
-              <AppDialog
-                trigger={<Button variant="outline">Cancel</Button>}
-                body={
-                  <p className="font-semibold text-lg">
-                    Are you sure you want to{" "}
-                    <span className="font-bold text-red-500">Cancel</span> this
-                    Exam
-                  </p>
-                }
-                title="Cancel Exam"
-                okDialog={cancelExam}
-              />
+              {/* cancel exam */}
+              {!completed && (
+                <AppDialog
+                  trigger={<Button variant="outline">Cancel</Button>}
+                  body={
+                    <p className="font-semibold text-lg">
+                      Are you sure you want to{" "}
+                      <span className="font-bold text-red-500">Cancel</span>{" "}
+                      this Exam
+                    </p>
+                  }
+                  title="Cancel Exam"
+                  okDialog={cancelExam}
+                />
+              )}
 
               {/* finish exam */}
-              <AppDialog
-                trigger={<Button>Complete Exam</Button>}
-                body={
-                  <p className="font-semibold text-lg">
-                    Are you sure you want to Finish this Exam
-                  </p>
-                }
-                title="Complete Exam"
-                okDialog={completeExam}
-              />
+              {!completed && (
+                <AppDialog
+                  trigger={<Button>Complete Exam</Button>}
+                  body={
+                    <p className="font-semibold text-lg">
+                      Are you sure you want to Finish this Exam
+                    </p>
+                  }
+                  title="Complete Exam"
+                  okDialog={completeExam}
+                />
+              )}
+
+              {completed && <Button onClick={() => router.back()}>Back</Button>}
             </div>
           </CardContent>
         </Card>

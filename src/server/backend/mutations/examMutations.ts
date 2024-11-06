@@ -7,8 +7,40 @@ import {
   cancelStudentExam,
   deleteExam,
   deleteExamFromStudent,
+  updateAnswerStudentExam,
 } from "../actions/examActions";
 import { toast } from "sonner";
+
+export const useUpdateAnswerStudentExam = () => {
+  return useMutation({
+    mutationFn: ({
+      examId,
+      studentId,
+      completedAt,
+      marks,
+      duration,
+    }: {
+      examId: string;
+      studentId: string;
+      completedAt: string;
+      marks: number;
+      duration: number;
+    }) =>
+      updateAnswerStudentExam({
+        examId,
+        studentId,
+        completedAt,
+        marks,
+        duration,
+      }),
+    onSuccess: (res) => {
+      console.log(res);
+    },
+    onError: (res) => {
+      console.log(res);
+    },
+  });
+};
 
 export const useCancelStudentExam = () => {
   return useMutation({

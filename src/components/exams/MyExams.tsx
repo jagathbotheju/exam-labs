@@ -2,7 +2,7 @@
 import { Student } from "@/server/db/schema/students";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useStudentExams } from "@/server/backend/queries/examQueries";
-import { Loader2, Trash2 } from "lucide-react";
+import { Eye, Loader2, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -30,6 +30,7 @@ import AppDialog from "../AppDialog";
 import { useDeleteExamFromStudent } from "@/server/backend/mutations/examMutations";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 
 interface Props {
   studentId: string;
@@ -42,7 +43,6 @@ const MyExams = ({ studentId, role }: Props) => {
   const { data: studentExams, isPending } = useStudentExams(studentId);
   const { mutate: deleteExamFromStudent } = useDeleteExamFromStudent();
 
-  console.log("MyExams selectedStudentId", studentId);
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["student-exams"] });
   }, [studentId, queryClient]);
@@ -121,7 +121,7 @@ const MyExams = ({ studentId, role }: Props) => {
                   {/* marks */}
                   <TableCell className="text-start whitespace-nowrap">
                     {item.completedAt ? (
-                      item.marks
+                      <p className="font-semibold">{item.marks}/100</p>
                     ) : (
                       <Badge variant="destructive">pending</Badge>
                     )}
@@ -130,13 +130,13 @@ const MyExams = ({ studentId, role }: Props) => {
                   {/* time */}
                   <TableCell className="text-start whitespace-nowrap">
                     {item.completedAt ? (
-                      item.duration
+                      <p className="font-semibold">{item.duration}min/60min</p>
                     ) : (
                       <Badge variant="destructive">pending</Badge>
                     )}
                   </TableCell>
 
-                  {!item.completedAt && role === "admin" ? (
+                  {role === "admin" ? (
                     // delete exam
                     <TableCell className="text-start">
                       <AppDialog
@@ -155,7 +155,8 @@ const MyExams = ({ studentId, role }: Props) => {
                     </TableCell>
                   ) : (
                     // start exam
-                    <TableCell className="text-start">
+
+                    <TableCell className="text-start flex gap-4 items-center">
                       <AppDialog
                         title="Start Exam"
                         body={
@@ -189,11 +190,24 @@ const MyExams = ({ studentId, role }: Props) => {
                             </div>
                           </div>
                         }
-                        trigger={<Button size="sm">Start Exam</Button>}
+                        trigger={
+                          <Button
+                            disabled={Boolean(item.completedAt)}
+                            size="sm"
+                          >
+                            Start Exam
+                          </Button>
+                        }
                         okDialog={() =>
                           router.push(`/student/exam/${item.examId}`)
                         }
                       />
+
+                      {item.completedAt && (
+                        <Link href={`/student/completed-exam/${item.examId}`}>
+                          <Eye />
+                        </Link>
+                      )}
                     </TableCell>
                   )}
                 </TableRow>

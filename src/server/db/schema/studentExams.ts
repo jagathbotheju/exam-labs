@@ -1,4 +1,5 @@
 import {
+  doublePrecision,
   integer,
   pgTable,
   primaryKey,
@@ -23,7 +24,7 @@ export const studentExams = pgTable(
       .notNull()
       .defaultNow(),
     completedAt: timestamp("completed_at", { mode: "string" }),
-    marks: integer("marks").default(0),
+    marks: doublePrecision("marks").default(0),
     duration: integer("duration").default(0),
   },
   (table) => ({

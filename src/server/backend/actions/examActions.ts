@@ -129,6 +129,46 @@ export const getExams = async () => {
   return exams as ExamExt[];
 };
 
+//=======updateAnswerStudentExam=======================================================================================
+export const updateAnswerStudentExam = async ({
+  examId,
+  studentId,
+  completedAt,
+  marks,
+  duration,
+}: {
+  examId: string;
+  studentId: string;
+  completedAt: string;
+  marks: number;
+  duration: number;
+}) => {
+  try {
+    console.log(examId, studentId);
+    console.log(marks, duration);
+    console.log(completedAt);
+    const updatedStudentExam = await db
+      .update(studentExams)
+      .set({
+        completedAt,
+        marks,
+        duration,
+      })
+      .where(
+        and(
+          eq(studentExams.examId, examId),
+          eq(studentExams.studentId, studentId)
+        )
+      )
+      .returning();
+    console.log("updating answers....", updateAnswerStudentExam);
+    // return { error: "Could not save Answer data" };
+  } catch (error) {
+    console.log(error);
+    return { error: "Could not save Answer data" };
+  }
+};
+
 //=======getStudentExams================================================================================================
 export const getStudentExams = async (studentId: string) => {
   // const exams1 = await db

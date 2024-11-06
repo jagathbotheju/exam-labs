@@ -36,6 +36,13 @@
       "when": 1730828793304,
       "tag": "0004_loud_frog_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1730905842817,
+      "tag": "0005_freezing_george_stacy",
+      "breakpoints": true
     }
   ]
 }
