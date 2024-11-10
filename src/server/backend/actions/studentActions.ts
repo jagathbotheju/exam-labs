@@ -15,6 +15,14 @@ export const getStudents = async () => {
   return students as StudentExt[];
 };
 
+export const getStudentById = async (studentId: string) => {
+  const student = await db
+    .select()
+    .from(students)
+    .where(eq(students.id, studentId));
+  return student[0] as Student;
+};
+
 export const updateProfile = async ({
   formData,
   studentId,

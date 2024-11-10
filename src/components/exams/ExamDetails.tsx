@@ -13,17 +13,23 @@ import { Button } from "../ui/button";
 import { useAddExamToStudent } from "@/server/backend/mutations/examMutations";
 import { toast } from "sonner";
 import { Student, StudentExt } from "@/server/db/schema/students";
+import { useRouter } from "next/navigation";
+import { useStudents } from "@/server/backend/queries/studentQueries";
+import { Badge } from "../ui/badge";
 
 interface Props {
   examId: string;
-  student: Student;
+  student: StudentExt;
 }
 
 const ExamDetails = ({ examId, student }: Props) => {
-  const { data: exam, isLoading } = useExamById(examId);
+  const router = useRouter();
   const [selectedStudent, setSelectedStudent] = useState<null | StudentExt>(
     null
   );
+
+  const { data: exam, isLoading } = useExamById(examId);
+  const { data: allStudents } = useStudents();
   const { mutate: addExamToStudent } = useAddExamToStudent();
 
   if (isLoading) {
@@ -33,6 +39,11 @@ const ExamDetails = ({ examId, student }: Props) => {
       </div>
     );
   }
+
+  const examStudentIds = exam?.studentExams.map((exam) => exam?.studentId);
+  const examStudents = _.filter(allStudents, (student) =>
+    _.includes(examStudentIds, student.id)
+  );
 
   const assignExamToStudent = () => {
     console.log("selectedStudent", selectedStudent);
@@ -44,6 +55,8 @@ const ExamDetails = ({ examId, student }: Props) => {
       });
     }
   };
+
+  // console.log("Admin ExamDetails", exam);
 
   return (
     <Card className="flex flex-col">
@@ -64,6 +77,13 @@ const ExamDetails = ({ examId, student }: Props) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="gap-4 flex flex-col h-full">
+        {/* students having this exam */}
+        <div className="flex gap-4">
+          {examStudents.map((student) => (
+            <Badge key={student.id}>{student.name}</Badge>
+          ))}
+        </div>
+
         {exam && exam.examQuestions.length ? (
           exam.examQuestions.map((item, index) => {
             return (
@@ -72,7 +92,7 @@ const ExamDetails = ({ examId, student }: Props) => {
                 question={item.questions}
                 questionNumber={item.questionNumber}
                 examId={examId}
-                student={student}
+                role={student.role}
               />
             );
           })
@@ -83,6 +103,10 @@ const ExamDetails = ({ examId, student }: Props) => {
             </h1>
           </div>
         )}
+
+        <Button className="w-fit self-end" onClick={() => router.back()}>
+          Back
+        </Button>
       </CardContent>
     </Card>
   );

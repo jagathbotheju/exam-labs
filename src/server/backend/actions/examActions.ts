@@ -3,7 +3,11 @@ import { AddExamSchema } from "@/lib/schema";
 import { db } from "@/server/db";
 import { examQuestions, questions, studentAnswers } from "@/server/db/schema";
 import { Exam, ExamExt, exams } from "@/server/db/schema/exams";
-import { StudentExam, studentExams } from "@/server/db/schema/studentExams";
+import {
+  StudentExam,
+  StudentExamExt,
+  studentExams,
+} from "@/server/db/schema/studentExams";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -171,12 +175,6 @@ export const updateAnswerStudentExam = async ({
 
 //=======getStudentExams================================================================================================
 export const getStudentExams = async (studentId: string) => {
-  // const exams1 = await db
-  //   .select()
-  //   .from(studentExams)
-  //   .where(eq(studentExams.studentId, studentId));
-  if (!studentId) return null;
-  console.log("studentID", studentId);
   const exams = await db.query.studentExams.findMany({
     where: eq(studentExams.studentId, studentId),
     with: {
@@ -194,7 +192,28 @@ export const getStudentExams = async (studentId: string) => {
     },
   });
 
-  return exams as StudentExam[];
+  return exams as StudentExamExt[];
+};
+
+//=======getStudentExam================================================================================================
+export const getStudentExam = async ({
+  studentId,
+  examId,
+}: {
+  studentId: string;
+  examId: string;
+}) => {
+  const studentExam = await db
+    .select()
+    .from(studentExams)
+    .where(
+      and(
+        eq(studentExams.studentId, studentId),
+        eq(studentExams.examId, examId)
+      )
+    );
+
+  return studentExam[0] as StudentExam;
 };
 
 //===========getExamsBySubject==========================================================================================
@@ -225,6 +244,7 @@ export const getExamById = async (examId: string) => {
         },
       },
       subjects: true,
+      studentExams: true,
     },
   });
 

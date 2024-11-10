@@ -76,10 +76,10 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
       form.setValue("term", question[0].term);
       form.setValue("subject", question[0].subjectId);
       form.setValue("body", question[0].body);
-      form.setValue("option1", question[0].option1);
-      form.setValue("option2", question[0].option2);
-      form.setValue("option3", question[0].option3);
-      form.setValue("option4", question[0].option4);
+      form.setValue("option1", question[0].option1 ?? "");
+      form.setValue("option2", question[0].option2 ?? "");
+      form.setValue("option3", question[0].option3 ?? "");
+      form.setValue("option4", question[0].option4 ?? "");
       form.setValue("answer", question[0].answer);
     }
   }, [question, form]);

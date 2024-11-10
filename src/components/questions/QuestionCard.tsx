@@ -157,7 +157,7 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
               {/* delete */}
               <div className="px-4 h-full flex items-center overflow-hidden rounded-br-lg cursor-pointer hover:bg-opacity-70">
                 <AlertDialog>
-                  <AlertDialogTrigger>
+                  <AlertDialogTrigger asChild>
                     <Trash2 className="w-5 h-5 text-red-500" />
                   </AlertDialogTrigger>
                   <AlertDialogContent aria-describedby="delete question">
@@ -165,7 +165,7 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
                       <AlertDialogTitle>
                         Are you absolutely sure?
                       </AlertDialogTitle>
-                      <AlertDialogDescription className="flex flex-col gap-1">
+                      <AlertDialogDescription className="flex flex-col gap-1 font-semibold">
                         <span>This action cannot be undone.</span>
                         <span>This will permanently delete this Question.</span>
                       </AlertDialogDescription>

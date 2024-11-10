@@ -2,19 +2,20 @@
 
 import {
   useExamById,
+  useStudentExam,
   useStudentExams,
 } from "@/server/backend/queries/examQueries";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import ExamQuestionCard from "../exams/ExamQuestionCard";
 import { Student } from "@/server/db/schema/students";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StudentResponse } from "@/lib/types";
 import ExamTimer from "../exams/ExamTimer";
 import { Button } from "../ui/button";
 import AppDialog from "../AppDialog";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { format, addMinutes } from "date-fns";
 import _ from "lodash";
 import { useAnswerQuestion } from "@/server/backend/mutations/questionMutations";
@@ -24,58 +25,71 @@ import {
 } from "@/server/backend/mutations/examMutations";
 import { useStudentAnswers } from "@/server/backend/queries/answerQueries";
 import { useQueryClient } from "@tanstack/react-query";
+import { useStudentById } from "@/server/backend/queries/studentQueries";
+import { Separator } from "../ui/separator";
 
 interface Props {
   examId: string;
-  student: Student;
   completed?: boolean;
 }
 
-const StudentExam = ({ examId, student, completed = false }: Props) => {
+const StudentExam = ({ examId, completed = false }: Props) => {
+  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const startTime = new Date();
   const router = useRouter();
-  // const [answers, setAnswers] = useState<StudentResponse[]>([]);
+
+  //from search params
+  const studentId = searchParams.get("studentId") ?? "";
+  const studentName = searchParams.get("studentName") ?? "";
+  const role = searchParams.get("role") ?? "student";
 
   const { data: exam, isLoading } = useExamById(examId);
+  // const { data: studentExam } = useStudentExam({ examId, studentId });
+  // const {data:studentExams}=useStudentExams(studentId)
   const { mutate: answerQuestion } = useAnswerQuestion();
   const { mutate: cancelStudentExam } = useCancelStudentExam();
   const { mutate: updateAnswerStudentExam } = useUpdateAnswerStudentExam();
+
   const { data: studentAnswers } = useStudentAnswers({
     examId,
-    studentId: student.id,
+    studentId: studentId,
   });
 
-  // console.log("exam", exam);
+  const correctAnswers =
+    studentAnswers?.reduce((acc, answer) => {
+      if (answer.questionAnswer === answer.studentAnswer) return acc + 1;
+      return acc;
+    }, 0) ?? 0;
 
-  if (isLoading) {
-    return (
-      <div className="flex w-full mt-10 justify-center items-center">
-        <Loader2 className="animate-spin w-8 h-8" />
-      </div>
-    );
-  }
+  const marks =
+    correctAnswers && exam && exam.examQuestions
+      ? (correctAnswers / exam.examQuestions.length) * 100
+      : 0;
 
   const completeExam = () => {
     queryClient.invalidateQueries({ queryKey: ["student-answers"] });
     const endTime = new Date();
-    const marks = studentAnswers
-      ? studentAnswers.reduce((acc, answer) => {
-          if (answer.questionAnswer === answer.studentAnswer) return acc + 2.5;
-          return acc;
-        }, 0)
-      : 0;
+    // const marks = studentAnswers
+    //   ? studentAnswers.reduce((acc, answer) => {
+    //       if (answer.questionAnswer === answer.studentAnswer) return acc + 2.5;
+    //       return acc;
+    //     }, 0)
+    //   : 0;
     const durationSec = (endTime.getTime() - startTime.getTime()) / 1000;
     const durationMin = durationSec / 60;
 
     updateAnswerStudentExam({
       examId,
-      studentId: student.id,
+      studentId: studentId,
       marks,
       duration: Math.round(durationMin),
       completedAt: endTime.toISOString(),
     });
-    router.push("/");
+    // router.push("/");
+    router.push(
+      `/student/completed-exam/${examId}?studentId=${studentId}&studentName=${studentName}&role=${role}`
+    );
   };
 
   const answerExamQuestion = ({
@@ -85,7 +99,7 @@ const StudentExam = ({ examId, student, completed = false }: Props) => {
   }: StudentResponse) => {
     answerQuestion({
       examId,
-      studentId: student.id,
+      studentId: studentId,
       questionId,
       studentAnswer,
       questionAnswer,
@@ -93,24 +107,35 @@ const StudentExam = ({ examId, student, completed = false }: Props) => {
   };
 
   const cancelExam = () => {
-    // setAnswers([]);
     cancelStudentExam({
       examId,
-      studentId: student.id,
+      studentId: studentId,
     });
     router.back();
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex w-full mt-10 justify-center items-center">
+        <Loader2 className="animate-spin w-8 h-8" />
+      </div>
+    );
+  }
+
+  // console.log("result", result);
+
   return (
-    <div>
+    <div className="relative">
       {exam ? (
-        <Card className="flex flex-col">
+        <Card className="flex flex-col justify-start dark:border-primary/40 bg-transparent">
           <CardHeader>
             <CardTitle>
               <div className="flex justify-between items-center">
-                <p className="uppercase text-2xl font-bold">
-                  {exam.name} {completed && ",Answer Sheet"}
-                </p>
+                <div className="text-2xl font-bold flex gap-2">
+                  <span className="uppercase">{exam.name} Exam,</span>
+                  <span>{role === "admin" && studentName}</span>
+                  <span>{completed && "Answer Sheet"}</span>
+                </div>
                 {!completed && <ExamTimer examDuration={exam.duration ?? 60} />}
               </div>
             </CardTitle>
@@ -127,9 +152,10 @@ const StudentExam = ({ examId, student, completed = false }: Props) => {
                     question={item.questions}
                     questionNumber={item.questionNumber}
                     examId={examId}
-                    student={student}
+                    role={role}
                     answer={studentAnswer}
                     answerExamQuestion={answerExamQuestion}
+                    completed={completed}
                   />
                 );
               })
@@ -172,7 +198,9 @@ const StudentExam = ({ examId, student, completed = false }: Props) => {
                 />
               )}
 
-              {completed && <Button onClick={() => router.back()}>Back</Button>}
+              {completed && (
+                <Button onClick={() => router.push("/")}>Back</Button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -181,6 +209,15 @@ const StudentExam = ({ examId, student, completed = false }: Props) => {
           <div className="fle w-full mt-10 justify-center">
             <h2 className="font-semibold text-2xl">Exam Not Found!</h2>
           </div>
+        </div>
+      )}
+
+      {/* result */}
+      {completed && (
+        <div className="flex flex-col top-8 right-8 absolute z-10 text-red-600 -rotate-[25deg]">
+          <p className="font-bold text-7xl font-marks">{marks}</p>
+          <Separator className="font-marks h-2 bg-red-600" />
+          <p className="font-bold text-7xl font-marks">100</p>
         </div>
       )}
     </div>

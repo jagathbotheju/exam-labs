@@ -14,9 +14,11 @@ const StudentCompletedExamPage = async ({ params }: Props) => {
   const student = session?.user as Student;
   if (!student) redirect("/auth/login");
 
+  // console.log("studentId", searchParams.studentId);
+
   return (
     <div className="w-full">
-      <StudentExam examId={params.id} student={student} completed />
+      <StudentExam examId={params.id} completed />
     </div>
   );
 };

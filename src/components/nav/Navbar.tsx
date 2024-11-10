@@ -9,7 +9,7 @@ const Navbar = async () => {
   const student = session?.user as Student;
 
   return (
-    <div className="border-b-[1.5px] border-b-primary">
+    <div className="border-b-[1.5px] border-b-primary sticky top-0 z-50 dark:bg-slate-900 bg-slate-50">
       <nav className="max-w-7xl mx-auto px-10 pt-6 pb-4">
         <ul className="flex justify-between items-center">
           <li>

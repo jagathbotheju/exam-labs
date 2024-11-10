@@ -10,6 +10,7 @@ import {
   updateAnswerStudentExam,
 } from "../actions/examActions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export const useUpdateAnswerStudentExam = () => {
   return useMutation({
@@ -70,6 +71,7 @@ export const useCancelStudentExam = () => {
 
 export const useAddExamToStudent = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   return useMutation({
     mutationFn: ({
@@ -83,6 +85,7 @@ export const useAddExamToStudent = () => {
       console.log(res);
       if (res.success) {
         // queryClient.invalidateQueries({ queryKey: ["questions-by-subject"] });
+        router.back();
         toast.success(res.success);
       }
       if (res.error) {

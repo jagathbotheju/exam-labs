@@ -18,7 +18,7 @@ const ExamTimer = ({ examDuration }: Props) => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center text-5xl">
+    <div className="flex justify-center items-center text-5xl bg-transparent p-2 rounded-md fixed top-5 left-0 right-0 z-50 mx-auto">
       <FlipClockCountdown
         to={addMinutes(new Date().getTime(), examDuration)}
         renderMap={[false, true, true, true]}

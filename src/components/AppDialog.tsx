@@ -25,7 +25,10 @@ const AppDialog = ({ title, trigger, okDialog, body, cancelDialog }: Props) => {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{body}</AlertDialogDescription>
+          <AlertDialogDescription className="hidden">
+            {title}
+          </AlertDialogDescription>
+          {body}
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={cancelDialog}>Cancel</AlertDialogCancel>

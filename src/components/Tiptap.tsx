@@ -45,6 +45,7 @@ const TipTap = ({ value }: { value: string }) => {
   });
 
   useEffect(() => {
+    editor?.commands.clearContent();
     if (editor && value) {
       const prev = editor.getText();
       if (prev !== value) {

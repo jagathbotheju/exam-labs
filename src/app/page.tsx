@@ -1,4 +1,4 @@
-import AdminDashboard from "@/components/admin/AdminDashboard";
+import AdminDashboard from "@/components/admin/Results";
 import MyExams from "@/components/exams/MyExams";
 import ResultSummary from "@/components/student/ResultSummary";
 import StudentTest from "@/components/student/StudentTest";
@@ -11,17 +11,14 @@ export default async function Home() {
   const student = session?.user as Student;
 
   if (!student) redirect("/auth/login");
+  if (student.role === "admin") redirect("/admin");
 
   return (
     <div className="w-full">
-      {student && student.role === "admin" ? (
-        <AdminDashboard admin={student} />
-      ) : (
-        <div className="flex flex-col gap-8">
-          <ResultSummary />
-          <MyExams studentId={student.id} />
-        </div>
-      )}
+      <div className="flex flex-col gap-8">
+        <ResultSummary />
+        <MyExams student={student} />
+      </div>
     </div>
   );
 }

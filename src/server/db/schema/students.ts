@@ -1,7 +1,7 @@
 import { InferSelectModel, relations } from "drizzle-orm";
 import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { ExamExt, exams } from "./exams";
-import { StudentExam, studentExams } from "./studentExams";
+import { StudentExamExt, studentExams } from "./studentExams";
 
 export const students = pgTable("students", {
   id: text("id")
@@ -26,5 +26,5 @@ export const studentRelations = relations(students, ({ many }) => ({
 
 export type Student = InferSelectModel<typeof students>;
 export type StudentExt = InferSelectModel<typeof students> & {
-  exams: StudentExam[];
+  exams: StudentExamExt[];
 };

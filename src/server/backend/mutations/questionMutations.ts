@@ -115,8 +115,6 @@ export const useDeleteQuestion = () => {
 };
 
 export const useAddQuestion = () => {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: ({
       questionData,
@@ -128,7 +126,6 @@ export const useAddQuestion = () => {
     onSuccess: (res) => {
       const message = res.success;
       toast.success(message);
-      router.push("/admin/questions");
     },
     onError: (res) => {
       const err = res.message;

@@ -12,6 +12,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sinhala: ["var(--font-sinhala)"],
+        marks: ["var(--font-marks)"],
       },
       colors: {
         background: "hsl(var(--background))",

@@ -1,6 +1,6 @@
 import ExamDetails from "@/components/exams/ExamDetails";
 import { auth } from "@/lib/auth";
-import { Student } from "@/server/db/schema/students";
+import { Student, StudentExt } from "@/server/db/schema/students";
 import { redirect } from "next/navigation";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 const ExamDetailsPage = async ({ params }: Props) => {
   const session = await auth();
-  const user = session?.user as Student;
+  const user = session?.user as StudentExt;
 
   if (!user || user.role !== "admin") return redirect("/not-authorized");
 

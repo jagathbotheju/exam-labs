@@ -14,17 +14,6 @@ import {
 import { format } from "date-fns";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import AppDialog from "../AppDialog";
 import { useDeleteExamFromStudent } from "@/server/backend/mutations/examMutations";
@@ -33,19 +22,19 @@ import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 
 interface Props {
-  studentId: string;
   role?: string;
+  student: Student;
 }
 
-const MyExams = ({ studentId, role }: Props) => {
+const MyExams = ({ student, role = "student" }: Props) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { data: studentExams, isPending } = useStudentExams(studentId);
+  const { data: studentExams, isPending } = useStudentExams(student.id);
   const { mutate: deleteExamFromStudent } = useDeleteExamFromStudent();
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["student-exams"] });
-  }, [studentId, queryClient]);
+  }, [student, queryClient]);
 
   if (isPending) {
     return (
@@ -55,7 +44,7 @@ const MyExams = ({ studentId, role }: Props) => {
     );
   }
 
-  if (!studentId) {
+  if (!student.id) {
     return (
       <div className="flex w-full">
         <h2 className="text-3xl font-bold text-muted-foreground">
@@ -66,10 +55,10 @@ const MyExams = ({ studentId, role }: Props) => {
   }
 
   return (
-    <Card>
+    <Card className="bg-transparent dark:border-primary/40">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">
-          {role === "admin" ? "Student Exams" : "My Exams"}
+          {role === "admin" ? `${student.name}` : "My Exams"}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -93,22 +82,18 @@ const MyExams = ({ studentId, role }: Props) => {
                   <TableCell className="uppercase whitespace-nowrap">
                     {item.exams.name}
                   </TableCell>
-
                   {/* subject */}
                   <TableCell className="uppercase">
                     {item.exams.subjects.title}
                   </TableCell>
-
                   {/* number of questions */}
                   <TableCell className="text-center">
                     {item.exams.examQuestions.length}
                   </TableCell>
-
                   {/* publish date */}
                   <TableCell className="text-start">
                     {format(item.exams.createdAt, "yyyy-MM-dd")}
                   </TableCell>
-
                   {/* completed date */}
                   <TableCell className="text-start whitespace-nowrap">
                     {item.completedAt ? (
@@ -117,7 +102,6 @@ const MyExams = ({ studentId, role }: Props) => {
                       <Badge variant="destructive">pending</Badge>
                     )}
                   </TableCell>
-
                   {/* marks */}
                   <TableCell className="text-start whitespace-nowrap">
                     {item.completedAt ? (
@@ -126,7 +110,6 @@ const MyExams = ({ studentId, role }: Props) => {
                       <Badge variant="destructive">pending</Badge>
                     )}
                   </TableCell>
-
                   {/* time */}
                   <TableCell className="text-start whitespace-nowrap">
                     {item.completedAt ? (
@@ -136,7 +119,8 @@ const MyExams = ({ studentId, role }: Props) => {
                     )}
                   </TableCell>
 
-                  {role === "admin" ? (
+                  {/* admin - delete exam */}
+                  {role === "admin" && (
                     // delete exam
                     <TableCell className="text-start">
                       <AppDialog
@@ -147,16 +131,17 @@ const MyExams = ({ studentId, role }: Props) => {
                         body={<div>You you sure, delete this Exam</div>}
                         okDialog={() =>
                           deleteExamFromStudent({
-                            studentId,
+                            studentId: student.id,
                             examId: item.examId,
                           })
                         }
                       />
                     </TableCell>
-                  ) : (
-                    // start exam
+                  )}
 
-                    <TableCell className="text-start flex gap-4 items-center">
+                  {/* student - start exam */}
+                  <TableCell className="text-start flex gap-4 items-center">
+                    {role !== "admin" && (
                       <AppDialog
                         title="Start Exam"
                         body={
@@ -199,17 +184,22 @@ const MyExams = ({ studentId, role }: Props) => {
                           </Button>
                         }
                         okDialog={() =>
-                          router.push(`/student/exam/${item.examId}`)
+                          router.push(
+                            `/student/exam/${item.examId}?studentId=${student.id}&studentName=${student.name}&role=${role}`
+                          )
                         }
                       />
+                    )}
 
-                      {item.completedAt && (
-                        <Link href={`/student/completed-exam/${item.examId}`}>
-                          <Eye />
-                        </Link>
-                      )}
-                    </TableCell>
-                  )}
+                    {/* result sheet */}
+                    {item.completedAt && (
+                      <Link
+                        href={`/student/completed-exam/${item.examId}?studentId=${student.id}&studentName=${student.name}&role=${role}`}
+                      >
+                        <Eye />
+                      </Link>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

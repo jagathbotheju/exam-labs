@@ -62,27 +62,24 @@ const AllExams = () => {
               {exam.examQuestions.length}
             </TableCell>
 
-            {/* actions */}
-            <div className="flex items-center gap-3">
-              {/* exam details */}
-              <TableCell className="text-left">
-                <Eye
-                  onClick={() => router.push(`/admin/exams/${exam.id}`)}
-                  className="w-5 h-5 cursor-pointer"
-                />
-              </TableCell>
+            {/* exam details */}
+            <TableCell className="text-left">
+              <Eye
+                onClick={() => router.push(`/admin/exams/${exam.id}`)}
+                className="w-5 h-5 cursor-pointer"
+              />
+            </TableCell>
 
-              {/* delete exam */}
-              <TableCell className="text-left">
-                <DeleteExamDialog
-                  examTitle={exam.name}
-                  examId={exam.id}
-                  trigger={
-                    <Trash2 className="w-5 h-5 cursor-pointer text-red-500" />
-                  }
-                />
-              </TableCell>
-            </div>
+            {/* delete exam */}
+            <TableCell className="text-left">
+              <DeleteExamDialog
+                examTitle={exam.name}
+                examId={exam.id}
+                trigger={
+                  <Trash2 className="w-5 h-5 cursor-pointer text-red-500" />
+                }
+              />
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

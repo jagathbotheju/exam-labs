@@ -2,28 +2,34 @@
 import MyExams from "../exams/MyExams";
 import { Student, StudentExt } from "@/server/db/schema/students";
 import StudentSelector from "../student/StudentSelector";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import _ from "lodash";
 
 interface Props {
   admin: Student;
 }
 
-const AdminDashboard = ({ admin }: Props) => {
+const Results = ({ admin }: Props) => {
   const [selectedStudent, setSelectedStudent] = useState<StudentExt | null>(
     null
   );
 
+  console.log("Results, selectedStudent", selectedStudent);
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full">
       <div className="flex w-full items-center justify-between">
-        <p className="text-2xl font-bold">Exam Details</p>
+        <p className="text-2xl font-bold">Exam Results</p>
         <StudentSelector setSelectedStudent={setSelectedStudent} />
       </div>
 
       <div className="mt-8">
         {selectedStudent ? (
-          <MyExams studentId={selectedStudent.id} role={admin.role} />
+          <MyExams
+            // studentId={selectedStudent.id}
+            role={admin.role}
+            student={selectedStudent}
+          />
         ) : (
           <div className="flex justify-center mt-8">
             <h2 className="text-3xl font-bold text-muted-foreground">
@@ -35,4 +41,4 @@ const AdminDashboard = ({ admin }: Props) => {
     </div>
   );
 };
-export default AdminDashboard;
+export default Results;
