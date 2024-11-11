@@ -67,7 +67,7 @@ const AddExamForm = () => {
                         variant="outline"
                         role="combobox"
                         className={cn(
-                          "w-[200px] justify-between",
+                          "w-[200px] justify-between dark:bg-transparent",
                           !field.value && "text-muted-foreground"
                         )}
                       >
@@ -81,7 +81,7 @@ const AddExamForm = () => {
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent className="w-[200px] p-0">
-                    <Command>
+                    <Command className="">
                       <CommandInput placeholder="Search subjects..." />
                       <CommandList>
                         <CommandEmpty>No subject found.</CommandEmpty>
@@ -160,6 +160,7 @@ const AddExamForm = () => {
               variant="outline"
               onClick={() => router.back()}
               type="button"
+              className="dark:bg-transparent"
             >
               Cancel
             </Button>

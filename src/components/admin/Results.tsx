@@ -14,8 +14,6 @@ const Results = ({ admin }: Props) => {
     null
   );
 
-  console.log("Results, selectedStudent", selectedStudent);
-
   return (
     <div className="flex flex-col w-full">
       <div className="flex w-full items-center justify-between">

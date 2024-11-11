@@ -35,3 +35,12 @@ export const getSubjects = async () => {
     .orderBy(desc(subjects.title));
   return allSubjects as Subject[];
 };
+
+export const getSubjectById = async (subjectId: string) => {
+  const subject = await db
+    .select()
+    .from(subjects)
+    .where(eq(subjects.id, subjectId));
+  if (subject) return subject[0] as Subject;
+  return null;
+};

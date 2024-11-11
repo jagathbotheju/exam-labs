@@ -34,50 +34,45 @@ interface Props {
 }
 
 const StudentExam = ({ examId, completed = false }: Props) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const startTime = new Date();
-  const router = useRouter();
+
+  const [studentResponse, setStudentResponse] = useState<StudentResponse[]>([]);
 
   //from search params
   const studentId = searchParams.get("studentId") ?? "";
   const studentName = searchParams.get("studentName") ?? "";
   const role = searchParams.get("role") ?? "student";
 
-  const { data: exam, isLoading } = useExamById(examId);
-  // const { data: studentExam } = useStudentExam({ examId, studentId });
-  // const {data:studentExams}=useStudentExams(studentId)
   const { mutate: answerQuestion } = useAnswerQuestion();
   const { mutate: cancelStudentExam } = useCancelStudentExam();
   const { mutate: updateAnswerStudentExam } = useUpdateAnswerStudentExam();
-
+  const { data: exam, isFetching: isFetchingExam } = useExamById(examId);
+  const { data: studentExam, isFetching: studentExamFetching } = useStudentExam(
+    { examId, studentId }
+  );
   const { data: studentAnswers } = useStudentAnswers({
     examId,
     studentId: studentId,
   });
 
-  const correctAnswers =
-    studentAnswers?.reduce((acc, answer) => {
-      if (answer.questionAnswer === answer.studentAnswer) return acc + 1;
-      return acc;
-    }, 0) ?? 0;
-
-  const marks =
-    correctAnswers && exam && exam.examQuestions
-      ? (correctAnswers / exam.examQuestions.length) * 100
-      : 0;
-
   const completeExam = () => {
     queryClient.invalidateQueries({ queryKey: ["student-answers"] });
     const endTime = new Date();
-    // const marks = studentAnswers
-    //   ? studentAnswers.reduce((acc, answer) => {
-    //       if (answer.questionAnswer === answer.studentAnswer) return acc + 2.5;
-    //       return acc;
-    //     }, 0)
-    //   : 0;
     const durationSec = (endTime.getTime() - startTime.getTime()) / 1000;
     const durationMin = durationSec / 60;
+
+    const correctAnswers =
+      studentResponse?.reduce((acc, answer) => {
+        if (answer.questionAnswer === answer.studentAnswer) return acc + 1;
+        return acc;
+      }, 0) ?? 0;
+    const marks =
+      correctAnswers && exam && exam.examQuestions
+        ? (correctAnswers / exam.examQuestions.length) * 100
+        : 0;
 
     updateAnswerStudentExam({
       examId,
@@ -86,7 +81,6 @@ const StudentExam = ({ examId, completed = false }: Props) => {
       duration: Math.round(durationMin),
       completedAt: endTime.toISOString(),
     });
-    // router.push("/");
     router.push(
       `/student/completed-exam/${examId}?studentId=${studentId}&studentName=${studentName}&role=${role}`
     );
@@ -97,6 +91,15 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     studentAnswer,
     questionAnswer,
   }: StudentResponse) => {
+    setStudentResponse([
+      ...studentResponse,
+      {
+        questionId,
+        studentAnswer,
+        questionAnswer,
+      },
+    ]);
+
     answerQuestion({
       examId,
       studentId: studentId,
@@ -114,7 +117,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     router.back();
   };
 
-  if (isLoading) {
+  if (isFetchingExam) {
     return (
       <div className="flex w-full mt-10 justify-center items-center">
         <Loader2 className="animate-spin w-8 h-8" />
@@ -122,15 +125,13 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     );
   }
 
-  // console.log("result", result);
-
   return (
     <div className="relative">
       {exam ? (
         <Card className="flex flex-col justify-start dark:border-primary/40 bg-transparent">
           <CardHeader>
             <CardTitle>
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center relative">
                 <div className="text-2xl font-bold flex gap-2">
                   <span className="uppercase">{exam.name} Exam,</span>
                   <span>{role === "admin" && studentName}</span>
@@ -150,7 +151,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
                   <ExamQuestionCard
                     key={index}
                     question={item.questions}
-                    questionNumber={item.questionNumber}
+                    questionNumber={index + 1}
                     examId={examId}
                     role={role}
                     answer={studentAnswer}
@@ -213,9 +214,11 @@ const StudentExam = ({ examId, completed = false }: Props) => {
       )}
 
       {/* result */}
-      {completed && (
+      {completed && studentExamFetching ? (
+        <Loader2 className="w-6 h-6 animate-spin top-8 right-8 absolute" />
+      ) : (
         <div className="flex flex-col top-8 right-8 absolute z-10 text-red-600 -rotate-[25deg]">
-          <p className="font-bold text-7xl font-marks">{marks}</p>
+          <p className="font-bold text-7xl font-marks">{studentExam?.marks}</p>
           <Separator className="font-marks h-2 bg-red-600" />
           <p className="font-bold text-7xl font-marks">100</p>
         </div>

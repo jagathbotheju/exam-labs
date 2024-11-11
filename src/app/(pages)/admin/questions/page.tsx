@@ -10,7 +10,7 @@ const QuestionsPage = async () => {
   if (!user || user.role !== "admin") return redirect("/not-authorized");
 
   return (
-    <div className="flex flex-col border h-full p-4 w-full">
+    <div className="flex flex-col border rounded-md dark:border-primary/40 h-full p-4 w-full">
       <AllQuestions />
     </div>
   );

@@ -19,7 +19,7 @@ export const studentExams = pgTable(
       .references(() => students.id),
     examId: text("exam_id")
       .notNull()
-      .references(() => exams.id),
+      .references(() => exams.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at", { mode: "string" })
       .notNull()
       .defaultNow(),

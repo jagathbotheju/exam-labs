@@ -29,14 +29,14 @@ interface Props {
 const MyExams = ({ student, role = "student" }: Props) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { data: studentExams, isPending } = useStudentExams(student.id);
+  const { data: studentExams, isFetching } = useStudentExams(student.id);
   const { mutate: deleteExamFromStudent } = useDeleteExamFromStudent();
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["student-exams"] });
   }, [student, queryClient]);
 
-  if (isPending) {
+  if (isFetching) {
     return (
       <div className="flex w-full mt-10 justify-center items-center">
         <Loader2 className="animate-spin w-8 h-8" />

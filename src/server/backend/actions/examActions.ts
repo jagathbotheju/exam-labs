@@ -10,6 +10,7 @@ import {
 } from "@/server/db/schema/studentExams";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
+import _ from "lodash";
 
 //==========addExam=====================================================================================================
 export const addExam = async ({
@@ -114,7 +115,19 @@ export const deleteExamFromStudent = async ({
         )
       )
       .returning();
-    if (deletedExam) return { success: "Exam deleted successfully" };
+
+    const deletedStudentAnswers = await db
+      .delete(studentAnswers)
+      .where(
+        and(
+          eq(studentAnswers.examId, examId),
+          eq(studentAnswers.studentId, studentId)
+        )
+      )
+      .returning();
+
+    if (deletedExam && deletedStudentAnswers)
+      return { success: "Exam deleted successfully" };
     return { error: "Exam could not be deleted" };
   } catch (error) {
     return { error: "Exam could not be deleted" };
@@ -264,7 +277,8 @@ export const deleteExam = async (examId: string) => {
       .where(eq(exams.id, examId))
       .returning();
 
-    if (deletedExam.length) return { success: "Exam deleted successfully" };
+    if (!_.isEmpty(deletedExam) && !_.isEmpty(questionsDeleted))
+      return { success: "Exam deleted successfully" };
     return { error: "Could not delete Exam" };
   } catch (error) {
     console.log(error);

@@ -72,7 +72,7 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
   }, [exams, question.examQuestions]);
 
   return (
-    <Card>
+    <Card className="dark:bg-transparent">
       <CardContent className="p-0">
         <div className="flex flex-col hover:drop-shadow-xl h-[100px]">
           <div className="flex justify-between h-full">

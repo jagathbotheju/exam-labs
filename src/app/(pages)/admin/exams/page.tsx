@@ -12,7 +12,7 @@ const ExamsPage = async () => {
   if (!user || user.role !== "admin") return redirect("/not-authorized");
   return (
     <div className="flex flex-col gap-10 w-full">
-      <Card className="flex flex-col w-full h-fit">
+      <Card className="flex flex-col w-full h-fit bg-transparent dark:border-primary/40">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Add New Exam</CardTitle>
         </CardHeader>
@@ -21,7 +21,7 @@ const ExamsPage = async () => {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-transparent dark:border-primary/40">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">All Exams</CardTitle>
         </CardHeader>

@@ -53,7 +53,7 @@ const ExamQuestionCard = ({
   // console.log("answer", answer);
 
   return (
-    <Card className="bg-transparent dark:border-primary/40">
+    <Card className="dark:bg-transparent dark:border-primary/40">
       <CardContent className="p-0">
         <div className="flex flex-col hover:drop-shadow-xl relative">
           <div className="flex justify-between">
@@ -76,14 +76,14 @@ const ExamQuestionCard = ({
               >
                 <div className="flex flex-col gap-2 p-3">
                   {/* question body */}
-                  <p className="line-clamp-3 tracking-wide font-sinhala text-xl">
+                  <p className="tracking-wide font-sinhala text-xl">
                     {parse(question.body)}
                   </p>
 
                   {/* option-1 */}
                   <div className="flex items-center space-x-2 relative">
                     <RadioGroupItem
-                      disabled={role === "admin"}
+                      disabled={role === "admin" || completed}
                       className="w-5 h-5"
                       value="option1"
                       id="option1"
@@ -115,7 +115,7 @@ const ExamQuestionCard = ({
                   {/* option-2 */}
                   <div className="flex items-center space-x-2 relative">
                     <RadioGroupItem
-                      disabled={role === "admin"}
+                      disabled={role === "admin" || completed}
                       className="w-5 h-5"
                       value="option2"
                       id="option2"
@@ -147,7 +147,7 @@ const ExamQuestionCard = ({
                   {/* option-3 */}
                   <div className="flex items-center space-x-2 relative">
                     <RadioGroupItem
-                      disabled={role === "admin"}
+                      disabled={role === "admin" || completed}
                       className="w-5 h-5"
                       value="option3"
                       id="option3"
@@ -179,7 +179,7 @@ const ExamQuestionCard = ({
                   {/* option-4 */}
                   <div className="flex items-center space-x-2 relative">
                     <RadioGroupItem
-                      disabled={role === "admin"}
+                      disabled={role === "admin" || completed}
                       className="w-5 h-5"
                       value="option4"
                       id="option4"

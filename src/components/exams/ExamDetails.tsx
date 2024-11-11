@@ -8,7 +8,7 @@ import { Question } from "@/server/db/schema/questions";
 import { ExamQuestion } from "@/server/db/schema/examQuestions";
 import ExamQuestionCard from "./ExamQuestionCard";
 import StudentSelector from "../student/StudentSelector";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useAddExamToStudent } from "@/server/backend/mutations/examMutations";
 import { toast } from "sonner";
@@ -16,6 +16,7 @@ import { Student, StudentExt } from "@/server/db/schema/students";
 import { useRouter } from "next/navigation";
 import { useStudents } from "@/server/backend/queries/studentQueries";
 import { Badge } from "../ui/badge";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   examId: string;
@@ -23,22 +24,15 @@ interface Props {
 }
 
 const ExamDetails = ({ examId, student }: Props) => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const [selectedStudent, setSelectedStudent] = useState<null | StudentExt>(
     null
   );
 
-  const { data: exam, isLoading } = useExamById(examId);
+  const { data: exam, isFetching: isFetchingExam } = useExamById(examId);
   const { data: allStudents } = useStudents();
   const { mutate: addExamToStudent } = useAddExamToStudent();
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin" />
-      </div>
-    );
-  }
 
   const examStudentIds = exam?.studentExams.map((exam) => exam?.studentId);
   const examStudents = _.filter(allStudents, (student) =>
@@ -46,7 +40,6 @@ const ExamDetails = ({ examId, student }: Props) => {
   );
 
   const assignExamToStudent = () => {
-    console.log("selectedStudent", selectedStudent);
     if (!selectedStudent) return toast.error("Please select a Student");
     if (selectedStudent && examId) {
       addExamToStudent({
@@ -56,10 +49,22 @@ const ExamDetails = ({ examId, student }: Props) => {
     }
   };
 
-  // console.log("Admin ExamDetails", exam);
+  useEffect(() => {
+    if (examId) {
+      queryClient.invalidateQueries({ queryKey: ["exam-by-id"] });
+    }
+  }, [examId]);
+
+  if (isFetchingExam) {
+    return (
+      <div className="flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col dark:bg-transparent dark:border-primary/40">
       <CardHeader>
         <CardTitle className="flex justify-between">
           <div className="uppercase text-2xl font-bold">
@@ -90,7 +95,7 @@ const ExamDetails = ({ examId, student }: Props) => {
               <ExamQuestionCard
                 key={index}
                 question={item.questions}
-                questionNumber={item.questionNumber}
+                questionNumber={index + 1}
                 examId={examId}
                 role={student.role}
               />
