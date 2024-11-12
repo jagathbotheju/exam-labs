@@ -58,6 +58,16 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     studentId: studentId,
   });
 
+  // console.log("exam", exam);
+  const typeIds = exam?.examQuestions.map((item) => {
+    return {
+      questionId: item.questions.id,
+      typeId: item.questions.typeId,
+    };
+  });
+
+  console.log("typeIds", typeIds);
+
   const completeExam = () => {
     queryClient.invalidateQueries({ queryKey: ["student-answers"] });
     const endTime = new Date();

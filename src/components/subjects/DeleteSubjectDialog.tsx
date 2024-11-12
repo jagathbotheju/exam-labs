@@ -28,31 +28,33 @@ const DeleteSubjectDialog = ({ trigger, subjectTitle, subjectId }: Props) => {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Delete Subject</DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-col">
-          <p>
-            Are you sure, to delete this{" "}
-            <span className="font-semibold text-red-500 uppercase">
-              {subjectTitle}
-            </span>{" "}
-            subject
-          </p>
+          <DialogDescription>
+            <div className="flex flex-col">
+              <p>
+                Are you sure, to delete this{" "}
+                <span className="font-semibold text-red-500 uppercase">
+                  {subjectTitle}
+                </span>{" "}
+                subject
+              </p>
 
-          <p>
-            All the <span className="font-semibold">Questions</span>, related to
-            this subject will also be deleted!
-          </p>
-        </div>
+              <p>
+                All the <span className="font-semibold">Questions</span>,
+                related to this subject will also be deleted!
+              </p>
+            </div>
+          </DialogDescription>
+        </DialogHeader>
         <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
           <Button
             variant="destructive"
             type="submit"
             onClick={() => mutate(subjectId)}
           >
             Delete
-          </Button>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

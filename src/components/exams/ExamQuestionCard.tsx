@@ -15,12 +15,8 @@ import {
 } from "../ui/alert-dialog";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 import { useRemoveQuestionFromExam } from "@/server/backend/mutations/questionMutations";
-import { Student } from "@/server/db/schema/students";
-import { Checkbox } from "../ui/checkbox";
-import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
-import { useState } from "react";
 import { StudentResponse } from "@/lib/types";
 import { StudentAnswer } from "@/server/db/schema/studentAnswers";
 import Image from "next/image";
@@ -211,7 +207,7 @@ const ExamQuestionCard = ({
               </RadioGroup>
 
               {/* answer correctness */}
-              {role !== "admin" && isAnswerCorrect && completed && (
+              {isAnswerCorrect && completed && (
                 <Image
                   src="/images/check-icon.png"
                   alt="correct answer"
@@ -220,7 +216,7 @@ const ExamQuestionCard = ({
                 />
               )}
 
-              {role !== "admin" && !isAnswerCorrect && completed && (
+              {!isAnswerCorrect && completed && (
                 <Image
                   src="/images/cross-icon.png"
                   alt="wrong answer"

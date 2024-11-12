@@ -1,11 +1,11 @@
-import AddSubjectForm from "@/components/subjects/AddSubjectForm";
-import AllSubjects from "@/components/subjects/AllSubjects";
+import AddQuestionTypeForm from "@/components/questions/AddQuestionTypeForm";
+import AllQuestionTypes from "@/components/questions/AllQuestionTypes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
 import { Student } from "@/server/db/schema/students";
 import { redirect } from "next/navigation";
 
-const SubjectsPage = async () => {
+const QuestionTypePage = async () => {
   const session = await auth();
   const user = session?.user as Student;
 
@@ -15,22 +15,26 @@ const SubjectsPage = async () => {
     <div className="flex flex-col gap-10 w-full">
       <Card className="flex flex-col w-full h-fit dark:bg-transparent dark:border-primary/40">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Add New Subject</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            Add New Question Type
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <AddSubjectForm />
+          <AddQuestionTypeForm />
         </CardContent>
       </Card>
 
       <Card className="dark:bg-transparent dark:border-primary/40">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">All Subjects</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            All Question Types
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <AllSubjects />
+          <AllQuestionTypes />
         </CardContent>
       </Card>
     </div>
   );
 };
-export default SubjectsPage;
+export default QuestionTypePage;

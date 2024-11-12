@@ -27,6 +27,19 @@ const AdminLayout = ({ children }: Props) => {
           <Link href="/admin/questions">All Questions</Link>
         </Button>
 
+        {/* question types */}
+        <Button
+          asChild
+          className={cn(
+            pathname === "/admin/questions/type"
+              ? "bg-primary text-black font-semibold"
+              : "bg-transparent"
+          )}
+          variant={pathname === "/admin/questions/type" ? "default" : "outline"}
+        >
+          <Link href="/admin/questions/type">Question Types</Link>
+        </Button>
+
         {/* add MCQ */}
         <Button
           asChild

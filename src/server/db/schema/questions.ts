@@ -3,6 +3,7 @@ import { integer, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { Subject, subjects } from "./subjects";
 import { Exam, ExamExt, exams } from "./exams";
 import { ExamQuestion, examQuestions } from "./examQuestions";
+import { questionTypes } from "./questionTypes";
 
 export const questions = pgTable("questions", {
   id: text("id")
@@ -12,6 +13,9 @@ export const questions = pgTable("questions", {
   subjectId: text("subject_id")
     .notNull()
     .references(() => subjects.id, { onDelete: "cascade" }),
+  typeId: text("type_id").references(() => questionTypes.id, {
+    onDelete: "cascade",
+  }),
   body: text("body").notNull(),
   option1: text("option1"),
   option2: text("option2"),
@@ -29,6 +33,10 @@ export const questionRelations = relations(questions, ({ one, many }) => ({
   subjects: one(subjects, {
     fields: [questions.subjectId],
     references: [subjects.id],
+  }),
+  types: one(questionTypes, {
+    fields: [questions.typeId],
+    references: [questionTypes.id],
   }),
   examQuestions: many(examQuestions),
 }));

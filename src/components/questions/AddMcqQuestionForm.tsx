@@ -38,6 +38,7 @@ import { useAddQuestion } from "@/server/backend/mutations/questionMutations";
 import { useQuestionById } from "@/server/backend/queries/questionQueries";
 import TipTap from "../Tiptap";
 import _ from "lodash";
+import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
 
 interface Props {
   questionId?: string;
@@ -46,7 +47,9 @@ interface Props {
 const AddMcqQuestionForm = ({ questionId }: Props) => {
   const router = useRouter();
   const { data: subjects } = useSubjects();
+  const { data: types } = useQuestionTypes();
   const [openSubject, setOpenSubject] = useState(false);
+  const [openType, setOpenType] = useState(false);
   const [openGrade, setOpenGrade] = useState(false);
   const [openTerm, setOpenTerm] = useState(false);
   const [openAnswer, setOpenAnswer] = useState(false);
@@ -61,8 +64,9 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
       option4: "",
       grade: "",
       term: "",
-      answer: "",
       subject: "",
+      type: "",
+      answer: "",
     },
     mode: "all",
   });
@@ -75,6 +79,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
       form.setValue("grade", question[0].grade);
       form.setValue("term", question[0].term);
       form.setValue("subject", question[0].subjectId);
+      form.setValue("type", question[0].typeId);
       form.setValue("body", question[0].body);
       form.setValue("option1", question[0].option1 ?? "");
       form.setValue("option2", question[0].option2 ?? "");
@@ -270,6 +275,70 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
                                   )}
                                 />
                                 {subject.title}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* type */}
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Subject</FormLabel>
+                  <Popover open={openType} onOpenChange={setOpenType}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-[200px] justify-between font-sinhala",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? types?.find((item) => item.id === field.value)
+                                ?.type
+                            : "Select Type"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search subjects..." />
+                        <CommandList>
+                          <CommandEmpty>No types found.</CommandEmpty>
+                          <CommandGroup>
+                            {types?.map((item) => (
+                              <CommandItem
+                                className="font-sinhala"
+                                key={item.id}
+                                value={item.type}
+                                onSelect={() => {
+                                  form.setValue("type", item.id);
+                                  setOpenType(false);
+                                  form.trigger("type");
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    item.id === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {item.type}
                               </CommandItem>
                             ))}
                           </CommandGroup>

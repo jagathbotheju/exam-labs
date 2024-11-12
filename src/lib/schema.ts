@@ -90,13 +90,17 @@ export const AddMcqQuestionSchema = z.object({
   option4: z.string(),
   grade: z.string().min(1, "please select grade"),
   term: z.string().min(1, "please select term"),
-  // type: z.string().min(1, "please select question type"),
   subject: z.string({ required_error: "please select a subject" }),
+  type: z.string().min(1, "please select question type").nullable(),
   answer: z.string().min(1, "please select an Answer"),
 });
 
 export const AddSubjectSchema = z.object({
   title: z.string().min(1, "subject name is required"),
+});
+
+export const AddQuestionTypeSchema = z.object({
+  type: z.string().min(1, "type name is required"),
 });
 
 export const AddExamSchema = z.object({

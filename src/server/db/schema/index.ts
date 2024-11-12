@@ -5,6 +5,7 @@ export {
 } from "@/server/db/schema/studentExams";
 export { questions, questionRelations } from "@/server/db/schema/questions";
 export { subjects } from "@/server/db/schema/subjects";
+export { questionTypes } from "@/server/db/schema/questionTypes";
 export { emailTokens } from "@/server/db/schema/emailTokens";
 export { passwordResetTokens } from "@/server/db/schema/passwordResetTokens";
 export {

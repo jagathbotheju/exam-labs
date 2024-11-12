@@ -9,11 +9,12 @@ import {
   subjects,
 } from "../../db/schema";
 import { z } from "zod";
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 import { Question, QuestionExt } from "../../db/schema/questions";
 import _ from "lodash";
 import { auth } from "@/lib/auth";
 import { Student } from "@/server/db/schema/students";
+import { QuestionType } from "@/server/db/schema/questionTypes";
 
 //========answerQuestion================================================================================================
 export const answerQuestion = async ({
@@ -84,6 +85,7 @@ export const addQuestion = async ({
           term: validData.term,
           grade: validData.grade,
           subjectId: validData.subject,
+          typeId: validData.type,
         })
         .where(eq(questions.id, questionId));
       if (updatedQuestion) {
@@ -100,6 +102,7 @@ export const addQuestion = async ({
         term: validData.term,
         grade: validData.grade,
         subjectId: validData.subject,
+        typeId: validData.type,
       });
       if (newQuestion) return { success: "Question added successfully" };
     }
@@ -194,7 +197,7 @@ export const getQuestionsBySubject = async (subjectId: string) => {
       examQuestions: true,
     },
     where: eq(questions.subjectId, subjectId),
-    orderBy: desc(questions.createdAt),
+    orderBy: asc(questions.createdAt),
   });
   // .select()
   // .from(questions)

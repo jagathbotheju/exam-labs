@@ -20,15 +20,7 @@ const AllQuestions = () => {
     }
   }, [subjectId, queryClient]);
 
-  // if (isFetching) {
-  //   return (
-  //     <div className="flex justify-center items-center w-full mt-10">
-  //       <Loader2 className="w-8 h-8 animate-spin" />
-  //     </div>
-  //   );
-  // }
-
-  console.log("subjectId", subjectId);
+  // console.log("questions", questions);
 
   return (
     <div className="flex flex-col w-full">
