@@ -1,6 +1,6 @@
 "use client";
 import { useSubjects } from "@/server/backend/queries/subjectQueries";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -20,12 +20,19 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   setSubject: (subject: string) => void;
+  subjectId: string;
 }
 
-const SubjectSelector = ({ setSubject }: Props) => {
+const SubjectSelector = ({ setSubject, subjectId }: Props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const { data: subjects } = useSubjects();
+
+  useEffect(() => {
+    if (subjectId) {
+      setValue(subjectId);
+    }
+  }, [subjectId]);
 
   return (
     <div>

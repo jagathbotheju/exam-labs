@@ -1,10 +1,3 @@
-CREATE TABLE IF NOT EXISTS "answers" (
-	"id" text PRIMARY KEY NOT NULL,
-	"question_id" text,
-	"answer_option" text,
-	"created_at" timestamp DEFAULT now() NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "email_tokens" (
 	"id" text NOT NULL,
 	"token" text NOT NULL,
@@ -37,14 +30,22 @@ CREATE TABLE IF NOT EXISTS "password_reset_tokens" (
 	CONSTRAINT "password_reset_tokens_id_token_pk" PRIMARY KEY("id","token")
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "question_types" (
+	"id" text PRIMARY KEY NOT NULL,
+	"type" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "question_types_type_unique" UNIQUE("type")
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "questions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"subject_id" text NOT NULL,
+	"type_id" text,
 	"body" text NOT NULL,
-	"option1" text NOT NULL,
-	"option2" text NOT NULL,
-	"option3" text NOT NULL,
-	"option4" text NOT NULL,
+	"option1" text,
+	"option2" text,
+	"option3" text,
+	"option4" text,
 	"year" text NOT NULL,
 	"term" text DEFAULT 'all' NOT NULL,
 	"answer" text NOT NULL,
@@ -78,9 +79,12 @@ CREATE TABLE IF NOT EXISTS "student-answers" (
 	"student_id" text,
 	"exam_id" text,
 	"question_id" text,
-	"answer" text,
+	"question_type_id" text,
+	"question_answer" text,
+	"student_answer" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "student-answers_exam_id_student_id_pk" PRIMARY KEY("exam_id","student_id")
+	CONSTRAINT "student-answers_exam_id_student_id_question_id_pk" PRIMARY KEY("exam_id","student_id","question_id"),
+	CONSTRAINT "student-answers_question_id_unique" UNIQUE("question_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "student_exams" (
@@ -88,7 +92,7 @@ CREATE TABLE IF NOT EXISTS "student_exams" (
 	"exam_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"completed_at" timestamp,
-	"marks" integer DEFAULT 0,
+	"marks" double precision DEFAULT 0,
 	"duration" integer DEFAULT 0,
 	CONSTRAINT "student_exams_student_id_exam_id_pk" PRIMARY KEY("student_id","exam_id")
 );
@@ -118,12 +122,6 @@ CREATE TABLE IF NOT EXISTS "subjects" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "answers" ADD CONSTRAINT "answers_question_id_questions_id_fk" FOREIGN KEY ("question_id") REFERENCES "public"."questions"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
  ALTER TABLE "exam-questions" ADD CONSTRAINT "exam-questions_exam_id_exams_id_fk" FOREIGN KEY ("exam_id") REFERENCES "public"."exams"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -149,6 +147,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "questions" ADD CONSTRAINT "questions_subject_id_subjects_id_fk" FOREIGN KEY ("subject_id") REFERENCES "public"."subjects"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "questions" ADD CONSTRAINT "questions_type_id_question_types_id_fk" FOREIGN KEY ("type_id") REFERENCES "public"."question_types"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -196,13 +200,19 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "student-answers" ADD CONSTRAINT "student-answers_question_type_id_question_types_id_fk" FOREIGN KEY ("question_type_id") REFERENCES "public"."question_types"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "student_exams" ADD CONSTRAINT "student_exams_student_id_students_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."students"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "student_exams" ADD CONSTRAINT "student_exams_exam_id_exams_id_fk" FOREIGN KEY ("exam_id") REFERENCES "public"."exams"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "student_exams" ADD CONSTRAINT "student_exams_exam_id_exams_id_fk" FOREIGN KEY ("exam_id") REFERENCES "public"."exams"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

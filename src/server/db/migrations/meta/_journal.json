@@ -5,57 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1730794402065,
-      "tag": "0000_lumpy_outlaw_kid",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1730796481912,
-      "tag": "0001_nosy_jack_murdock",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1730822683636,
-      "tag": "0002_lush_wrecker",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1730827344605,
-      "tag": "0003_gorgeous_brood",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1730828793304,
-      "tag": "0004_loud_frog_thor",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1730905842817,
-      "tag": "0005_freezing_george_stacy",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1731319933484,
-      "tag": "0006_steep_madame_masque",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1731387218088,
-      "tag": "0007_moaning_spencer_smythe",
+      "when": 1731498250376,
+      "tag": "0000_special_captain_britain",
       "breakpoints": true
     }
   ]

@@ -21,12 +21,14 @@ export const answerQuestion = async ({
   examId,
   studentId,
   questionId,
+  questionTypeId,
   studentAnswer,
   questionAnswer,
 }: {
   examId: string;
   studentId: string;
   questionId: string;
+  questionTypeId: string | null;
   studentAnswer: string;
   questionAnswer: string;
 }) => {
@@ -39,6 +41,7 @@ export const answerQuestion = async ({
       examId,
       studentId,
       questionId,
+      questionTypeId,
       studentAnswer,
       questionAnswer,
     })

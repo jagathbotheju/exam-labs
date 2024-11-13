@@ -7,10 +7,14 @@ import { Loader2 } from "lucide-react";
 import QuestionCard from "./QuestionCard";
 import { useQueryClient } from "@tanstack/react-query";
 import _ from "lodash";
+import { useSearchParams } from "next/navigation";
 
 const AllQuestions = () => {
   const queryClient = useQueryClient();
-  const [subjectId, setSubjectId] = useState("");
+  const searchParams = useSearchParams();
+  const [subjectId, setSubjectId] = useState<string>(
+    searchParams.get("subjectId") ?? ""
+  );
 
   const { data: questions, isFetching } = useQuestionsBySubject(subjectId);
 
@@ -27,7 +31,7 @@ const AllQuestions = () => {
       <div className="flex justify-between">
         <h1 className="text-3xl font-semibold">Questions</h1>
 
-        <SubjectSelector setSubject={setSubjectId} />
+        <SubjectSelector setSubject={setSubjectId} subjectId={subjectId} />
       </div>
 
       {/* questions */}

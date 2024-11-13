@@ -11,6 +11,7 @@ import { exams } from "./exams";
 import { InferSelectModel, relations } from "drizzle-orm";
 import { StudentResponse } from "@/lib/types";
 import { questions } from "./questions";
+import { QuestionType, questionTypes } from "./questionTypes";
 
 export const studentAnswers = pgTable(
   "student-answers",
@@ -20,6 +21,7 @@ export const studentAnswers = pgTable(
     questionId: text("question_id")
       .unique()
       .references(() => questions.id),
+    questionTypeId: text("question_type_id").references(() => questionTypes.id),
     questionAnswer: text("question_answer"),
     studentAnswer: text("student_answer"),
     createdAt: timestamp("created_at", { mode: "string" })
@@ -44,7 +46,14 @@ export const studentAnswerRelations = relations(
       fields: [studentAnswers.studentId],
       references: [students.id],
     }),
+    questionTypes: one(questionTypes, {
+      fields: [studentAnswers.questionTypeId],
+      references: [questionTypes.id],
+    }),
   })
 );
 
 export type StudentAnswer = InferSelectModel<typeof studentAnswers>;
+export type StudentAnswerExt = InferSelectModel<typeof studentAnswers> & {
+  questionTypes: QuestionType;
+};

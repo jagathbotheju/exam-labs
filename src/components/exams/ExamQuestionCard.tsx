@@ -52,7 +52,7 @@ const ExamQuestionCard = ({
     <Card className="dark:bg-transparent dark:border-primary/40">
       <CardContent className="p-0">
         <div className="flex flex-col hover:drop-shadow-xl relative">
-          <div className="flex justify-between">
+          <div className="flex relative">
             <div className="flex gap-2 items-center relative">
               <div className="bg-slate-200 dark:bg-slate-800 p-4 font-bold rounded-tl-lg rounded-bl-lg h-full flex items-center justify-center">
                 {questionNumber}
@@ -66,6 +66,7 @@ const ExamQuestionCard = ({
                       questionId: question.id,
                       questionAnswer: question.answer,
                       studentAnswer: value,
+                      questionTypeId: question.typeId,
                     });
                   }
                 }}
@@ -205,8 +206,10 @@ const ExamQuestionCard = ({
                   </div>
                 </div>
               </RadioGroup>
+            </div>
 
-              {/* answer correctness */}
+            {/* answer correctness */}
+            <div className="z-20 absolute bottom-10 right-[20%]">
               {isAnswerCorrect && completed && (
                 <Image
                   src="/images/check-icon.png"

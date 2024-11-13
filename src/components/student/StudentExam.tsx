@@ -27,6 +27,16 @@ import { useStudentAnswers } from "@/server/backend/queries/answerQueries";
 import { useQueryClient } from "@tanstack/react-query";
 import { useStudentById } from "@/server/backend/queries/studentQueries";
 import { Separator } from "../ui/separator";
+import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import { cn } from "@/lib/utils";
 
 interface Props {
   examId: string;
@@ -49,24 +59,36 @@ const StudentExam = ({ examId, completed = false }: Props) => {
   const { mutate: answerQuestion } = useAnswerQuestion();
   const { mutate: cancelStudentExam } = useCancelStudentExam();
   const { mutate: updateAnswerStudentExam } = useUpdateAnswerStudentExam();
-  const { data: exam, isFetching: isFetchingExam } = useExamById(examId);
-  const { data: studentExam, isFetching: studentExamFetching } = useStudentExam(
-    { examId, studentId }
-  );
+  const { data: exam, isPending: isPendingExam } = useExamById(examId);
+  const { data: studentExam, isPending: studentExamPending } = useStudentExam({
+    examId,
+    studentId,
+  });
   const { data: studentAnswers } = useStudentAnswers({
     examId,
     studentId: studentId,
   });
 
-  // console.log("exam", exam);
-  const typeIds = exam?.examQuestions.map((item) => {
-    return {
-      questionId: item.questions.id,
-      typeId: item.questions.typeId,
-    };
-  });
-
-  console.log("typeIds", typeIds);
+  const questionTypes = studentAnswers?.reduce((acc, item) => {
+    if (item.questionTypeId) {
+      const exist = acc.find(
+        (accItem) => accItem.questionTypeId === item.questionTypeId
+      );
+      if (exist) {
+        exist.score = exist.score + 1;
+      } else {
+        return [
+          {
+            score: 1,
+            questionTypeId: item.questionTypeId,
+            questionType: item.questionTypes.type,
+          },
+          ...acc,
+        ];
+      }
+    }
+    return acc;
+  }, [] as { score: number; questionTypeId: string; questionType: string }[]);
 
   const completeExam = () => {
     queryClient.invalidateQueries({ queryKey: ["student-answers"] });
@@ -98,6 +120,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
 
   const answerExamQuestion = ({
     questionId,
+    questionTypeId,
     studentAnswer,
     questionAnswer,
   }: StudentResponse) => {
@@ -105,6 +128,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
       ...studentResponse,
       {
         questionId,
+        questionTypeId,
         studentAnswer,
         questionAnswer,
       },
@@ -114,6 +138,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
       examId,
       studentId: studentId,
       questionId,
+      questionTypeId,
       studentAnswer,
       questionAnswer,
     });
@@ -127,7 +152,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     router.back();
   };
 
-  if (isFetchingExam) {
+  if (isPendingExam) {
     return (
       <div className="flex w-full mt-10 justify-center items-center">
         <Loader2 className="animate-spin w-8 h-8" />
@@ -136,103 +161,154 @@ const StudentExam = ({ examId, completed = false }: Props) => {
   }
 
   return (
-    <div className="relative">
-      {exam ? (
-        <Card className="flex flex-col justify-start dark:border-primary/40 bg-transparent">
+    <div className="flex flex-col gap-8">
+      {completed && (
+        <Card className="dark:bg-transparent dark:border-primary/40">
           <CardHeader>
-            <CardTitle>
-              <div className="flex justify-between items-center relative">
-                <div className="text-2xl font-bold flex gap-2">
-                  <span className="uppercase">{exam.name} Exam,</span>
-                  <span>{role === "admin" && studentName}</span>
-                  <span>{completed && "Answer Sheet"}</span>
-                </div>
-                {!completed && <ExamTimer examDuration={exam.duration ?? 60} />}
-              </div>
-            </CardTitle>
+            <CardTitle className="text-2xl font-bold">Result Summary</CardTitle>
           </CardHeader>
-          <CardContent className="gap-4 flex flex-col h-full">
-            {exam && exam.examQuestions.length ? (
-              exam.examQuestions.map((item, index) => {
-                const studentAnswer = studentAnswers?.find(
-                  (answer) => answer.questionId === item.questionId
-                );
-                return (
-                  <ExamQuestionCard
-                    key={index}
-                    question={item.questions}
-                    questionNumber={index + 1}
-                    examId={examId}
-                    role={role}
-                    answer={studentAnswer}
-                    answerExamQuestion={answerExamQuestion}
-                    completed={completed}
-                  />
-                );
-              })
-            ) : (
-              <div className="flex items-center justify-center mt-10">
-                <h1 className="text-xl font-bold text-muted-foreground">
-                  No Questions Found!
-                </h1>
-              </div>
-            )}
-
-            <div className="mt-8 flex gap-4 self-end">
-              {/* cancel exam */}
-              {!completed && (
-                <AppDialog
-                  trigger={<Button variant="outline">Cancel</Button>}
-                  body={
-                    <p className="font-semibold text-lg">
-                      Are you sure you want to{" "}
-                      <span className="font-bold text-red-500">Cancel</span>{" "}
-                      this Exam
-                    </p>
-                  }
-                  title="Cancel Exam"
-                  okDialog={cancelExam}
-                />
-              )}
-
-              {/* finish exam */}
-              {!completed && (
-                <AppDialog
-                  trigger={<Button>Complete Exam</Button>}
-                  body={
-                    <p className="font-semibold text-lg">
-                      Are you sure you want to Finish this Exam
-                    </p>
-                  }
-                  title="Complete Exam"
-                  okDialog={completeExam}
-                />
-              )}
-
-              {completed && (
-                <Button onClick={() => router.push("/")}>Back</Button>
-              )}
-            </div>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-semibold text-xl">
+                    Knowledge Area
+                  </TableHead>
+                  <TableHead className="font-semibold text-xl">Score</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {questionTypes &&
+                  questionTypes.map((item) => (
+                    <TableRow key={item.questionTypeId}>
+                      <TableCell className="font-sinhala text-xl">
+                        {item.questionType}
+                      </TableCell>
+                      <TableCell
+                        className={cn("text-xl font-semibold", {
+                          "text-green-700":
+                            studentAnswers &&
+                            (item.score / studentAnswers?.length) * 100 > 70,
+                          "text-red-700":
+                            studentAnswers &&
+                            (item.score / studentAnswers?.length) * 100 < 40,
+                        })}
+                      >
+                        {studentAnswers &&
+                          (item.score / studentAnswers?.length) * 100}
+                        %
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
-      ) : (
-        <div>
-          <div className="fle w-full mt-10 justify-center">
-            <h2 className="font-semibold text-2xl">Exam Not Found!</h2>
-          </div>
-        </div>
       )}
 
-      {/* result */}
-      {completed && studentExamFetching ? (
-        <Loader2 className="w-6 h-6 animate-spin top-8 right-8 absolute" />
-      ) : (
-        <div className="flex flex-col top-8 right-8 absolute z-10 text-red-600 -rotate-[25deg]">
-          <p className="font-bold text-7xl font-marks">{studentExam?.marks}</p>
-          <Separator className="font-marks h-2 bg-red-600" />
-          <p className="font-bold text-7xl font-marks">100</p>
+      <div className="relative">
+        {exam ? (
+          <Card className="flex flex-col justify-start dark:border-primary/40 dark:bg-transparent">
+            <CardHeader>
+              <CardTitle>
+                <div className="flex justify-between items-center relative">
+                  <div className="text-2xl font-bold flex gap-2">
+                    <span className="uppercase">{exam.name} Exam,</span>
+                    <span>{role === "admin" && studentName}</span>
+                    <span>{completed && "Answer Sheet"}</span>
+                  </div>
+                  {!completed && (
+                    <ExamTimer examDuration={exam.duration ?? 60} />
+                  )}
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="gap-4 flex flex-col h-full">
+              {exam && exam.examQuestions.length ? (
+                exam.examQuestions.map((item, index) => {
+                  const studentAnswer = studentAnswers?.find(
+                    (answer) => answer.questionId === item.questionId
+                  );
+                  return (
+                    <ExamQuestionCard
+                      key={index}
+                      question={item.questions}
+                      questionNumber={index + 1}
+                      examId={examId}
+                      role={role}
+                      answer={studentAnswer}
+                      answerExamQuestion={answerExamQuestion}
+                      completed={completed}
+                    />
+                  );
+                })
+              ) : (
+                <div className="flex items-center justify-center mt-10">
+                  <h1 className="text-xl font-bold text-muted-foreground">
+                    No Questions Found!
+                  </h1>
+                </div>
+              )}
+
+              <div className="mt-8 flex gap-4 self-end">
+                {/* cancel exam */}
+                {!completed && (
+                  <AppDialog
+                    trigger={<Button variant="outline">Cancel</Button>}
+                    body={
+                      <p className="font-semibold text-lg">
+                        Are you sure you want to{" "}
+                        <span className="font-bold text-red-500">Cancel</span>{" "}
+                        this Exam
+                      </p>
+                    }
+                    title="Cancel Exam"
+                    okDialog={cancelExam}
+                  />
+                )}
+
+                {/* finish exam */}
+                {!completed && (
+                  <AppDialog
+                    trigger={<Button>Complete Exam</Button>}
+                    body={
+                      <p className="font-semibold text-lg">
+                        Are you sure you want to Finish this Exam
+                      </p>
+                    }
+                    title="Complete Exam"
+                    okDialog={completeExam}
+                  />
+                )}
+
+                {completed && (
+                  <Button onClick={() => router.push("/")}>Back</Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <div>
+            <div className="fle w-full mt-10 justify-center">
+              <h2 className="font-semibold text-2xl">Exam Not Found!</h2>
+            </div>
+          </div>
+        )}
+
+        {/* result */}
+        <div className="top-8 right-8 absolute">
+          {studentExamPending && <Loader2 className="w-6 h-6 animate-spin" />}
+          {completed && (
+            <div className="flex flex-col top-8 right-8 absolute z-10 text-red-600 -rotate-[25deg]">
+              <p className="font-bold text-7xl font-marks">
+                {studentExam?.marks}
+              </p>
+              <Separator className="font-marks h-2 bg-red-600" />
+              <p className="font-bold text-7xl font-marks">100</p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };

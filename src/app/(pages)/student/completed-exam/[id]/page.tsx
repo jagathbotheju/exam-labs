@@ -7,13 +7,16 @@ interface Props {
   params: {
     id: string;
   };
+  searchParams: {
+    role: string;
+  };
 }
 
-const StudentCompletedExamPage = async ({ params }: Props) => {
+const StudentCompletedExamPage = async ({ params, searchParams }: Props) => {
   const session = await auth();
   const student = session?.user as Student;
   if (!student) redirect("/auth/login");
-
+  if (student.role !== searchParams.role) redirect("/not-authorized");
   // console.log("studentId", searchParams.studentId);
 
   return (

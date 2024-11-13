@@ -1,7 +1,5 @@
-import AdminDashboard from "@/components/admin/Results";
 import MyExams from "@/components/exams/MyExams";
 import ResultSummary from "@/components/student/ResultSummary";
-import StudentTest from "@/components/student/StudentTest";
 import { auth } from "@/lib/auth";
 import { Student } from "@/server/db/schema/students";
 import { redirect } from "next/navigation";

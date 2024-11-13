@@ -91,7 +91,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
 
   const onSubmit = (questionData: z.infer<typeof AddMcqQuestionSchema>) => {
     addQuestion({ questionData, questionId });
-    form.reset();
+    router.push(`/admin/questions?subjectId=${form.getValues("subject")}`);
   };
 
   return (
@@ -499,7 +499,9 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
             </Button>
             <Button
               onClick={() => {
-                router.back();
+                router.push(
+                  `/admin/questions?subjectId=${form.getValues("subject")}`
+                );
                 form.reset();
               }}
               type="button"
