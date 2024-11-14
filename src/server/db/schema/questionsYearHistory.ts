@@ -9,44 +9,48 @@ import {
 } from "drizzle-orm/pg-core";
 import { questions } from "./questions";
 import { students } from "./students";
+import { Subject, subjects } from "./subjects";
+import { exams } from "./exams";
 
 export const questionsYearHistory = pgTable(
   "questions_year_history",
   {
-    questionId: text("question_id")
+    examId: text("exam_id")
       .notNull()
-      .references(() => questions.id, { onDelete: "cascade" }),
+      .references(() => exams.id, { onDelete: "cascade" }),
+    subjectId: text("subject_id")
+      .notNull()
+      .references(() => subjects.id, { onDelete: "cascade" }),
     studentId: text("student_id")
       .notNull()
       .references(() => students.id),
     month: integer("month").notNull(),
     year: integer("year").notNull(),
-    status: boolean("status").default(false),
+    marks: integer("marks").default(0),
     createdAt: timestamp("created_at", { mode: "string" })
       .notNull()
       .defaultNow(),
   },
   (table) => {
     return {
-      pk: primaryKey({ columns: [table.month, table.year, table.questionId] }),
+      pk: primaryKey({ columns: [table.month, table.year, table.subjectId] }),
     };
   }
 );
 
 export const questionsYearHistoryRelations = relations(
   questionsYearHistory,
-  ({ one }) => ({
-    students: one(students, {
-      fields: [questionsYearHistory.studentId],
-      references: [students.id],
-    }),
-    questions: one(questions, {
-      fields: [questionsYearHistory.questionId],
-      references: [questions.id],
-    }),
+  ({ many }) => ({
+    subjects: many(subjects),
   })
 );
 
 export type QuestionsYearHistory = InferSelectModel<
   typeof questionsYearHistory
 >;
+
+export type QuestionsYearHistoryExt = InferSelectModel<
+  typeof questionsYearHistory
+> & {
+  subjects: Subject[];
+};

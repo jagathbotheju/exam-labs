@@ -55,24 +55,26 @@ CREATE TABLE IF NOT EXISTS "questions" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "questions_month_history" (
-	"question_id" text NOT NULL,
+	"exam_id" text NOT NULL,
 	"student_id" text NOT NULL,
+	"subject_id" text,
+	"marks" integer DEFAULT 0,
 	"day" integer NOT NULL,
 	"month" integer NOT NULL,
 	"year" integer NOT NULL,
-	"status" boolean DEFAULT false,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "questions_month_history_day_month_year_question_id_pk" PRIMARY KEY("day","month","year","question_id")
+	CONSTRAINT "questions_month_history_day_month_year_subject_id_pk" PRIMARY KEY("day","month","year","subject_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "questions_year_history" (
-	"question_id" text NOT NULL,
+	"exam_id" text NOT NULL,
+	"subject_id" text NOT NULL,
 	"student_id" text NOT NULL,
 	"month" integer NOT NULL,
 	"year" integer NOT NULL,
-	"status" boolean DEFAULT false,
+	"marks" integer DEFAULT 0,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "questions_year_history_month_year_question_id_pk" PRIMARY KEY("month","year","question_id")
+	CONSTRAINT "questions_year_history_month_year_subject_id_pk" PRIMARY KEY("month","year","subject_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "student-answers" (
@@ -158,7 +160,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "questions_month_history" ADD CONSTRAINT "questions_month_history_question_id_questions_id_fk" FOREIGN KEY ("question_id") REFERENCES "public"."questions"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "questions_month_history" ADD CONSTRAINT "questions_month_history_exam_id_exams_id_fk" FOREIGN KEY ("exam_id") REFERENCES "public"."exams"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -170,7 +172,19 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "questions_year_history" ADD CONSTRAINT "questions_year_history_question_id_questions_id_fk" FOREIGN KEY ("question_id") REFERENCES "public"."questions"("id") ON DELETE cascade ON UPDATE no action;
+ ALTER TABLE "questions_month_history" ADD CONSTRAINT "questions_month_history_subject_id_subjects_id_fk" FOREIGN KEY ("subject_id") REFERENCES "public"."subjects"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "questions_year_history" ADD CONSTRAINT "questions_year_history_exam_id_exams_id_fk" FOREIGN KEY ("exam_id") REFERENCES "public"."exams"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "questions_year_history" ADD CONSTRAINT "questions_year_history_subject_id_subjects_id_fk" FOREIGN KEY ("subject_id") REFERENCES "public"."subjects"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

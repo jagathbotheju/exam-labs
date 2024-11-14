@@ -56,6 +56,7 @@ export const useAddQuestionToExam = () => {
       console.log(res);
       if (res.success) {
         queryClient.invalidateQueries({ queryKey: ["questions-by-subject"] });
+        queryClient.invalidateQueries({ queryKey: ["exams"] });
         toast.success(res.success);
       }
       if (res.error) {

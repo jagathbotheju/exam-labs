@@ -16,7 +16,7 @@ const AllQuestions = () => {
     searchParams.get("subjectId") ?? ""
   );
 
-  const { data: questions, isFetching } = useQuestionsBySubject(subjectId);
+  const { data: questions, isPending } = useQuestionsBySubject(subjectId);
 
   useEffect(() => {
     if (subjectId) {
@@ -35,7 +35,7 @@ const AllQuestions = () => {
       </div>
 
       {/* questions */}
-      {isFetching ? (
+      {isPending ? (
         <div className="flex justify-center items-center w-full mt-10">
           <Loader2 className="w-8 h-8 animate-spin" />
         </div>
@@ -54,7 +54,7 @@ const AllQuestions = () => {
         </div>
       )}
 
-      {!subjectId && !isFetching && (
+      {!subjectId && !isPending && (
         <div className="flex w-full mt-20">
           <div className="w-full rounded-md p-10">
             <h1 className="text-3xl font-semibold text-center text-muted-foreground">
@@ -64,7 +64,7 @@ const AllQuestions = () => {
         </div>
       )}
 
-      {_.isEmpty(questions) && !isFetching && subjectId.length > 0 && (
+      {_.isEmpty(questions) && !isPending && subjectId.length > 0 && (
         <div className="mt-10 flex w-full">
           <h2 className="text-3xl font-semibold text-muted-foreground mx-auto">
             {`No questions found`}

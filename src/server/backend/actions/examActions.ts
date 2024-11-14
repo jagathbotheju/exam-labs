@@ -1,14 +1,20 @@
 "use server";
 import { AddExamSchema } from "@/lib/schema";
 import { db } from "@/server/db";
-import { examQuestions, questions, studentAnswers } from "@/server/db/schema";
+import {
+  examQuestions,
+  questions,
+  questionsMonthHistory,
+  questionsYearHistory,
+  studentAnswers,
+} from "@/server/db/schema";
 import { Exam, ExamExt, exams } from "@/server/db/schema/exams";
 import {
   StudentExam,
   StudentExamExt,
   studentExams,
 } from "@/server/db/schema/studentExams";
-import { and, eq } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import _ from "lodash";
 
@@ -136,35 +142,38 @@ export const deleteExamFromStudent = async ({
 
 //=======getExams=======================================================================================================
 export const getExams = async () => {
-  const exams = await db.query.exams.findMany({
+  const allExams = await db.query.exams.findMany({
     with: {
       // questions: true,
       examQuestions: true,
       subjects: true,
     },
+    orderBy: desc(exams.id),
   });
-  return exams as ExamExt[];
+  return allExams as ExamExt[];
 };
 
-//=======updateAnswerStudentExam=======================================================================================
-export const updateAnswerStudentExam = async ({
+//=======completeExam=======================================================================================
+export const completeExam = async ({
   examId,
+  subjectId,
   studentId,
   completedAt,
   marks,
   duration,
 }: {
   examId: string;
+  subjectId: string;
   studentId: string;
   completedAt: string;
   marks: number;
   duration: number;
 }) => {
   try {
-    console.log(examId, studentId);
-    console.log(marks, duration);
-    console.log(completedAt);
-    const updatedStudentExam = await db
+    // console.log(examId, studentId);
+    // console.log(marks, duration);
+    // console.log(completedAt);
+    const completedExam = await db
       .update(studentExams)
       .set({
         completedAt,
@@ -178,11 +187,72 @@ export const updateAnswerStudentExam = async ({
         )
       )
       .returning();
-    console.log("updating answers....", updateAnswerStudentExam);
-    // return { error: "Could not save Answer data" };
+
+    const date = new Date();
+    //update month history
+
+    const monthHistory = await db
+      .insert(questionsMonthHistory)
+      .values({
+        examId,
+        studentId,
+        subjectId,
+        marks,
+        day: date.getUTCDate(),
+        month: date.getUTCMonth(),
+        year: date.getUTCFullYear(),
+      })
+      .onConflictDoUpdate({
+        target: [
+          questionsMonthHistory.day,
+          questionsMonthHistory.month,
+          questionsMonthHistory.year,
+          questionsMonthHistory.subjectId,
+        ],
+        set: {
+          marks: sql`${questionsMonthHistory.marks}+marks`,
+        },
+      })
+      .returning();
+
+    // update year history
+    const yearHistory = await db
+      .insert(questionsYearHistory)
+      .values({
+        examId,
+        studentId,
+        subjectId,
+        marks,
+        month: date.getUTCMonth(),
+        year: date.getUTCFullYear(),
+      })
+      .onConflictDoUpdate({
+        target: [
+          questionsMonthHistory.month,
+          questionsMonthHistory.year,
+          questionsMonthHistory.subjectId,
+        ],
+        set: {
+          marks: sql`${questionsYearHistory.marks}+marks`,
+        },
+      })
+      .returning();
+
+    console.log("yearHistory", yearHistory);
+    console.log("monthHistory", monthHistory);
+
+    if (
+      !_.isEmpty(completedExam) &&
+      !_.isEmpty(yearHistory) &&
+      !_.isEmpty(monthHistory)
+    ) {
+      return { success: "Exam completed successfully" };
+    }
+
+    return { error: "Error completing Exam" };
   } catch (error) {
     console.log(error);
-    return { error: "Could not save Answer data" };
+    return { error: "Error completing Exam" };
   }
 };
 
@@ -203,6 +273,7 @@ export const getStudentExams = async (studentId: string) => {
         },
       },
     },
+    orderBy: [desc(studentExams.createdAt)],
   });
 
   return exams as StudentExamExt[];

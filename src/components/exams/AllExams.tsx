@@ -15,9 +15,9 @@ import { useRouter } from "next/navigation";
 
 const AllExams = () => {
   const router = useRouter();
-  const { data: exams, isFetching } = useExams();
+  const { data: exams, isPending } = useExams();
 
-  if (isFetching) {
+  if (isPending) {
     return (
       <div className="flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin" />
