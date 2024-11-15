@@ -188,9 +188,13 @@ export const completeExam = async ({
       )
       .returning();
 
+    console.log("examId", examId);
+    console.log("studentId", studentId);
+    console.log("subjectId", subjectId);
+    console.log("marks", marks);
+
     const date = new Date();
     //update month history
-
     const monthHistory = await db
       .insert(questionsMonthHistory)
       .values({

@@ -14,6 +14,15 @@ export const getQuestionTypes = async () => {
   return types as QuestionType[];
 };
 
+//======getQuestionTypeById==============================================================================================
+export const getQuestionTypeById = async (questionTypeId: string) => {
+  const types = await db
+    .select()
+    .from(questionTypes)
+    .where(eq(questionTypes.id, questionTypeId));
+  return types[0] as QuestionType;
+};
+
 //======deleteQuestionType==============================================================================================
 export const deleteQuestionType = async (questionTypeId: string) => {
   try {

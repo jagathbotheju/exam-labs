@@ -38,6 +38,12 @@ import {
 } from "../ui/table";
 import { cn } from "@/lib/utils";
 
+type QType = {
+  score: number;
+  questionTypeId: string;
+  questionType: string;
+};
+
 interface Props {
   examId: string;
   completed?: boolean;
@@ -71,45 +77,6 @@ const StudentExam = ({ examId, completed = false }: Props) => {
 
   // console.log("exam", exam);
   const examTimerMemo = useMemo(() => <ExamTimer />, [exam?.duration ?? 0]);
-
-  const questionTypes = studentAnswers?.reduce(
-    (acc, item) => {
-      if (item.questionTypeId) {
-        const exist = acc.find(
-          (accItem) => accItem.questionTypeId === item.questionTypeId
-        );
-        if (exist && item.questionAnswer === item.studentAnswer) {
-          // exist.score = exist.score + 1;
-          return [
-            {
-              score: exist.score + 1,
-              questionType: item.questionTypes.type,
-              questionTypeId: item.questionTypeId,
-            },
-            ...acc,
-          ];
-        }
-        return [
-          {
-            score: 0,
-            questionType: item.questionTypes.type,
-            questionTypeId: item.questionTypeId,
-          },
-          ...acc,
-        ];
-      }
-      return acc;
-    },
-    [
-      {
-        score: 0,
-        questionType: "",
-        questionTypeId: "",
-      },
-    ] as { score: number; questionTypeId: string; questionType: string }[]
-  );
-
-  console.log("questionTypes", questionTypes);
 
   const completeExam = () => {
     queryClient.invalidateQueries({ queryKey: ["student-answers"] });
@@ -192,6 +159,50 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     );
   }
 
+  const questionTypes = studentAnswers?.reduce((acc, item) => {
+    if (item.questionTypeId) {
+      const exist = acc.find(
+        (accItem) => accItem.questionTypeId === item.questionTypeId
+      );
+      if (exist) {
+        const filteredAcc = acc.filter(
+          (accItem) => accItem.questionTypeId !== exist?.questionTypeId
+        );
+
+        if (item.questionAnswer === item.studentAnswer) {
+          return [
+            {
+              ...exist,
+              score: exist.score + 1,
+            },
+            ...filteredAcc,
+          ];
+        } else {
+          return [
+            {
+              score: 0,
+              questionType: item.questionTypes.type,
+              questionTypeId: item.questionTypeId,
+            },
+            ...filteredAcc,
+          ];
+        }
+      } else {
+        return [
+          {
+            score: 1,
+            questionType: item.questionTypes.type,
+            questionTypeId: item.questionTypeId,
+          },
+          ...acc,
+        ];
+      }
+    }
+    return acc;
+  }, [] as { score: number; questionTypeId: string; questionType: string }[]);
+
+  // console.log("questionTypes", questionTypes);
+
   return (
     <div className="flex flex-col gap-8">
       {completed && (
@@ -211,24 +222,20 @@ const StudentExam = ({ examId, completed = false }: Props) => {
               </TableHeader>
               <TableBody>
                 {questionTypes &&
-                  questionTypes.map((item) => (
-                    <TableRow key={item.questionTypeId}>
+                  questionTypes.map((item, index) => (
+                    <TableRow key={item.questionTypeId + index}>
                       <TableCell className="font-sinhala text-xl">
                         {item.questionType}
                       </TableCell>
                       <TableCell
                         className={cn("text-xl font-semibold", {
                           "text-green-700":
-                            studentAnswers &&
-                            (item.score / studentAnswers?.length) * 100 > 70,
+                            (item.score / questionTypes.length) * 100 > 70,
                           "text-red-700":
-                            studentAnswers &&
-                            (item.score / studentAnswers?.length) * 100 < 40,
+                            (item.score / questionTypes.length) * 100 < 40,
                         })}
                       >
-                        {studentAnswers &&
-                          (item.score / studentAnswers?.length) * 100}
-                        %
+                        {(item.score / questionTypes.length) * 100}%
                       </TableCell>
                     </TableRow>
                   ))}
@@ -255,6 +262,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
           <CardContent className="gap-4 flex flex-col h-full">
             {exam && exam.examQuestions.length ? (
               exam.examQuestions.map((item, index) => {
+                // console.log("StudentExam", index, item.questions.typeId);
                 const studentAnswer = studentAnswers?.find(
                   (answer) => answer.questionId === item.questionId
                 );

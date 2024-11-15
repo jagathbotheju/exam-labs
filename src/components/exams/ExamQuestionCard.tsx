@@ -20,6 +20,12 @@ import { Label } from "../ui/label";
 import { StudentResponse } from "@/lib/types";
 import { StudentAnswer } from "@/server/db/schema/studentAnswers";
 import Image from "next/image";
+import {
+  useQuestionTypeById,
+  useQuestionTypes,
+} from "@/server/backend/queries/questionTypeQueries";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   question: Question;
@@ -40,13 +46,16 @@ const ExamQuestionCard = ({
   role = "student",
   completed = false,
 }: Props) => {
+  const { data: questionTypes } = useQuestionTypes();
   const { mutate: removeQuestionFromExam } = useRemoveQuestionFromExam();
 
   const isAnswerCorrect = answer
     ? answer.questionAnswer === answer.studentAnswer
     : false;
 
-  // console.log("answer", answer);
+  const questionType = questionTypes?.find(
+    (item) => item.id === question.typeId
+  )?.type;
 
   return (
     <Card className="dark:bg-transparent dark:border-primary/40">
@@ -211,21 +220,27 @@ const ExamQuestionCard = ({
             {/* answer correctness */}
             <div className="z-20 absolute bottom-10 right-[20%]">
               {isAnswerCorrect && completed && (
-                <Image
-                  src="/images/check-icon.png"
-                  alt="correct answer"
-                  width={60}
-                  height={60}
-                />
+                <div className="flex flex-col gap-2 items-center">
+                  <Image
+                    src="/images/check-icon.png"
+                    alt="correct answer"
+                    width={60}
+                    height={60}
+                  />
+                  <p className="font-sinhala">{questionType}</p>
+                </div>
               )}
 
               {!isAnswerCorrect && completed && (
-                <Image
-                  src="/images/cross-icon.png"
-                  alt="wrong answer"
-                  width={60}
-                  height={60}
-                />
+                <div className="flex flex-col gap-2 items-center">
+                  <Image
+                    src="/images/cross-icon.png"
+                    alt="wrong answer"
+                    width={60}
+                    height={60}
+                  />
+                  <p className="font-sinhala">{questionType}</p>
+                </div>
               )}
             </div>
           </div>
