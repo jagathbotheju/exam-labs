@@ -1,5 +1,5 @@
 {
-  "id": "76ddc34c-eca8-4be4-ac82-751396af086c",
+  "id": "0a560287-342c-48ea-854c-e175c4b61cfe",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -713,15 +713,7 @@
           ]
         }
       },
-      "uniqueConstraints": {
-        "student-answers_question_id_unique": {
-          "name": "student-answers_question_id_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "question_id"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "public.student_exams": {
       "name": "student_exams",

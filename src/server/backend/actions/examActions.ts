@@ -9,6 +9,7 @@ import {
   studentAnswers,
 } from "@/server/db/schema";
 import { Exam, ExamExt, exams } from "@/server/db/schema/exams";
+import { QuestionsMonthHistory } from "@/server/db/schema/questionsMonthHistory";
 import {
   StudentExam,
   StudentExamExt,
@@ -17,6 +18,7 @@ import {
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import _ from "lodash";
+import { QuestionsYearHistory } from "@/server/db/schema/questionsYearHistory";
 
 //==========addExam=====================================================================================================
 export const addExam = async ({
@@ -194,61 +196,103 @@ export const completeExam = async ({
     console.log("marks", marks);
 
     const date = new Date();
-    //update month history
-    const monthHistory = await db
-      .insert(questionsMonthHistory)
-      .values({
-        examId,
-        studentId,
-        subjectId,
-        marks,
-        day: date.getUTCDate(),
-        month: date.getUTCMonth(),
-        year: date.getUTCFullYear(),
-      })
-      .onConflictDoUpdate({
-        target: [
-          questionsMonthHistory.day,
-          questionsMonthHistory.month,
-          questionsMonthHistory.year,
-          questionsMonthHistory.subjectId,
-        ],
-        set: {
-          marks: sql`${questionsMonthHistory.marks}+marks`,
-        },
-      })
-      .returning();
+    const monthHistoryExist = await db
+      .select()
+      .from(questionsMonthHistory)
+      .where(
+        and(
+          eq(questionsMonthHistory.day, date.getUTCDate()),
+          eq(questionsMonthHistory.month, date.getUTCMonth()),
+          eq(questionsMonthHistory.year, date.getUTCFullYear()),
+          eq(questionsMonthHistory.subjectId, subjectId)
+        )
+      );
+    const yearHistoryExist = await db
+      .select()
+      .from(questionsYearHistory)
+      .where(
+        and(
+          eq(questionsYearHistory.month, date.getUTCMonth()),
+          eq(questionsYearHistory.year, date.getUTCFullYear()),
+          eq(questionsYearHistory.subjectId, subjectId)
+        )
+      );
+
+    console.log("exist", monthHistoryExist);
+
+    // update month history
+    let monthHistory = [] as QuestionsMonthHistory[];
+    if (!_.isEmpty(monthHistoryExist)) {
+      const existMarks = monthHistoryExist[0].marks ?? 0;
+      monthHistory = await db
+        .update(questionsMonthHistory)
+        .set({
+          marks: existMarks + marks,
+        })
+        .where(
+          and(
+            eq(questionsMonthHistory.day, date.getUTCDate()),
+            eq(questionsMonthHistory.month, date.getUTCMonth()),
+            eq(questionsMonthHistory.year, date.getUTCFullYear()),
+            eq(questionsMonthHistory.subjectId, subjectId)
+          )
+        )
+        .returning();
+    } else {
+      monthHistory = await db
+        .insert(questionsMonthHistory)
+        .values({
+          examId,
+          studentId,
+          subjectId,
+          marks,
+          day: date.getUTCDate(),
+          month: date.getUTCMonth(),
+          year: date.getUTCFullYear(),
+        })
+        .returning();
+    }
 
     // update year history
-    const yearHistory = await db
-      .insert(questionsYearHistory)
-      .values({
-        examId,
-        studentId,
-        subjectId,
-        marks,
-        month: date.getUTCMonth(),
-        year: date.getUTCFullYear(),
-      })
-      .onConflictDoUpdate({
-        target: [
-          questionsMonthHistory.month,
-          questionsMonthHistory.year,
-          questionsMonthHistory.subjectId,
-        ],
-        set: {
-          marks: sql`${questionsYearHistory.marks}+marks`,
-        },
-      })
-      .returning();
+    let yearHistory = [] as QuestionsYearHistory[];
+    if (!_.isEmpty(yearHistoryExist)) {
+      const existMarks = yearHistoryExist[0].marks ?? 0;
+      yearHistory = await db
+        .update(questionsYearHistory)
+        .set({
+          marks: existMarks + marks,
+        })
+        .where(
+          and(
+            eq(questionsYearHistory.month, date.getUTCMonth()),
+            eq(questionsYearHistory.year, date.getUTCFullYear()),
+            eq(questionsYearHistory.subjectId, subjectId)
+          )
+        )
+        .returning();
+    } else {
+      console.log("creating...");
+
+      yearHistory = await db
+        .insert(questionsYearHistory)
+        .values({
+          examId,
+          studentId,
+          subjectId,
+          marks,
+          month: date.getUTCMonth(),
+          year: date.getUTCFullYear(),
+        })
+        .returning();
+    }
 
     console.log("yearHistory", yearHistory);
     console.log("monthHistory", monthHistory);
 
     if (
       !_.isEmpty(completedExam) &&
-      !_.isEmpty(yearHistory) &&
-      !_.isEmpty(monthHistory)
+      !_.isEmpty(monthHistory) &&
+      !_.isEmpty(yearHistory)
     ) {
       return { success: "Exam completed successfully" };
     }

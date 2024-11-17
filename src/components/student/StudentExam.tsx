@@ -42,6 +42,7 @@ type QType = {
   score: number;
   questionTypeId: string;
   questionType: string;
+  correctTypeLength: number;
 };
 
 interface Props {
@@ -56,6 +57,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
   const startTime = new Date();
 
   const [studentResponse, setStudentResponse] = useState<StudentResponse[]>([]);
+  // const [questionType,setQuestionType]=useState<QType[]>([])
 
   //from search params
   const studentId = searchParams.get("studentId") ?? "";
@@ -66,7 +68,11 @@ const StudentExam = ({ examId, completed = false }: Props) => {
   const { mutate: cancelStudentExam } = useCancelStudentExam();
   const { mutate: completeExamMut } = useCompleteExam();
   const { data: exam, isPending: isPendingExam } = useExamById(examId);
-  const { data: studentExam, isPending: studentExamPending } = useStudentExam({
+  const {
+    data: studentExam,
+    isPending: studentExamPending,
+    isFetching: studentExamFetching,
+  } = useStudentExam({
     examId,
     studentId,
   });
@@ -76,7 +82,11 @@ const StudentExam = ({ examId, completed = false }: Props) => {
   });
 
   // console.log("exam", exam);
-  const examTimerMemo = useMemo(() => <ExamTimer />, [exam?.duration ?? 0]);
+  const examDuration = exam && exam.duration ? exam.duration : 0;
+  const examTimerMemo = useMemo(
+    () => <ExamTimer examDuration={examDuration} />,
+    [examDuration]
+  );
 
   const completeExam = () => {
     queryClient.invalidateQueries({ queryKey: ["student-answers"] });
@@ -113,15 +123,26 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     studentAnswer,
     questionAnswer,
   }: StudentResponse) => {
-    setStudentResponse([
-      ...studentResponse,
-      {
-        questionId,
-        questionTypeId,
-        studentAnswer,
-        questionAnswer,
-      },
-    ]);
+    const exist = studentResponse.find(
+      (item) => item.questionId === questionId
+    );
+    if (exist) {
+      _.forEach(studentResponse, (item) => {
+        if (item.questionId === exist.questionId) {
+          item.studentAnswer = studentAnswer;
+        }
+      });
+    } else {
+      setStudentResponse([
+        ...studentResponse,
+        {
+          questionId,
+          questionTypeId,
+          studentAnswer,
+          questionAnswer,
+        },
+      ]);
+    }
 
     answerQuestion({
       examId,
@@ -159,49 +180,53 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     );
   }
 
-  const questionTypes = studentAnswers?.reduce((acc, item) => {
-    if (item.questionTypeId) {
-      const exist = acc.find(
-        (accItem) => accItem.questionTypeId === item.questionTypeId
+  const questionTypes = [] as QType[];
+  studentAnswers?.forEach((answer) => {
+    if (answer.questionAnswer === answer.studentAnswer) {
+      const exist = questionTypes.find(
+        (item) => item.questionTypeId === answer.questionTypeId
       );
       if (exist) {
-        const filteredAcc = acc.filter(
-          (accItem) => accItem.questionTypeId !== exist?.questionTypeId
-        );
-
-        if (item.questionAnswer === item.studentAnswer) {
-          return [
-            {
-              ...exist,
-              score: exist.score + 1,
-            },
-            ...filteredAcc,
-          ];
-        } else {
-          return [
-            {
-              score: 0,
-              questionType: item.questionTypes.type,
-              questionTypeId: item.questionTypeId,
-            },
-            ...filteredAcc,
-          ];
-        }
+        _.forEach(questionTypes, (type) => {
+          if (type.questionTypeId === answer.questionTypeId) {
+            type.score += 1;
+            type.correctTypeLength += 1;
+          }
+        });
       } else {
-        return [
-          {
-            score: 1,
-            questionType: item.questionTypes.type,
-            questionTypeId: item.questionTypeId,
-          },
-          ...acc,
-        ];
+        questionTypes.push({
+          score: 1,
+          correctTypeLength: 1,
+          questionType: answer.questionTypes.type,
+          questionTypeId: answer.questionTypeId ?? "",
+        });
       }
     }
-    return acc;
-  }, [] as { score: number; questionTypeId: string; questionType: string }[]);
 
-  // console.log("questionTypes", questionTypes);
+    if (answer.questionAnswer !== answer.studentAnswer) {
+      const exist = questionTypes.find(
+        (item) => item.questionTypeId === answer.questionTypeId
+      );
+      if (exist) {
+        _.forEach(questionTypes, (type) => {
+          if (type.questionTypeId === answer.questionTypeId) {
+            // type.score += 1;
+            type.correctTypeLength += 1;
+          }
+        });
+      } else {
+        questionTypes.push({
+          score: 0,
+          correctTypeLength: 1,
+          questionType: answer.questionTypes.type,
+          questionTypeId: answer.questionTypeId ?? "",
+        });
+      }
+    }
+  });
+
+  console.log("questionTypes", questionTypes);
+  // console.log("score", Math.round((3 / 5) * 100));
 
   return (
     <div className="flex flex-col gap-8">
@@ -222,23 +247,33 @@ const StudentExam = ({ examId, completed = false }: Props) => {
               </TableHeader>
               <TableBody>
                 {questionTypes &&
-                  questionTypes.map((item, index) => (
-                    <TableRow key={item.questionTypeId + index}>
-                      <TableCell className="font-sinhala text-xl">
-                        {item.questionType}
-                      </TableCell>
-                      <TableCell
-                        className={cn("text-xl font-semibold", {
-                          "text-green-700":
-                            (item.score / questionTypes.length) * 100 > 70,
-                          "text-red-700":
-                            (item.score / questionTypes.length) * 100 < 40,
-                        })}
-                      >
-                        {(item.score / questionTypes.length) * 100}%
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  studentAnswers &&
+                  questionTypes.map((item, index) => {
+                    const score = (
+                      (item.score / item.correctTypeLength) *
+                      100
+                    ).toFixed();
+                    return (
+                      <TableRow key={item.questionTypeId + index}>
+                        <TableCell className="font-sinhala text-xl">
+                          {item.questionType}
+                        </TableCell>
+                        <TableCell
+                          className={cn("text-xl font-semibold", {
+                            "text-green-700": +score > 70,
+                            "text-yellow-500": +score < 70,
+                            "text-red-700": +score < 40,
+                          })}
+                        >
+                          {(
+                            (item.score / item.correctTypeLength) *
+                            100
+                          ).toFixed()}
+                          %
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </CardContent>
@@ -326,7 +361,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
         </Card>
 
         {/* result */}
-        {studentExamPending ? (
+        {studentExamFetching ? (
           <Loader2 className="w-6 h-6 animate-spin" />
         ) : (
           <div className="top-8 right-8 absolute">

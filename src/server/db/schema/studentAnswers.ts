@@ -18,9 +18,7 @@ export const studentAnswers = pgTable(
   {
     studentId: text("student_id").references(() => students.id),
     examId: text("exam_id").references(() => exams.id),
-    questionId: text("question_id")
-      .unique()
-      .references(() => questions.id),
+    questionId: text("question_id").references(() => questions.id),
     questionTypeId: text("question_type_id").references(() => questionTypes.id),
     questionAnswer: text("question_answer"),
     studentAnswer: text("student_answer"),

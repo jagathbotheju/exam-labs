@@ -9,7 +9,7 @@ interface Props {
   examDuration: number;
 }
 
-const ExamTimer = () => {
+const ExamTimer = ({ examDuration }: Props) => {
   const [bgColor, setBgColor] = useState("#000000");
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const ExamTimer = () => {
   return (
     <div className="flex justify-center items-center text-5xl dark:bg-slate-700 p-2 rounded-md fixed z-50 right-[15%]">
       <FlipClockCountdown
-        to={addMinutes(new Date().getTime(), 60)}
+        to={addMinutes(new Date().getTime(), examDuration)}
         renderMap={[false, true, true, true]}
         hideOnComplete={false}
         digitBlockStyle={{

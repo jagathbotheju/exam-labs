@@ -38,19 +38,19 @@ export const questionsYearHistory = pgTable(
   }
 );
 
-export const questionsYearHistoryRelations = relations(
-  questionsYearHistory,
-  ({ many }) => ({
-    subjects: many(subjects),
-  })
-);
+// export const questionsYearHistoryRelations = relations(
+//   questionsYearHistory,
+//   ({ many }) => ({
+//     subjects: many(subjects),
+//   })
+// );
 
 export type QuestionsYearHistory = InferSelectModel<
   typeof questionsYearHistory
 >;
 
-export type QuestionsYearHistoryExt = InferSelectModel<
-  typeof questionsYearHistory
-> & {
-  subjects: Subject[];
-};
+// export type QuestionsYearHistoryExt = InferSelectModel<
+//   typeof questionsYearHistory
+// > & {
+//   subjects: Subject[];
+// };

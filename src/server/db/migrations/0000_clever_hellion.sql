@@ -85,8 +85,7 @@ CREATE TABLE IF NOT EXISTS "student-answers" (
 	"question_answer" text,
 	"student_answer" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "student-answers_exam_id_student_id_question_id_pk" PRIMARY KEY("exam_id","student_id","question_id"),
-	CONSTRAINT "student-answers_question_id_unique" UNIQUE("question_id")
+	CONSTRAINT "student-answers_exam_id_student_id_question_id_pk" PRIMARY KEY("exam_id","student_id","question_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "student_exams" (

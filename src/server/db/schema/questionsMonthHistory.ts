@@ -42,18 +42,18 @@ export const questionsMonthHistory = pgTable(
   }
 );
 
-export const questionsMonthHistoryRelations = relations(
-  questionsMonthHistory,
-  ({ many }) => ({
-    subjects: many(subjects),
-  })
-);
+// export const questionsMonthHistoryRelations = relations(
+//   questionsMonthHistory,
+//   ({ many }) => ({
+//     subjects: many(subjects),
+//   })
+// );
 
 export type QuestionsMonthHistory = InferSelectModel<
   typeof questionsMonthHistory
 >;
-export type QuestionsMonthHistoryExt = InferSelectModel<
-  typeof questionsMonthHistory
-> & {
-  subjects: Subject[];
-};
+// export type QuestionsMonthHistoryExt = InferSelectModel<
+//   typeof questionsMonthHistory
+// > & {
+//   subjects: Subject[];
+// };

@@ -13,14 +13,8 @@ export {
   examQuestionsRelations,
 } from "@/server/db/schema/examQuestions";
 export { students, studentRelations } from "@/server/db/schema/students";
-export {
-  questionsMonthHistory,
-  questionsMonthHistoryRelations,
-} from "@/server/db/schema/questionsMonthHistory";
-export {
-  questionsYearHistory,
-  questionsYearHistoryRelations,
-} from "@/server/db/schema/questionsYearHistory";
+export { questionsMonthHistory } from "@/server/db/schema/questionsMonthHistory";
+export { questionsYearHistory } from "@/server/db/schema/questionsYearHistory";
 export {
   studentAnswers,
   studentAnswerRelations,
