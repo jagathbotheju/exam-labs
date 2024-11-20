@@ -83,7 +83,7 @@ const MyExams = ({ student, role = "student" }: Props) => {
                     {item.exams.name}
                   </TableCell>
                   {/* subject */}
-                  <TableCell className="uppercase">
+                  <TableCell className="uppercase text-primary font-semibold">
                     {item.exams.subjects.title}
                   </TableCell>
                   {/* number of questions */}

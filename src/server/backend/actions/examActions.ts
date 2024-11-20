@@ -134,7 +134,32 @@ export const deleteExamFromStudent = async ({
       )
       .returning();
 
-    if (deletedExam && deletedStudentAnswers)
+    const deletedYearHistory = await db
+      .delete(questionsYearHistory)
+      .where(
+        and(
+          eq(questionsYearHistory.examId, examId),
+          eq(questionsYearHistory.studentId, studentId)
+        )
+      )
+      .returning();
+
+    const deletedMonthHistory = await db
+      .delete(questionsMonthHistory)
+      .where(
+        and(
+          eq(questionsMonthHistory.examId, examId),
+          eq(questionsMonthHistory.studentId, studentId)
+        )
+      )
+      .returning();
+
+    if (
+      deletedExam &&
+      deletedStudentAnswers &&
+      deletedYearHistory &&
+      deletedMonthHistory
+    )
       return { success: "Exam deleted successfully" };
     return { error: "Exam could not be deleted" };
   } catch (error) {
@@ -172,9 +197,6 @@ export const completeExam = async ({
   duration: number;
 }) => {
   try {
-    // console.log(examId, studentId);
-    // console.log(marks, duration);
-    // console.log(completedAt);
     const completedExam = await db
       .update(studentExams)
       .set({
@@ -190,11 +212,6 @@ export const completeExam = async ({
       )
       .returning();
 
-    console.log("examId", examId);
-    console.log("studentId", studentId);
-    console.log("subjectId", subjectId);
-    console.log("marks", marks);
-
     const date = new Date();
     const monthHistoryExist = await db
       .select()
@@ -204,7 +221,8 @@ export const completeExam = async ({
           eq(questionsMonthHistory.day, date.getUTCDate()),
           eq(questionsMonthHistory.month, date.getUTCMonth()),
           eq(questionsMonthHistory.year, date.getUTCFullYear()),
-          eq(questionsMonthHistory.subjectId, subjectId)
+          eq(questionsMonthHistory.subjectId, subjectId),
+          eq(questionsMonthHistory.studentId, studentId)
         )
       );
     const yearHistoryExist = await db
@@ -214,11 +232,10 @@ export const completeExam = async ({
         and(
           eq(questionsYearHistory.month, date.getUTCMonth()),
           eq(questionsYearHistory.year, date.getUTCFullYear()),
-          eq(questionsYearHistory.subjectId, subjectId)
+          eq(questionsYearHistory.subjectId, subjectId),
+          eq(questionsYearHistory.studentId, studentId)
         )
       );
-
-    console.log("exist", monthHistoryExist);
 
     // update month history
     let monthHistory = [] as QuestionsMonthHistory[];
@@ -227,7 +244,7 @@ export const completeExam = async ({
       monthHistory = await db
         .update(questionsMonthHistory)
         .set({
-          marks: existMarks + marks,
+          marks: existMarks < marks ? marks : existMarks,
         })
         .where(
           and(
@@ -260,13 +277,14 @@ export const completeExam = async ({
       yearHistory = await db
         .update(questionsYearHistory)
         .set({
-          marks: existMarks + marks,
+          marks: existMarks < marks ? marks : existMarks,
         })
         .where(
           and(
             eq(questionsYearHistory.month, date.getUTCMonth()),
             eq(questionsYearHistory.year, date.getUTCFullYear()),
-            eq(questionsYearHistory.subjectId, subjectId)
+            eq(questionsYearHistory.subjectId, subjectId),
+            eq(questionsYearHistory.studentId, studentId)
           )
         )
         .returning();

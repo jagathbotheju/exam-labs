@@ -26,3 +26,13 @@ export const useExamTimer = () => {
 
   return { seconds, minutes };
 };
+
+export const formatPrice = (amount: number, code: string) => {
+  if (!code) return "0";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: code,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+};

@@ -225,7 +225,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     }
   });
 
-  console.log("questionTypes", questionTypes);
+  // console.log("questionTypes", questionTypes);
   // console.log("score", Math.round((3 / 5) * 100));
 
   return (

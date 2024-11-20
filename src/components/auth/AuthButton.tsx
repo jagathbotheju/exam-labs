@@ -69,15 +69,6 @@ const AuthButton = ({ student }: Props) => {
                 </span>
               </div>
 
-              {/* orders */}
-              <DropdownMenuItem
-                onClick={() => router.push("/dashboard/orders")}
-                className="font-medium transition-all duration-500 cursor-pointer group ease-in-out"
-              >
-                <TruckIcon className="mr-2 w-4 group-hover:translate-x-1 transition-all duration-300 ease-in-out" />
-                <span className="">My Orders</span>
-              </DropdownMenuItem>
-
               {/* profiles */}
               <DropdownMenuItem
                 onClick={() => router.push("/student/profile")}

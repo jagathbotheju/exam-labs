@@ -43,7 +43,7 @@ const SubjectSelector = ({ setSubject, subjectId }: Props) => {
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              className="w-[200px] justify-between"
+              className="w-[200px] justify-between dark:bg-transparent"
             >
               {value
                 ? subjects.find((subject) => subject.id === value)?.title

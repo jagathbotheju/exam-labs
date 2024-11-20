@@ -22,7 +22,10 @@ import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import Image from "next/image";
 import FormError from "../FormError";
 import FormSuccess from "../FormSuccess";
-import { emailSignIn } from "@/server/backend/actions/authActions";
+import {
+  emailSignIn,
+  socialSignIn,
+} from "@/server/backend/actions/authActions";
 
 interface Props {
   callbackUrl?: string;
@@ -137,7 +140,7 @@ const LoginForm = ({ callbackUrl }: Props) => {
                 className="w-full"
                 disabled={!form.formState.isValid}
               >
-                {isPending && <Loader2 className="mr-2" />}
+                {isPending && <Loader2 className="mr-2 animate-spin" />}
                 Log In
               </Button>
             </form>
@@ -165,9 +168,9 @@ const LoginForm = ({ callbackUrl }: Props) => {
             type="button"
             className="w-full mb-3"
             variant="secondary"
-            // onClick={() =>
-            //   socialSignIn({ social: "google", callback: callbackUrl ?? "/" })
-            // }
+            onClick={() =>
+              socialSignIn({ social: "google", callback: callbackUrl ?? "/" })
+            }
           >
             <div className="relative mr-2">
               <Image

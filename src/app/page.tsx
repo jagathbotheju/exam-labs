@@ -14,7 +14,7 @@ export default async function Home() {
   return (
     <div className="w-full">
       <div className="flex flex-col gap-8">
-        <ResultSummary />
+        <ResultSummary student={student} />
         <MyExams student={student} />
       </div>
     </div>

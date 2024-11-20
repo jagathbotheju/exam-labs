@@ -33,7 +33,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 // import { Calendar } from "../ui/calendar";
 import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
+// import "react-calendar/dist/Calendar.css";
 import { grades } from "@/lib/constants";
 import {
   Command,
@@ -53,8 +53,9 @@ type Value = ValuePiece | [ValuePiece, ValuePiece];
 const RegisterForm = () => {
   const router = useRouter();
   const [showPass, setShowPass] = useState(false);
-  const [value, onChange] = useState<Value>(new Date());
+  // const [value, onChange] = useState<Value>(new Date());
   const [openGrade, setOpenGrade] = useState(false);
+  const [openCalendar, setOpenCalendar] = useState(false);
   const {
     mutate: registerUser,
     isPending,
@@ -76,22 +77,18 @@ const RegisterForm = () => {
     mode: "all",
   });
 
-  // const [error, setError] = useState("");
-  // const [success, setSuccess] = useState("");
-  // const { isExecuting, execute } = useAction(registerUser, {
-  //   onSuccess: ({ data }) => {
-  //     if (data?.error) setError(data.error);
-  //     if (data?.success) setSuccess(data.success);
-  //   },
-  // });
-
   const onSubmit = (formData: z.infer<typeof RegisterSchema>) => {
     console.log(formData);
     registerUser({ formData });
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-5 w-full justify-center items-center">
+      {isSuccess && (
+        <FormSuccess message="We sent a confirmation Email, please check your Email" />
+      )}
+      {isError && <FormError message={error.message} />}
+
       <Card className="w-full md:w-[500px]">
         <CardHeader>
           <h1 className="mb-4 text-center bg-gradient-to-r from-orange-400 to-red-900 bg-clip-text text-3xl font-bold text-transparent">
@@ -152,7 +149,10 @@ const RegisterForm = () => {
                   render={({ field }) => (
                     <FormItem className="flex flex-col w-full">
                       <FormLabel>Date of birth</FormLabel>
-                      <Popover>
+                      <Popover
+                        open={openCalendar}
+                        onOpenChange={setOpenCalendar}
+                      >
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
@@ -173,8 +173,12 @@ const RegisterForm = () => {
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
+                            className="react-calendar"
                             value={field.value}
-                            onChange={field.onChange}
+                            onChange={(val) => {
+                              field.onChange(val);
+                              setOpenCalendar(false);
+                            }}
                             // disabled={(date) =>
                             //   date > new Date() || date < new Date("1900-01-01")
                             // }
@@ -329,7 +333,7 @@ const RegisterForm = () => {
                   disabled={!form.formState.isValid}
                   className="w-full"
                 >
-                  {isPending && <Loader2 />} Register
+                  {isPending && <Loader2 className="animate-spin" />} Register
                 </Button>
 
                 <Link
@@ -343,12 +347,7 @@ const RegisterForm = () => {
           </Form>
         </CardContent>
       </Card>
-
-      {isSuccess && (
-        <FormSuccess message="We sent a confirmation Email, please check your Email" />
-      )}
-      {isError && <FormError message={error.message} />}
-    </>
+    </div>
   );
 };
 

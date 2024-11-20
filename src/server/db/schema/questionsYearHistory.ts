@@ -33,7 +33,9 @@ export const questionsYearHistory = pgTable(
   },
   (table) => {
     return {
-      pk: primaryKey({ columns: [table.month, table.year, table.subjectId] }),
+      pk: primaryKey({
+        columns: [table.month, table.year, table.subjectId, table.studentId],
+      }),
     };
   }
 );

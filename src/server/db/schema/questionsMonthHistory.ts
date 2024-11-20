@@ -36,7 +36,13 @@ export const questionsMonthHistory = pgTable(
   (table) => {
     return {
       pk: primaryKey({
-        columns: [table.day, table.month, table.year, table.subjectId],
+        columns: [
+          table.day,
+          table.month,
+          table.year,
+          table.subjectId,
+          table.studentId,
+        ],
       }),
     };
   }
