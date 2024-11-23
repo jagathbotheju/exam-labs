@@ -29,6 +29,7 @@ const protest = Protest_Revolution({
   display: "swap",
   weight: ["400"],
   variable: "--font-protest",
+  adjustFontFallback: false,
 });
 
 const marks = Mynerve({
