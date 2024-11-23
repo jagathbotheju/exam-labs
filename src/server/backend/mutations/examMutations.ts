@@ -37,12 +37,12 @@ export const useCompleteExam = () => {
         marks,
         duration,
       }),
-    onSuccess: (res) => {
-      console.log(res);
-    },
-    onError: (res) => {
-      console.log(res);
-    },
+    // onSuccess: (res) => {
+    //   console.log(res);
+    // },
+    // onError: (res) => {
+    //   console.log(res);
+    // },
   });
 };
 
@@ -56,7 +56,6 @@ export const useCancelStudentExam = () => {
       studentId: string;
     }) => cancelStudentExam({ examId, studentId }),
     onSuccess: (res) => {
-      console.log(res);
       if (res.success) {
         // queryClient.invalidateQueries({ queryKey: ["questions-by-subject"] });
         toast.success(res.success);
@@ -66,7 +65,6 @@ export const useCancelStudentExam = () => {
       }
     },
     onError: (res) => {
-      console.log(res);
       toast.error("Exam could not be assign to Student");
     },
   });
@@ -85,7 +83,6 @@ export const useAddExamToStudent = () => {
       studentId: string;
     }) => addExamToStudent({ examId, studentId }),
     onSuccess: (res) => {
-      console.log(res);
       if (res.success) {
         // queryClient.invalidateQueries({ queryKey: ["questions-by-subject"] });
         router.back();
@@ -96,7 +93,6 @@ export const useAddExamToStudent = () => {
       }
     },
     onError: (res) => {
-      console.log(res);
       toast.error("Exam could not be assign to Student");
     },
   });
@@ -114,7 +110,6 @@ export const useDeleteExamFromStudent = () => {
       studentId: string;
     }) => deleteExamFromStudent({ examId, studentId }),
     onSuccess: (res) => {
-      console.log(res);
       if (res.success) {
         toast.success(res.success);
         queryClient.invalidateQueries({ queryKey: ["student-exams"] });
@@ -124,7 +119,6 @@ export const useDeleteExamFromStudent = () => {
       }
     },
     onError: (res) => {
-      console.log(res);
       toast.error("Exam could not be assign to Student");
     },
   });
@@ -163,7 +157,6 @@ export const useDeleteExam = () => {
       }
     },
     onError: (res) => {
-      console.log(res);
       toast.error("Could not delete Exam MUTATE");
     },
   });

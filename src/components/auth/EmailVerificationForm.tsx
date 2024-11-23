@@ -20,7 +20,6 @@ const EmailVerificationForm = ({ token }: Props) => {
     if (success || error) return;
 
     verifyEmailToken(token).then((data) => {
-      console.log("response", data);
       if (data.error) {
         setError(data.error);
       }

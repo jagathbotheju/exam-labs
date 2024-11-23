@@ -78,7 +78,6 @@ const RegisterForm = () => {
   });
 
   const onSubmit = (formData: z.infer<typeof RegisterSchema>) => {
-    console.log(formData);
     registerUser({ formData });
   };
 

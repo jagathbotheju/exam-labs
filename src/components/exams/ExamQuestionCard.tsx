@@ -82,9 +82,9 @@ const ExamQuestionCard = ({
               >
                 <div className="flex flex-col gap-2 p-3">
                   {/* question body */}
-                  <p className="tracking-wide font-sinhala text-xl">
+                  <div className="tracking-wide font-sinhala text-xl">
                     {parse(question.body)}
-                  </p>
+                  </div>
 
                   {/* option-1 */}
                   <div className="flex items-center space-x-2 relative">

@@ -54,12 +54,8 @@ const ResultSummary = ({ student }: Props) => {
       year: period.year,
     });
 
-  // console.log("monthHistoryData", _.isEmpty(monthHistoryData));
-  // console.log("year history", yearHistoryData);
-
   useEffect(() => {
     if (subjectId) {
-      console.log("updating subjectId");
       queryClient.invalidateQueries({ queryKey: ["month-history-data"] });
       queryClient.invalidateQueries({ queryKey: ["year-history-data"] });
     }

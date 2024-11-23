@@ -100,21 +100,17 @@ export const getYearHistoryData = async ({
 };
 
 export const getHistoryYears = async (subjectId: string) => {
-  try {
-    const result = (await db
-      .selectDistinctOn([questionsMonthHistory.year])
-      .from(questionsMonthHistory)
-      .orderBy(asc(questionsMonthHistory.year))) as QuestionsMonthHistory[];
+  const result = (await db
+    .selectDistinctOn([questionsMonthHistory.year])
+    .from(questionsMonthHistory)
+    .orderBy(asc(questionsMonthHistory.year))) as QuestionsMonthHistory[];
 
-    if (result) {
-      let years = result.map((item) => item.year);
-      if (years.length === 0) {
-        years = [new Date().getFullYear()];
-      }
-      return years;
+  if (result) {
+    let years = result.map((item) => item.year);
+    if (years.length === 0) {
+      years = [new Date().getFullYear()];
     }
-    return [];
-  } catch (error) {
-    console.log(error);
+    return years;
   }
+  return [];
 };

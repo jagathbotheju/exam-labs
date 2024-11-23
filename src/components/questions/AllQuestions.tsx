@@ -76,9 +76,6 @@ const AllQuestions = () => {
     }
   }, [subjectId, questionType, queryClient, page]);
 
-  // console.log("pages", questionsCount && Math.ceil(questionsCount.count / 10));
-  // console.log("questionType", questionType);
-
   return (
     <div className="flex flex-col w-full">
       <div className="flex justify-between">

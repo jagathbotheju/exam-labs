@@ -52,7 +52,6 @@ const LoginForm = ({ callbackUrl }: Props) => {
       // execute(formData);
       emailSignIn(formData)
         .then((res) => {
-          console.log("login res", res);
           if (res.success) {
             router.push("/");
             return toast.success(res.success);

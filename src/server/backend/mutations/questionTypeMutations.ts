@@ -33,7 +33,6 @@ export const useDeleteQuestionType = () => {
   return useMutation({
     mutationFn: (questionTypeId: string) => deleteQuestionType(questionTypeId),
     onSuccess: async (res) => {
-      console.log("res", res);
       if (res.success) {
         toast.success(res.success);
         await queryClient.invalidateQueries({ queryKey: ["question-types"] });
@@ -43,7 +42,6 @@ export const useDeleteQuestionType = () => {
       }
     },
     onError: (res) => {
-      console.log(res);
       const err = res.message;
       toast.error(err);
     },

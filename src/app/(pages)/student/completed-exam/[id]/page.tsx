@@ -17,7 +17,6 @@ const StudentCompletedExamPage = async ({ params, searchParams }: Props) => {
   const student = session?.user as User;
   if (!student) redirect("/auth/login");
   if (student.role !== searchParams.role) redirect("/not-authorized");
-  // console.log("studentId", searchParams.studentId);
 
   return (
     <div className="w-full">

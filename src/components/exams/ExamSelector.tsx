@@ -30,8 +30,6 @@ const ExamSelector = ({ setExam, subjectId }: Props) => {
   // const { data: exams, isPending } = useExams();
   const { data: examsBySubject, isPending } = useExamsBySubject(subjectId);
 
-  // console.log("examsBySubject", examsBySubject);
-
   if (isPending) {
     return <Loader2 className="animate-spin" />;
   }

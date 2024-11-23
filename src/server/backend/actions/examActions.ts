@@ -55,7 +55,6 @@ export const addExamToStudent = async ({
   examId: string;
 }) => {
   try {
-    console.log("adding exam to student");
     const examExist = await db
       .select()
       .from(studentExams)
@@ -79,7 +78,6 @@ export const addExamToStudent = async ({
     }
     return { error: "Could not assign Exam to Student" };
   } catch (error) {
-    console.log(error);
     return { error: "Could not assign Exam to Student" };
   }
 };
@@ -289,8 +287,6 @@ export const completeExam = async ({
         )
         .returning();
     } else {
-      console.log("creating...");
-
       yearHistory = await db
         .insert(questionsYearHistory)
         .values({
@@ -304,9 +300,6 @@ export const completeExam = async ({
         .returning();
     }
 
-    console.log("yearHistory", yearHistory);
-    console.log("monthHistory", monthHistory);
-
     if (
       !_.isEmpty(completedExam) &&
       !_.isEmpty(monthHistory) &&
@@ -317,7 +310,6 @@ export const completeExam = async ({
 
     return { error: "Error completing Exam" };
   } catch (error) {
-    console.log(error);
     return { error: "Error completing Exam" };
   }
 };
@@ -418,7 +410,6 @@ export const deleteExam = async (examId: string) => {
       return { success: "Exam deleted successfully" };
     return { error: "Could not delete Exam" };
   } catch (error) {
-    console.log(error);
     return { error: "Could not delete Exam" };
   }
 };

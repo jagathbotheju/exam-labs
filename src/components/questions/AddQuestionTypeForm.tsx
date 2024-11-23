@@ -34,7 +34,6 @@ const AddQuestionTypeForm = () => {
   });
 
   const onSubmit = (formData: z.infer<typeof AddQuestionTypeSchema>) => {
-    console.log(formData);
     addQuestionType(formData);
     form.reset();
   };

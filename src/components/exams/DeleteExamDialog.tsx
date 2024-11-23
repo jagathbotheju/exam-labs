@@ -21,7 +21,6 @@ interface Props {
 const DeleteExamDialog = ({ trigger, examTitle, examId }: Props) => {
   const { mutate } = useDeleteExam();
   const [open, setOpen] = useState(false);
-  // console.log("examId delete exam", examId);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -53,9 +53,10 @@ export const useAddQuestionToExam = () => {
       questionNumber: number;
     }) => addQuestionToExam({ examId, questionId, questionNumber }),
     onSuccess: (res) => {
-      console.log(res);
       if (res.success) {
-        queryClient.invalidateQueries({ queryKey: ["questions-by-subject"] });
+        queryClient.invalidateQueries({
+          queryKey: ["questions-by-subject-pagination"],
+        });
         queryClient.invalidateQueries({ queryKey: ["exams"] });
         toast.success(res.success);
       }
@@ -64,7 +65,6 @@ export const useAddQuestionToExam = () => {
       }
     },
     onError: (res) => {
-      console.log(res);
       toast.error("Question could not be add to the Exam");
     },
   });
@@ -96,7 +96,6 @@ export const useRemoveQuestionFromExam = () => {
       }
     },
     onError: (res) => {
-      console.log(res);
       toast.error("Question could not be deleted from the Exam");
     },
   });

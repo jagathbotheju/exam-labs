@@ -81,7 +81,9 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
       <CardContent className="p-0">
         <div className="flex flex-col hover:drop-shadow-xl p-2">
           {questionType && (
-            <Badge className="w-fit font-sinhala">{questionType}</Badge>
+            <Badge variant="secondary" className="w-fit font-sinhala">
+              {questionType}
+            </Badge>
           )}
           <div className="flex justify-between h-full">
             <div className="flex gap-2 items-center h-full w-full">
@@ -99,9 +101,14 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
                     questionExams.length > 0 &&
                     questionExams.map((item, index) => (
                       <div className="relative" key={index}>
-                        <Badge className="w-fit uppercase">{item.name}</Badge>
+                        <Badge
+                          variant="outline"
+                          className="w-fit uppercase border-primary"
+                        >
+                          {item.name}
+                        </Badge>
                         <CircleX
-                          className="w-4 h-4 absolute -top-2 -right-2 text-white font-bold bg-red-500 rounded-full cursor-pointer"
+                          className="w-4 h-4 absolute -top-2 -right-2 text-white font-bold hover:bg-red-500 rounded-full cursor-pointer"
                           onClick={() =>
                             removeQuestionFromExam({
                               questionId: question.id,

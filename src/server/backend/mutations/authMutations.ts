@@ -12,9 +12,6 @@ export const useRegisterUser = () => {
       if (res.success) {
         toast.success(res.success);
       }
-      if (res.error) {
-        toast.error(res.error);
-      }
     },
     onError: (res) => {
       const err = res.message;

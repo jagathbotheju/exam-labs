@@ -64,7 +64,6 @@ const Profile = ({ student }: Props) => {
         formData.image = uploadedImages[0].url;
       }
       updateProfile({ formData, studentId: student.id });
-      console.log("db error", error);
     });
   };
 

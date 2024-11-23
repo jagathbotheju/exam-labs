@@ -32,7 +32,6 @@ const AddSubjectForm = () => {
   });
 
   const onSubmit = (formData: z.infer<typeof AddSubjectSchema>) => {
-    console.log(formData);
     const subjectFound = subjects?.find(
       (subject) => subject.title === formData.title
     );

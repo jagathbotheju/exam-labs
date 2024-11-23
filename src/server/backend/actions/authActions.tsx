@@ -40,7 +40,6 @@ export const socialSignIn = async ({
 
 /***************EMAIL SIGN IN ***********************************************/
 export const emailSignIn = async (formData: z.infer<typeof LoginSchema>) => {
-  console.log("login with email******");
   try {
     const valid = LoginSchema.safeParse(formData);
     if (!valid.success) return { error: "Insufficient data for Login" };
@@ -88,7 +87,7 @@ export const registerUser = async ({
   formData: z.infer<typeof RegisterSchema>;
 }) => {
   const valid = RegisterSchema.safeParse(formData);
-  if (!valid.success) return { error: "Invalid data, please try again" };
+  if (!valid.success) throw new Error("Invalid data, please try again");
   const { email, password, name, dob, school, grade } = valid.data;
 
   const userExist = await db.query.users.findFirst({
@@ -96,20 +95,14 @@ export const registerUser = async ({
   });
 
   if (userExist && userExist.emailVerified !== null) {
-    return {
-      error: "Email already in use, please use different email address",
-    };
+    throw new Error("Email already in use, please use different email address");
   }
 
   if (userExist && !userExist.emailVerified) {
     const verificationToken = await generateEmailVerificationToken(email);
     const confirmLink = `${domain}/auth/email-verification/?token=${verificationToken[0].token}`;
     const emailHtml = await render(<VerifyEmailTemp url={confirmLink} />);
-    // await sendVerificationEmail({
-    //   email: verificationToken[0].email,
-    //   token: verificationToken[0].token,
-    //   name,
-    // });
+
     await sendMail({
       to: verificationToken[0].email,
       subject: "Email address verification",
@@ -117,12 +110,6 @@ export const registerUser = async ({
     });
     return { success: "Confirmation Email sent" };
   }
-
-  // if (userExist) {
-  //   return {
-  //     error: "Email already in use, please use different email address",
-  //   };
-  // }
 
   const hashedPassword = await bcrypt.hash(password, 10);
   await db.insert(users).values({
@@ -137,11 +124,7 @@ export const registerUser = async ({
   const verificationToken = await generateEmailVerificationToken(email);
   const confirmLink = `${domain}/auth/email-verification/?token=${verificationToken[0].token}`;
   const emailHtml = await render(<VerifyEmailTemp url={confirmLink} />);
-  // await sendVerificationEmail({
-  //   email: verificationToken[0].email,
-  //   token: verificationToken[0].token,
-  //   name,
-  // });
+
   await sendMail({
     to: verificationToken[0].email,
     subject: "Email address verification",
@@ -242,7 +225,6 @@ export const createNewPassword = async ({
 
     return { success: "Could not update password, please try again later" };
   } catch (error) {
-    console.log("new password error", error);
     return { error: "Internal Server Error" };
   }
 };

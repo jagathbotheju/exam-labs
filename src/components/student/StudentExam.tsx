@@ -76,7 +76,6 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     studentId: studentId,
   });
 
-  // console.log("exam", exam);
   const examDuration = exam && exam.duration ? exam.duration : 0;
   const examTimerMemo = useMemo(
     () => <ExamTimer examDuration={examDuration} />,
@@ -220,9 +219,6 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     }
   });
 
-  // console.log("questionTypes", questionTypes);
-  // console.log("score", Math.round((3 / 5) * 100));
-
   return (
     <div className="flex flex-col gap-8">
       {completed && (
@@ -292,7 +288,6 @@ const StudentExam = ({ examId, completed = false }: Props) => {
           <CardContent className="gap-4 flex flex-col h-full">
             {exam && exam.examQuestions.length ? (
               exam.examQuestions.map((item, index) => {
-                // console.log("StudentExam", index, item.questions.typeId);
                 const studentAnswer = studentAnswers?.find(
                   (answer) => answer.questionId === item.questionId
                 );

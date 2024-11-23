@@ -34,14 +34,12 @@ export const sendMail = async ({
       html: body,
     });
 
-    console.log(sendResult);
     if (!_.isEmpty(sendResult.accepted)) {
       return { success: "Email Sent Successfully" };
     }
 
     return { error: "Could not send activation link, try again later" };
   } catch (error) {
-    console.log(error);
     return { error: "Internal server error ,sending email" };
   }
 };
@@ -63,7 +61,7 @@ export const sendVerificationEmail = async ({
     // html: `<p>Click to <a href=${confirmLink}>Confirm your email</a></p>`,
     react: <VerifyEmailTemp url={confirmLink} />,
   });
-  if (error) return console.log(error);
+  // if (error) return console.log(error);
   if (data) return data;
 };
 

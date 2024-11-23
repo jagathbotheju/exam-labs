@@ -145,12 +145,10 @@ export const addQuestionToExam = async ({
       })
       .returning();
     if (addedQuestion.length) {
-      console.log(addedQuestion[0]);
       return { success: "Question added Successfully" };
     }
     return { error: "Could not add Question to Exam" };
   } catch (error) {
-    console.log(error);
     return { error: "Could not add Question to Exam" };
   }
 };
@@ -174,12 +172,10 @@ export const removeQuestionFromExam = async ({
       )
       .returning();
     if (deletedQuestion.length) {
-      console.log(deletedQuestion[0]);
       return { success: "Question deleted Successfully" };
     }
     return { error: "Could not delete Question from Exam" };
   } catch (error) {
-    console.log(error);
     return { error: "Could not delete Question from Exam" };
   }
 };
@@ -260,7 +256,6 @@ export const getQuestionById = async (questionId: string) => {
     .select()
     .from(questions)
     .where(eq(questions.id, questionId));
-  // console.log("questionById", questionById as Question[]);
   return questionById as Question[];
 };
 
