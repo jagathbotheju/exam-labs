@@ -1,14 +1,7 @@
 "use client";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import {
-  LogIn,
-  LogOutIcon,
-  Settings,
-  TruckIcon,
-  UserPen,
-  UserRoundPen,
-} from "lucide-react";
+import { LogIn, LogOutIcon, UserPen, UserRoundPen } from "lucide-react";
 import { signOut } from "next-auth/react";
 import {
   DropdownMenu,
@@ -20,13 +13,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Switch } from "../ui/switch";
 import { useRouter } from "next/navigation";
 import { ThemeSwitcher } from "../ThemeSwitcher";
-import { Student } from "@/server/db/schema/students";
+import { User } from "@/server/db/schema/users";
 
 interface Props {
-  student: Student;
+  student: User;
 }
 
 const AuthButton = ({ student }: Props) => {

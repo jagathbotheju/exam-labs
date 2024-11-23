@@ -6,17 +6,16 @@ import {
   customType,
   primaryKey,
 } from "drizzle-orm/pg-core";
-import { students } from "./students";
 import { exams } from "./exams";
 import { InferSelectModel, relations } from "drizzle-orm";
-import { StudentResponse } from "@/lib/types";
 import { questions } from "./questions";
 import { QuestionType, questionTypes } from "./questionTypes";
+import { users } from "./users";
 
 export const studentAnswers = pgTable(
   "student-answers",
   {
-    studentId: text("student_id").references(() => students.id),
+    studentId: text("student_id").references(() => users.id),
     examId: text("exam_id").references(() => exams.id),
     questionId: text("question_id").references(() => questions.id),
     questionTypeId: text("question_type_id").references(() => questionTypes.id),
@@ -40,9 +39,9 @@ export const studentAnswerRelations = relations(
       fields: [studentAnswers.examId],
       references: [exams.id],
     }),
-    students: one(students, {
+    students: one(users, {
       fields: [studentAnswers.studentId],
-      references: [students.id],
+      references: [users.id],
     }),
     questionTypes: one(questionTypes, {
       fields: [studentAnswers.questionTypeId],

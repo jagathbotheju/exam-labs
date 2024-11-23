@@ -8,8 +8,8 @@ import bcrypt from "bcryptjs";
 import { db } from "@/server/db";
 import { LoginSchema } from "./schema";
 import { compare } from "bcryptjs";
-import { students } from "@/server/db/schema";
-import { Student } from "@/server/db/schema/students";
+import { users } from "@/server/db/schema";
+import { User } from "@/server/db/schema/users";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: DrizzleAdapter(db),
@@ -37,8 +37,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!validated.success) return null;
 
         const { email, password } = validated.data;
-        const existStudent = await db.query.students.findFirst({
-          where: eq(students.email, email),
+        const existStudent = await db.query.users.findFirst({
+          where: eq(users.email, email),
         });
 
         if (!existStudent || existStudent.email !== email) return null;
@@ -46,13 +46,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const matchPassword = await compare(password, existStudent.password);
         if (!matchPassword) return null;
 
-        return existStudent as Student;
+        return existStudent as User;
       },
     }),
   ],
   callbacks: {
     async session({ token, session }) {
-      const tokenUser = token.user as Student;
+      const tokenUser = token.user as User;
       if (tokenUser) {
         session.user = tokenUser;
       }
@@ -61,8 +61,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user }) {
       if (token && token.sub) {
-        const studentDB = await db.query.students.findFirst({
-          where: eq(students.id, token.sub),
+        const studentDB = await db.query.users.findFirst({
+          where: eq(users.id, token.sub),
         });
         token.user = studentDB;
       }

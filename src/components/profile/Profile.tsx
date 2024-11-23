@@ -26,14 +26,14 @@ import { Edit, Edit2, Loader2 } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
-import { Student } from "@/server/db/schema/students";
 import { useUploadThing } from "@/lib/uploadthing";
 import { ProfileSchema } from "@/lib/schema";
 import ImageUpload from "../ImageUpload";
 import { useUpdateProfile } from "@/server/backend/mutations/studentMutations";
+import { User } from "@/server/db/schema/users";
 
 interface Props {
-  student: Student;
+  student: User;
 }
 
 const Profile = ({ student }: Props) => {

@@ -1,5 +1,4 @@
 "use client";
-import { useSubjects } from "@/server/backend/queries/subjectQueries";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,37 +16,39 @@ import {
 } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
+import { QuestionType } from "@/server/db/schema/questionTypes";
 
 interface Props {
-  setSubject: (subject: string) => void;
-  subjectId: string;
+  setQuestionType: (type: QuestionType) => void;
+  questionType: QuestionType | undefined;
 }
 
-const SubjectSelector = ({ setSubject, subjectId }: Props) => {
+const QuestionsTypePicker = ({ setQuestionType, questionType }: Props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const { data: subjects } = useSubjects();
+  const { data: questionTypes } = useQuestionTypes();
 
   useEffect(() => {
-    if (subjectId) {
-      setValue(subjectId);
+    if (questionType) {
+      setValue(questionType.id);
     }
-  }, [subjectId]);
+  }, [questionType]);
 
   return (
     <div>
-      {subjects && (
+      {questionTypes && (
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild className="dark:bg-slate-900 bg-slate-50">
             <Button
               variant="outline"
               role="combobox"
               aria-expanded={open}
-              className="w-[200px] justify-between"
+              className="w-[200px] justify-between font-sinhala"
             >
               {value
-                ? subjects.find((subject) => subject.id === value)?.title
-                : "Select a subject..."}
+                ? questionTypes.find((type) => type.id === value)?.type
+                : "filter with types..."}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
@@ -57,23 +58,27 @@ const SubjectSelector = ({ setSubject, subjectId }: Props) => {
               <CommandList>
                 <CommandEmpty>No subjects found.</CommandEmpty>
                 <CommandGroup>
-                  {subjects.map((subject) => (
+                  {questionTypes.map((type) => (
                     <CommandItem
-                      key={subject.id}
-                      value={subject.id}
+                      className="font-sinhala"
+                      key={type.id}
+                      value={type.id}
                       onSelect={(currentValue) => {
-                        setValue(currentValue === value ? "" : currentValue);
-                        setSubject(currentValue === value ? "" : currentValue);
+                        const selectedType = questionTypes.find(
+                          (item) => item.id === currentValue
+                        );
+                        setValue(currentValue);
+                        setQuestionType(selectedType ?? ({} as QuestionType));
                         setOpen(false);
                       }}
                     >
                       <Check
                         className={cn(
                           "mr-2 h-4 w-4",
-                          value === subject.id ? "opacity-100" : "opacity-0"
+                          value === type.id ? "opacity-100" : "opacity-0"
                         )}
                       />
-                      {subject.title}
+                      {type.type}
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -85,4 +90,4 @@ const SubjectSelector = ({ setSubject, subjectId }: Props) => {
     </div>
   );
 };
-export default SubjectSelector;
+export default QuestionsTypePicker;

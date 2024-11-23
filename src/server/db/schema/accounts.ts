@@ -6,7 +6,6 @@ import {
   primaryKey,
   integer,
 } from "drizzle-orm/pg-core";
-import { students } from "./students";
 import type { AdapterAccountType } from "next-auth/adapters";
 import { users } from "./users";
 

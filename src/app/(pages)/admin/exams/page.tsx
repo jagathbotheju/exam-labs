@@ -2,12 +2,12 @@ import AddExamForm from "@/components/exams/AddExamForm";
 import AllExams from "@/components/exams/AllExams";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { Student } from "@/server/db/schema/students";
+import { User } from "@/server/db/schema/users";
 import { redirect } from "next/navigation";
 
 const ExamsPage = async () => {
   const session = await auth();
-  const user = session?.user as Student;
+  const user = session?.user as User;
 
   if (!user || user.role !== "admin") return redirect("/not-authorized");
   return (

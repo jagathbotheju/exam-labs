@@ -49,8 +49,8 @@ const AllQuestionTypes = () => {
             <TableCell className="font-medium whitespace-nowrap">
               {type.id}
             </TableCell>
-            <TableCell className="uppercase font-sinhala">
-              {type.type}
+            <TableCell>
+              <p className="uppercase font-sinhala">{type.type}</p>
             </TableCell>
             <TableCell className="text-left text-slate-200">
               <AppDialog

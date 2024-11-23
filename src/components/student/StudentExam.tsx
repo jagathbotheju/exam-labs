@@ -8,15 +8,12 @@ import {
 import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import ExamQuestionCard from "../exams/ExamQuestionCard";
-import { Student } from "@/server/db/schema/students";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { StudentResponse } from "@/lib/types";
 import ExamTimer from "../exams/ExamTimer";
 import { Button } from "../ui/button";
 import AppDialog from "../AppDialog";
-import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
-import { format, addMinutes } from "date-fns";
 import _ from "lodash";
 import { useAnswerQuestion } from "@/server/backend/mutations/questionMutations";
 import {
@@ -25,9 +22,7 @@ import {
 } from "@/server/backend/mutations/examMutations";
 import { useStudentAnswers } from "@/server/backend/queries/answerQueries";
 import { useQueryClient } from "@tanstack/react-query";
-import { useStudentById } from "@/server/backend/queries/studentQueries";
 import { Separator } from "../ui/separator";
-import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
 import {
   Table,
   TableBody,

@@ -6,7 +6,7 @@ import {
   primaryKey,
   integer,
 } from "drizzle-orm/pg-core";
-import { students } from "./students";
+import { users } from "./users";
 
 export const authenticators = pgTable(
   "authenticator",
@@ -14,7 +14,7 @@ export const authenticators = pgTable(
     credentialID: text("credentialID").notNull().unique(),
     userId: text("userId")
       .notNull()
-      .references(() => students.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
     providerAccountId: text("providerAccountId").notNull(),
     credentialPublicKey: text("credentialPublicKey").notNull(),
     counter: integer("counter").notNull(),

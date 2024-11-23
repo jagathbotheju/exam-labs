@@ -3,15 +3,24 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Toggle } from "./ui/toggle";
-import { Bold, Italic, List, ListOrdered, Strikethrough } from "lucide-react";
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Strikethrough,
+  UnderlineIcon,
+} from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
+import Underline from "@tiptap/extension-underline";
 
 const TipTap = ({ value }: { value: string }) => {
   const { setValue } = useFormContext();
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
+      Underline,
       StarterKit.configure({
         orderedList: {
           HTMLAttributes: {
@@ -38,7 +47,7 @@ const TipTap = ({ value }: { value: string }) => {
     editorProps: {
       attributes: {
         class:
-          "min-h-[150px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 tracking-widest",
+          "min-h-[150px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 tracking-widest dark:bg-slate-900 bg-slate-50 text-lg",
       },
     },
     content: "",
@@ -67,6 +76,19 @@ const TipTap = ({ value }: { value: string }) => {
             onPressedChange={() => editor.chain().focus().toggleBold().run()}
           >
             <Bold className="w-4 h-4" />
+          </Toggle>
+
+          {/* underline */}
+          <Toggle
+            variant="outline"
+            size="sm"
+            className="w-fit"
+            pressed={editor.isActive("underline")}
+            onPressedChange={() =>
+              editor.chain().focus().toggleUnderline().run()
+            }
+          >
+            <UnderlineIcon className="w-4 h-4" />
           </Toggle>
 
           {/* italic */}

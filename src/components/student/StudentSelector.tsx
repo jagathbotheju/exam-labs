@@ -15,10 +15,10 @@ import {
 } from "../ui/command";
 import { cn } from "@/lib/utils";
 import { useStudents } from "@/server/backend/queries/studentQueries";
-import { StudentExt } from "@/server/db/schema/students";
+import { UserExt } from "@/server/db/schema/users";
 
 interface Props {
-  setSelectedStudent: (student: StudentExt | null) => void;
+  setSelectedStudent: (student: UserExt | null) => void;
 }
 
 const StudentSelector = ({ setSelectedStudent }: Props) => {
@@ -36,7 +36,7 @@ const StudentSelector = ({ setSelectedStudent }: Props) => {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className="dark:bg-slate-900">
         <Button
           variant="outline"
           role="combobox"
@@ -49,8 +49,8 @@ const StudentSelector = ({ setSelectedStudent }: Props) => {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
+      <PopoverContent className="w-[200px] p-0 dark:bg-slate-900">
+        <Command className="dark:bg-slate-900">
           <CommandInput placeholder="Search framework..." />
           <CommandList>
             <CommandEmpty>No students found.</CommandEmpty>

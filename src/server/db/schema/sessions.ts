@@ -6,13 +6,13 @@ import {
   primaryKey,
   integer,
 } from "drizzle-orm/pg-core";
-import { students } from "./students";
+import { users } from "./users";
 
 export const sessions = pgTable("session", {
   sessionToken: text("sessionToken").primaryKey(),
   userId: text("userId")
     .notNull()
-    .references(() => students.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 

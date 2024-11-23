@@ -7,7 +7,7 @@ import {
   ResetPasswordSchema,
 } from "@/lib/schema";
 import { db } from "@/server/db";
-import { passwordResetTokens, students } from "@/server/db/schema";
+import { passwordResetTokens, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { compare } from "bcryptjs";
@@ -46,8 +46,8 @@ export const emailSignIn = async (formData: z.infer<typeof LoginSchema>) => {
     if (!valid.success) return { error: "Insufficient data for Login" };
     const { email, password } = valid.data;
 
-    const existingStudent = await db.query.students.findFirst({
-      where: eq(students.email, email),
+    const existingStudent = await db.query.users.findFirst({
+      where: eq(users.email, email),
     });
     if (!existingStudent) return { error: "Invalid Credentials" };
 
@@ -91,8 +91,8 @@ export const registerUser = async ({
   if (!valid.success) return { error: "Invalid data, please try again" };
   const { email, password, name, dob, school, grade } = valid.data;
 
-  const userExist = await db.query.students.findFirst({
-    where: eq(students.email, email),
+  const userExist = await db.query.users.findFirst({
+    where: eq(users.email, email),
   });
 
   if (userExist && userExist.emailVerified !== null) {
@@ -125,7 +125,7 @@ export const registerUser = async ({
   // }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  await db.insert(students).values({
+  await db.insert(users).values({
     email,
     name,
     password: hashedPassword,
@@ -159,8 +159,8 @@ export const resetPassword = async (
   if (!valid.success) return { error: "Invalid data" };
   const { email } = valid.data;
 
-  const existingStudent = await db.query.students.findFirst({
-    where: eq(students.email, email),
+  const existingStudent = await db.query.users.findFirst({
+    where: eq(users.email, email),
   });
   if (!existingStudent) return { error: "No Student fond!" };
 
@@ -204,19 +204,19 @@ export const createNewPassword = async ({
     const hasExpired = new Date(existingToken.expires) < new Date();
     if (hasExpired) return { error: "Token expired" };
 
-    const existingStudent = await db.query.students.findFirst({
-      where: eq(students.email, existingToken.email),
+    const existingStudent = await db.query.users.findFirst({
+      where: eq(users.email, existingToken.email),
     });
     if (!existingStudent) return { error: "User not found" };
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const updatedStudent = await db
-      .update(students)
+      .update(users)
       .set({
         password: hashedPassword,
       })
-      .where(eq(students.id, existingStudent.id))
+      .where(eq(users.id, existingStudent.id))
       .returning();
 
     const deletedToken = await db

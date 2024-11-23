@@ -27,10 +27,10 @@ import {
 } from "@/server/backend/queries/subjectQueries";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
-import { Student } from "@/server/db/schema/students";
+import { User } from "@/server/db/schema/users";
 
 interface Props {
-  student: Student;
+  student: User;
 }
 
 const ResultSummary = ({ student }: Props) => {

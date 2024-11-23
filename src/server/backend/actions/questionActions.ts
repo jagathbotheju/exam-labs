@@ -9,12 +9,13 @@ import {
   subjects,
 } from "../../db/schema";
 import { z } from "zod";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, count } from "drizzle-orm";
 import { Question, QuestionExt } from "../../db/schema/questions";
 import _ from "lodash";
 import { auth } from "@/lib/auth";
-import { Student } from "@/server/db/schema/students";
 import { QuestionType } from "@/server/db/schema/questionTypes";
+import { User } from "@/server/db/schema/users";
+import { useQuestionTypes } from "../queries/questionTypeQueries";
 
 //========answerQuestion================================================================================================
 export const answerQuestion = async ({
@@ -63,7 +64,7 @@ export const addQuestion = async ({
   questionId?: string;
 }) => {
   const session = await auth();
-  const user = session?.user as Student;
+  const user = session?.user as User;
   if (!user) return { error: "Please LogIn" };
   if (user.role !== "admin") return { error: "Not Authorized!" };
 
@@ -191,6 +192,27 @@ export const getQuestions = async () => {
   return allQuestions as Question[];
 };
 
+export const getQuestionsCount = async ({
+  subjectId,
+  questionType,
+}: {
+  subjectId: string;
+  questionType?: QuestionType;
+}) => {
+  const questionsCount = await db
+    .select({ count: count() })
+    .from(questions)
+    .where(
+      questionType && questionType.type !== "all"
+        ? and(
+            eq(questions.subjectId, subjectId),
+            eq(questions.typeId, questionType.id)
+          )
+        : eq(questions.subjectId, subjectId)
+    );
+  return questionsCount[0];
+};
+
 export const getQuestionsBySubject = async (subjectId: string) => {
   const questionsBySubject = await db.query.questions.findMany({
     with: {
@@ -199,10 +221,37 @@ export const getQuestionsBySubject = async (subjectId: string) => {
     where: eq(questions.subjectId, subjectId),
     orderBy: asc(questions.createdAt),
   });
-  // .select()
-  // .from(questions)
-  // .where(eq(questions.subjectId, subjectId))
-  // .orderBy(desc(questions.createdAt));
+
+  return questionsBySubject as QuestionExt[];
+};
+
+export const getQuestionsBySubjectPagination = async ({
+  subjectId,
+  questionType,
+  page,
+  pageSize = 10,
+}: {
+  subjectId: string;
+  questionType?: QuestionType;
+  page: number;
+  pageSize?: number;
+}) => {
+  const questionsBySubject = await db.query.questions.findMany({
+    with: {
+      examQuestions: true,
+    },
+    where:
+      questionType && questionType.type !== "all"
+        ? and(
+            eq(questions.subjectId, subjectId),
+            eq(questions.typeId, questionType.id)
+          )
+        : eq(questions.subjectId, subjectId),
+    orderBy: asc(questions.createdAt),
+    limit: pageSize,
+    offset: (page - 1) * pageSize,
+  });
+
   return questionsBySubject as QuestionExt[];
 };
 
@@ -211,6 +260,7 @@ export const getQuestionById = async (questionId: string) => {
     .select()
     .from(questions)
     .where(eq(questions.id, questionId));
+  // console.log("questionById", questionById as Question[]);
   return questionById as Question[];
 };
 

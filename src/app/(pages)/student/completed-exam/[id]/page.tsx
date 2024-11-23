@@ -1,6 +1,6 @@
 import StudentExam from "@/components/student/StudentExam";
 import { auth } from "@/lib/auth";
-import { Student } from "@/server/db/schema/students";
+import { User } from "@/server/db/schema/users";
 import { redirect } from "next/navigation";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 
 const StudentCompletedExamPage = async ({ params, searchParams }: Props) => {
   const session = await auth();
-  const student = session?.user as Student;
+  const student = session?.user as User;
   if (!student) redirect("/auth/login");
   if (student.role !== searchParams.role) redirect("/not-authorized");
   // console.log("studentId", searchParams.studentId);

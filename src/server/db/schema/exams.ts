@@ -1,11 +1,11 @@
 import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { students } from "./students";
 import { InferSelectModel, relations } from "drizzle-orm";
 import { Question, QuestionExt, questions } from "./questions";
 import { Subject, subjects } from "./subjects";
 import { ExamQuestion, examQuestions } from "./examQuestions";
 import { StudentExamExt, studentExams } from "./studentExams";
 import { StudentAnswer, studentAnswers } from "./studentAnswers";
+import { users } from "./users";
 
 export const exams = pgTable("exams", {
   id: text("id")
@@ -14,7 +14,7 @@ export const exams = pgTable("exams", {
   subjectId: text("subject_id")
     .references(() => subjects.id)
     .notNull(),
-  studentId: text("student_id").references(() => students.id),
+  studentId: text("student_id").references(() => users.id),
   name: text("name").notNull(),
   duration: integer("duration"),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
@@ -24,9 +24,9 @@ export const examRelations = relations(exams, ({ one, many }) => ({
   examQuestions: many(examQuestions),
   studentAnswers: many(studentAnswers),
   studentExams: many(studentExams),
-  students: one(students, {
+  users: one(users, {
     fields: [exams.studentId],
-    references: [students.id],
+    references: [users.id],
   }),
   subjects: one(subjects, {
     fields: [exams.subjectId],

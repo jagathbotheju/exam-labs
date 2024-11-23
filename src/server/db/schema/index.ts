@@ -12,7 +12,6 @@ export {
   examQuestions,
   examQuestionsRelations,
 } from "@/server/db/schema/examQuestions";
-export { students, studentRelations } from "@/server/db/schema/students";
 export { questionsMonthHistory } from "@/server/db/schema/questionsMonthHistory";
 export { questionsYearHistory } from "@/server/db/schema/questionsYearHistory";
 export {
@@ -23,4 +22,4 @@ export { accounts } from "@/server/db/schema/accounts";
 export { sessions } from "@/server/db/schema/sessions";
 export { verificationTokens } from "@/server/db/schema/verificationTokens";
 export { authenticators } from "@/server/db/schema/authenticators";
-export { users } from "@/server/db/schema/users";
+export { users, userRelations } from "@/server/db/schema/users";

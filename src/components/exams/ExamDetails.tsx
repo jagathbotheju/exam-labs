@@ -12,23 +12,21 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useAddExamToStudent } from "@/server/backend/mutations/examMutations";
 import { toast } from "sonner";
-import { Student, StudentExt } from "@/server/db/schema/students";
 import { useRouter } from "next/navigation";
 import { useStudents } from "@/server/backend/queries/studentQueries";
 import { Badge } from "../ui/badge";
 import { useQueryClient } from "@tanstack/react-query";
+import { UserExt } from "@/server/db/schema/users";
 
 interface Props {
   examId: string;
-  student: StudentExt;
+  student: UserExt;
 }
 
 const ExamDetails = ({ examId, student }: Props) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [selectedStudent, setSelectedStudent] = useState<null | StudentExt>(
-    null
-  );
+  const [selectedStudent, setSelectedStudent] = useState<null | UserExt>(null);
 
   const { data: exam, isFetching: isFetchingExam } = useExamById(examId);
   const { data: allStudents } = useStudents();
@@ -53,7 +51,7 @@ const ExamDetails = ({ examId, student }: Props) => {
     if (examId) {
       queryClient.invalidateQueries({ queryKey: ["exam-by-id"] });
     }
-  }, [examId]);
+  }, [examId, queryClient]);
 
   if (isFetchingExam) {
     return (

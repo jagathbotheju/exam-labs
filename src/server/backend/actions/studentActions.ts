@@ -1,26 +1,23 @@
 "use server";
 import { ProfileSchema } from "@/lib/schema";
 import { db } from "@/server/db";
-import { Student, StudentExt, students } from "@/server/db/schema/students";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
+import { User, UserExt, users } from "@/server/db/schema/users";
 
 export const getStudents = async () => {
-  const students = await db.query.students.findMany({
+  const students = await db.query.users.findMany({
     with: {
       exams: true,
     },
   });
-  return students as StudentExt[];
+  return students as UserExt[];
 };
 
 export const getStudentById = async (studentId: string) => {
-  const student = await db
-    .select()
-    .from(students)
-    .where(eq(students.id, studentId));
-  return student[0] as Student;
+  const student = await db.select().from(users).where(eq(users.id, studentId));
+  return student[0] as User;
 };
 
 export const updateProfile = async ({
@@ -34,12 +31,12 @@ export const updateProfile = async ({
   if (valid.success) {
     const { name, image, password } = valid.data;
     await db
-      .update(students)
+      .update(users)
       .set({
         name,
         image,
         password: password ? await bcrypt.hash(password, 10) : password,
       })
-      .where(eq(students.id, studentId));
+      .where(eq(users.id, studentId));
   }
 };

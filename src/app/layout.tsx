@@ -3,13 +3,32 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Providers from "./providers";
 import Navbar from "@/components/nav/Navbar";
-import { Mynerve, Noto_Sans_Sinhala } from "next/font/google";
+import {
+  Mynerve,
+  Noto_Sans_Sinhala,
+  Noto_Serif_Sinhala,
+  Protest_Revolution,
+} from "next/font/google";
 
 const sinhala = Noto_Sans_Sinhala({
   subsets: ["sinhala"],
   display: "swap",
   weight: ["100", "400", "600", "800", "900"],
-  variable: "--font-sinhala",
+  variable: "--font-sinhala-sans",
+});
+
+const sinhala_serif = Noto_Serif_Sinhala({
+  subsets: ["sinhala"],
+  display: "swap",
+  weight: ["100", "200", "300", "400", "600", "800", "900"],
+  variable: "--font-sinhala-serif",
+});
+
+const protest = Protest_Revolution({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400"],
+  variable: "--font-protest",
 });
 
 const marks = Mynerve({
@@ -42,7 +61,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${sinhala.variable} ${marks.variable} scroll-smooth`}
+      className={`${sinhala.variable} ${marks.variable} ${protest.variable} ${sinhala_serif.variable} scroll-smooth`}
       suppressHydrationWarning
     >
       <body

@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import { useExamById, useExams } from "@/server/backend/queries/examQueries";
 import { Badge } from "../ui/badge";
 import { ExamExt } from "@/server/db/schema/exams";
+import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
 
 interface Props {
   question: QuestionExt;
@@ -50,6 +51,10 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
   const { mutate: removeQuestionFromExam } = useRemoveQuestionFromExam();
   const { mutate: addQuestion } = useAddQuestionToExam();
   const { data: exams } = useExams();
+  const { data: questionTypes } = useQuestionTypes();
+  const questionType = questionTypes?.find(
+    (type) => type.id === question.typeId
+  )?.type;
 
   const addQuestionToExam = () => {
     if (exam && question.id) {
@@ -72,19 +77,22 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
   }, [exams, question.examQuestions]);
 
   return (
-    <Card className="dark:bg-transparent">
+    <Card className="dark:bg-slate-900 bg-slate-50">
       <CardContent className="p-0">
-        <div className="flex flex-col hover:drop-shadow-xl h-[100px]">
+        <div className="flex flex-col hover:drop-shadow-xl p-2">
+          {questionType && (
+            <Badge className="w-fit font-sinhala">{questionType}</Badge>
+          )}
           <div className="flex justify-between h-full">
             <div className="flex gap-2 items-center h-full w-full">
-              <div className="bg-slate-500 px-4 h-full font-bold rounded-tl-lg rounded-bl-lg flex items-center justify-center">
+              {/* <div className="dark:bg-slate-800 bg-slate-300 px-4 h-full font-bold rounded-tl-lg rounded-bl-lg flex items-center justify-center">
                 {index}
-              </div>
+              </div> */}
               <div className="flex flex-col gap-1 py-1">
                 <div className="flex-1 h-full">
-                  <p className="line-clamp-2 tracking-wide font-sinhala">
+                  <div className="line-clamp-2 tracking-wide font-sinhala">
                     {parse(question.body)}
-                  </p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {questionExams &&
@@ -108,9 +116,9 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
             </div>
 
             {/* actions */}
-            <div className="flex flex-col items-center rounded-tr-lg rounded-br-lg">
+            <div className="flex p-2 gap-2">
               {/* add to exam */}
-              <div className="h-full px-4 flex items-center hover:bg-opacity-70 cursor-pointer rounded-tr-lg">
+              <div className="flex items-center hover:bg-opacity-70 cursor-pointer rounded-tr-lg">
                 <AlertDialog>
                   <AlertDialogTrigger>
                     <FilePlus className="text-blue-600" />
@@ -145,7 +153,7 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
               </div>
 
               {/* edit */}
-              <div className="h-full px-4 flex items-center hover:bg-opacity-70 cursor-pointer">
+              <div className="flex items-center hover:bg-opacity-70 cursor-pointer">
                 <FilePenLine
                   className="text-green-600"
                   onClick={() =>
@@ -155,7 +163,7 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
               </div>
 
               {/* delete */}
-              <div className="px-4 h-full flex items-center overflow-hidden rounded-br-lg cursor-pointer hover:bg-opacity-70">
+              <div className="flex items-center overflow-hidden rounded-br-lg cursor-pointer hover:bg-opacity-70">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Trash2 className="w-5 h-5 text-red-500" />

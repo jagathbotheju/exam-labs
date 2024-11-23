@@ -11,8 +11,10 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sinhala: ["var(--font-sinhala)"],
+        sinhala: ["var(--font-sinhala-sans)"],
         marks: ["var(--font-marks)"],
+        protest: ["var(--font-protest)"],
+        sinhala_serif: ["var(--font-sinhala-serif)"],
       },
       colors: {
         background: "hsl(var(--background))",

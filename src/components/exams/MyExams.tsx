@@ -1,5 +1,4 @@
 "use client";
-import { Student } from "@/server/db/schema/students";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useStudentExams } from "@/server/backend/queries/examQueries";
 import { Eye, Loader2, Trash2 } from "lucide-react";
@@ -20,10 +19,11 @@ import { useDeleteExamFromStudent } from "@/server/backend/mutations/examMutatio
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { User } from "@/server/db/schema/users";
 
 interface Props {
   role?: string;
-  student: Student;
+  student: User;
 }
 
 const MyExams = ({ student, role = "student" }: Props) => {

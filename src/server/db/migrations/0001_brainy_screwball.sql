@@ -1,4 +1,0 @@
-ALTER TABLE "questions_month_history" DROP CONSTRAINT "questions_month_history_day_month_year_subject_id_pk";--> statement-breakpoint
-ALTER TABLE "questions_year_history" DROP CONSTRAINT "questions_year_history_month_year_subject_id_pk";--> statement-breakpoint
-ALTER TABLE "questions_month_history" ADD CONSTRAINT "questions_month_history_day_month_year_subject_id_student_id_pk" PRIMARY KEY("day","month","year","subject_id","student_id");--> statement-breakpoint
-ALTER TABLE "questions_year_history" ADD CONSTRAINT "questions_year_history_month_year_subject_id_student_id_pk" PRIMARY KEY("month","year","subject_id","student_id");

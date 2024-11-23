@@ -1,9 +1,9 @@
 import { auth } from "@/lib/auth";
-import { Student } from "@/server/db/schema/students";
+import { User } from "@/server/db/schema/users";
 
 const AdminPage = async () => {
   const session = await auth();
-  const user = session?.user as Student;
+  const user = session?.user as User;
 
   return (
     <div className="flex justify-center items-center w-full">

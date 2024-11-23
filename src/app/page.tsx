@@ -1,12 +1,12 @@
 import MyExams from "@/components/exams/MyExams";
 import ResultSummary from "@/components/student/ResultSummary";
 import { auth } from "@/lib/auth";
-import { Student } from "@/server/db/schema/students";
+import { User } from "@/server/db/schema/users";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
   const session = await auth();
-  const student = session?.user as Student;
+  const student = session?.user as User;
 
   if (!student) redirect("/auth/login");
   if (student.role === "admin") redirect("/admin");

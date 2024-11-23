@@ -9,9 +9,9 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { questions } from "./questions";
-import { students } from "./students";
 import { exams } from "./exams";
 import { Subject, subjects } from "./subjects";
+import { users } from "./users";
 
 export const questionsMonthHistory = pgTable(
   "questions_month_history",
@@ -21,7 +21,7 @@ export const questionsMonthHistory = pgTable(
       .references(() => exams.id, { onDelete: "cascade" }),
     studentId: text("student_id")
       .notNull()
-      .references(() => students.id),
+      .references(() => users.id),
     subjectId: text("subject_id").references(() => subjects.id, {
       onDelete: "cascade",
     }),

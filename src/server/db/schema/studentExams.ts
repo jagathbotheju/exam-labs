@@ -7,16 +7,16 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { ExamExt, exams } from "./exams";
-import { Student, students } from "./students";
 import { InferSelectModel, relations } from "drizzle-orm";
 import { Question } from "./questions";
+import { User, users } from "./users";
 
 export const studentExams = pgTable(
   "student_exams",
   {
     studentId: text("student_id")
       .notNull()
-      .references(() => students.id),
+      .references(() => users.id),
     examId: text("exam_id")
       .notNull()
       .references(() => exams.id, { onDelete: "cascade" }),
@@ -37,14 +37,14 @@ export const studentExamRelations = relations(studentExams, ({ one }) => ({
     fields: [studentExams.examId],
     references: [exams.id],
   }),
-  questions: one(students, {
+  questions: one(users, {
     fields: [studentExams.studentId],
-    references: [students.id],
+    references: [users.id],
   }),
 }));
 
 export type StudentExam = InferSelectModel<typeof studentExams>;
 export type StudentExamExt = InferSelectModel<typeof studentExams> & {
   exams: ExamExt;
-  students: Student;
+  students: User;
 };

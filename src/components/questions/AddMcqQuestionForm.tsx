@@ -95,7 +95,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
   };
 
   return (
-    <div className="mt-2 w-full flex flex-col gap-4">
+    <div className="mt-2 w-full flex flex-col gap-4 dark:bg-slate-900 bg-slate-50">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="flex gap-5 items-center w-full">
@@ -107,7 +107,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
                 <FormItem className="flex flex-col">
                   <FormLabel>Grade</FormLabel>
                   <Popover open={openGrade} onOpenChange={setOpenGrade}>
-                    <PopoverTrigger asChild>
+                    <PopoverTrigger asChild className="dark:bg-slate-900">
                       <FormControl>
                         <Button
                           variant="outline"
@@ -124,8 +124,8 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
+                    <PopoverContent className="w-[200px] p-0 dark:bg-slate-900">
+                      <Command className="dark:bg-slate-900">
                         <CommandInput placeholder="Search subjects..." />
                         <CommandList>
                           <CommandEmpty>No grades found.</CommandEmpty>
@@ -169,7 +169,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
                 <FormItem className="flex flex-col">
                   <FormLabel>Term</FormLabel>
                   <Popover open={openTerm} onOpenChange={setOpenTerm}>
-                    <PopoverTrigger asChild>
+                    <PopoverTrigger asChild className="dark:bg-slate-900">
                       <FormControl>
                         <Button
                           variant="outline"
@@ -186,8 +186,8 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
+                    <PopoverContent className="w-[200px] p-0 bg-slate-900">
+                      <Command className="dark:bg-slate-900">
                         <CommandInput placeholder="Search subjects..." />
                         <CommandList>
                           <CommandEmpty>No terms found.</CommandEmpty>
@@ -231,7 +231,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
                 <FormItem className="flex flex-col">
                   <FormLabel>Subject</FormLabel>
                   <Popover open={openSubject} onOpenChange={setOpenSubject}>
-                    <PopoverTrigger asChild>
+                    <PopoverTrigger asChild className="dark:bg-slate-900">
                       <FormControl>
                         <Button
                           variant="outline"
@@ -250,8 +250,8 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
+                    <PopoverContent className="w-[200px] p-0 dark:bg-slate-900">
+                      <Command className="dark:bg-slate-900">
                         <CommandInput placeholder="Search subjects..." />
                         <CommandList>
                           <CommandEmpty>No subject found.</CommandEmpty>
@@ -293,9 +293,9 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
               name="type"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Subject</FormLabel>
+                  <FormLabel>Type</FormLabel>
                   <Popover open={openType} onOpenChange={setOpenType}>
-                    <PopoverTrigger asChild>
+                    <PopoverTrigger asChild className="dark:bg-slate-900">
                       <FormControl>
                         <Button
                           variant="outline"
@@ -313,8 +313,8 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
+                    <PopoverContent className="w-[200px] p-0 dark:bg-slate-900">
+                      <Command className="dark:bg-slate-900">
                         <CommandInput placeholder="Search subjects..." />
                         <CommandList>
                           <CommandEmpty>No types found.</CommandEmpty>
@@ -436,7 +436,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
               <FormItem className="flex flex-col">
                 <FormLabel>Answer</FormLabel>
                 <Popover open={openAnswer} onOpenChange={setOpenAnswer}>
-                  <PopoverTrigger asChild>
+                  <PopoverTrigger asChild className="dark:bg-slate-900">
                     <FormControl>
                       <Button
                         variant="outline"
@@ -455,8 +455,8 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[200px] p-0">
-                    <Command>
+                  <PopoverContent className="w-[200px] p-0 dark:bg-slate-900">
+                    <Command className="dark:bg-slate-900">
                       <CommandInput placeholder="Search answers..." />
                       <CommandList>
                         <CommandEmpty>No grades found.</CommandEmpty>
@@ -495,9 +495,10 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
           <div className="mt-8 flex gap-2">
             <Button type="submit">
               {questionId ? "Update" : isPending ? "Creating..." : "Create"}
-              {isPending && <Loader2 className="w-4 h-4" />}
+              {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
             </Button>
             <Button
+              className="dark:bg-slate-900"
               onClick={() => {
                 router.push(
                   `/admin/questions?subjectId=${form.getValues("subject")}`

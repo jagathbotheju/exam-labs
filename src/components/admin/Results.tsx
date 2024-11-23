@@ -1,18 +1,16 @@
 "use client";
 import MyExams from "../exams/MyExams";
-import { Student, StudentExt } from "@/server/db/schema/students";
 import StudentSelector from "../student/StudentSelector";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import _ from "lodash";
+import { User, UserExt } from "@/server/db/schema/users";
 
 interface Props {
-  admin: Student;
+  admin: User;
 }
 
 const Results = ({ admin }: Props) => {
-  const [selectedStudent, setSelectedStudent] = useState<StudentExt | null>(
-    null
-  );
+  const [selectedStudent, setSelectedStudent] = useState<UserExt | null>(null);
 
   return (
     <div className="flex flex-col w-full">
@@ -23,11 +21,7 @@ const Results = ({ admin }: Props) => {
 
       <div className="mt-8">
         {selectedStudent ? (
-          <MyExams
-            // studentId={selectedStudent.id}
-            role={admin.role}
-            student={selectedStudent}
-          />
+          <MyExams role={admin.role} student={selectedStudent} />
         ) : (
           <div className="flex justify-center mt-8">
             <h2 className="text-3xl font-bold text-muted-foreground">
