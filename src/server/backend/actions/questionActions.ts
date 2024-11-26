@@ -4,6 +4,7 @@ import { db } from "../../db";
 import {
   examQuestions,
   exams,
+  incorrectAnswers,
   questions,
   studentAnswers,
   subjects,
@@ -16,6 +17,30 @@ import { auth } from "@/lib/auth";
 import { QuestionType } from "@/server/db/schema/questionTypes";
 import { User } from "@/server/db/schema/users";
 import { useQuestionTypes } from "../queries/questionTypeQueries";
+import {
+  IncorrectAnswer,
+  IncorrectAnswerExt,
+} from "@/server/db/schema/incorrectAnswers";
+
+//=====get incorrect questions by userId and subjectId
+export const getIncorrectQuestions = async ({
+  studentId,
+  subjectId,
+}: {
+  studentId: string;
+  subjectId: string;
+}) => {
+  const incorrectQuestions = await db
+    .select()
+    .from(incorrectAnswers)
+    .where(
+      and(
+        eq(incorrectAnswers.studentId, studentId),
+        eq(incorrectAnswers.studentId, subjectId)
+      )
+    );
+  return incorrectQuestions as IncorrectAnswer[];
+};
 
 //========answerQuestion================================================================================================
 export const answerQuestion = async ({
@@ -53,6 +78,38 @@ export const answerQuestion = async ({
         studentAnswer,
       },
     });
+
+  if (studentAnswer !== questionAnswer) {
+    const incorrectAnswer = await db
+      .insert(incorrectAnswers)
+      .values({
+        studentId,
+        examId,
+        questionId,
+        questionTypeId,
+      })
+      .returning();
+  } else {
+    const existIncorrect: IncorrectAnswer[] = await db
+      .select()
+      .from(incorrectAnswers)
+      .where(
+        and(
+          eq(incorrectAnswers.questionId, questionId),
+          eq(incorrectAnswers.studentId, studentId)
+        )
+      );
+    if (existIncorrect) {
+      await db
+        .delete(incorrectAnswers)
+        .where(
+          and(
+            eq(incorrectAnswers.questionId, questionId),
+            eq(incorrectAnswers.studentId, studentId)
+          )
+        );
+    }
+  }
 };
 
 //===========addQuestion================================================================================================

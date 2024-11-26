@@ -117,6 +117,8 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     studentAnswer,
     questionAnswer,
   }: StudentResponse) => {
+    //setting studentResponse to calculate number of correct answers
+    //used in completeExam marks
     const exist = studentResponse.find(
       (item) => item.questionId === questionId
     );
