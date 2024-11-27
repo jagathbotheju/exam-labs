@@ -80,16 +80,6 @@ export const answerQuestion = async ({
     });
 
   if (studentAnswer !== questionAnswer) {
-    const incorrectAnswer = await db
-      .insert(incorrectAnswers)
-      .values({
-        studentId,
-        examId,
-        questionId,
-        questionTypeId,
-      })
-      .returning();
-  } else {
     const existIncorrect: IncorrectAnswer[] = await db
       .select()
       .from(incorrectAnswers)
@@ -108,6 +98,13 @@ export const answerQuestion = async ({
             eq(incorrectAnswers.studentId, studentId)
           )
         );
+    } else {
+      await db.insert(incorrectAnswers).values({
+        studentId,
+        examId,
+        questionId,
+        questionTypeId,
+      });
     }
   }
 };

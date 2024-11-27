@@ -1,9 +1,11 @@
 "use client";
 import MyExams from "../exams/MyExams";
 import StudentSelector from "../student/StudentSelector";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import _ from "lodash";
 import { User, UserExt } from "@/server/db/schema/users";
+import ResultSummary from "../student/ResultSummary";
+import { Loader2 } from "lucide-react";
 
 interface Props {
   admin: User;
@@ -29,6 +31,10 @@ const Results = ({ admin }: Props) => {
             </h2>
           </div>
         )}
+      </div>
+
+      <div className="mt-8">
+        {selectedStudent && <ResultSummary student={selectedStudent} />}
       </div>
     </div>
   );

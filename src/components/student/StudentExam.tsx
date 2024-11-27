@@ -32,6 +32,8 @@ import {
   TableRow,
 } from "../ui/table";
 import { cn } from "@/lib/utils";
+import { differenceInMinutes, format } from "date-fns";
+import Countdown, { zeroPad } from "react-countdown";
 
 type QType = {
   score: number;
@@ -49,10 +51,9 @@ const StudentExam = ({ examId, completed = false }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const startTime = new Date();
+  const startTime = useMemo(() => new Date(), []);
 
   const [studentResponse, setStudentResponse] = useState<StudentResponse[]>([]);
-  // const [questionType,setQuestionType]=useState<QType[]>([])
 
   //from search params
   const studentId = searchParams.get("studentId") ?? "";
@@ -76,17 +77,16 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     studentId: studentId,
   });
 
-  const examDuration = exam && exam.duration ? exam.duration : 0;
+  const examDurationMin = exam && exam.duration ? exam.duration : 0;
   const examTimerMemo = useMemo(
-    () => <ExamTimer examDuration={examDuration} />,
-    [examDuration]
+    () => <ExamTimer examDurationMin={examDurationMin} />,
+    [examDurationMin]
   );
 
   const completeExam = () => {
     queryClient.invalidateQueries({ queryKey: ["student-answers"] });
     const endTime = new Date();
-    const durationSec = (endTime.getTime() - startTime.getTime()) / 1000;
-    const durationMin = durationSec / 60;
+    const durationMin = differenceInMinutes(endTime, startTime);
 
     const correctAnswers =
       studentResponse?.reduce((acc, answer) => {
@@ -103,7 +103,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
       subjectId: exam?.subjectId ?? "",
       studentId: studentId,
       marks,
-      duration: Math.round(durationMin),
+      duration: durationMin,
       completedAt: endTime.toISOString(),
     });
     router.push(
@@ -222,7 +222,9 @@ const StudentExam = ({ examId, completed = false }: Props) => {
   });
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 relative">
+      {!completed && examTimerMemo}
+
       {completed && (
         <Card className="dark:bg-transparent dark:border-primary/40">
           <CardHeader>
@@ -273,7 +275,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
         </Card>
       )}
 
-      <div className="relative">
+      <div>
         <Card className="flex flex-col justify-start dark:border-primary/40 dark:bg-transparent">
           <CardHeader>
             <CardTitle>
@@ -283,7 +285,6 @@ const StudentExam = ({ examId, completed = false }: Props) => {
                   <span>{role === "admin" && studentName}</span>
                   <span>{completed && "Answer Sheet"}</span>
                 </div>
-                {!completed && examTimerMemo}
               </div>
             </CardTitle>
           </CardHeader>

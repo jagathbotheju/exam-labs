@@ -55,11 +55,11 @@ const ResultSummary = ({ student }: Props) => {
     });
 
   useEffect(() => {
-    if (subjectId) {
+    if (subjectId && student) {
       queryClient.invalidateQueries({ queryKey: ["month-history-data"] });
       queryClient.invalidateQueries({ queryKey: ["year-history-data"] });
     }
-  }, [subjectId, queryClient]);
+  }, [subjectId, queryClient, student]);
 
   return (
     <Card className="bg-transparent dark:border-primary/40">
@@ -73,7 +73,7 @@ const ResultSummary = ({ student }: Props) => {
               </span>
             </p>
 
-            <div className="flex gap-4">
+            <div className="flex md:flex-col gap-4">
               <SubjectSelector
                 setSubject={setSubjectId}
                 subjectId={subjectId}
