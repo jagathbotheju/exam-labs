@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1732107031632,
-      "tag": "0000_oval_nicolaos",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1732558024158,
-      "tag": "0001_last_mockingbird",
+      "when": 1732801364384,
+      "tag": "0000_jazzy_thunderbolt",
       "breakpoints": true
     }
   ]

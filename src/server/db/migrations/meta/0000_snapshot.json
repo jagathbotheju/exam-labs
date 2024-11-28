@@ -1,5 +1,5 @@
 {
-  "id": "9ed60352-25cb-4675-bc84-ee09c351c7d9",
+  "id": "5cd1a138-35a5-419a-9df0-939881a671c6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -367,6 +367,210 @@
         }
       },
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.incorrect_answers": {
+      "name": "incorrect_answers",
+      "schema": "",
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "exam_id": {
+          "name": "exam_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "question_id": {
+          "name": "question_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "question_type_id": {
+          "name": "question_type_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "incorrect_answers_student_id_user_id_fk": {
+          "name": "incorrect_answers_student_id_user_id_fk",
+          "tableFrom": "incorrect_answers",
+          "tableTo": "user",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "incorrect_answers_exam_id_exams_id_fk": {
+          "name": "incorrect_answers_exam_id_exams_id_fk",
+          "tableFrom": "incorrect_answers",
+          "tableTo": "exams",
+          "columnsFrom": [
+            "exam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "incorrect_answers_question_id_questions_id_fk": {
+          "name": "incorrect_answers_question_id_questions_id_fk",
+          "tableFrom": "incorrect_answers",
+          "tableTo": "questions",
+          "columnsFrom": [
+            "question_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "incorrect_answers_question_type_id_question_types_id_fk": {
+          "name": "incorrect_answers_question_type_id_question_types_id_fk",
+          "tableFrom": "incorrect_answers",
+          "tableTo": "question_types",
+          "columnsFrom": [
+            "question_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "incorrect_answers_student_id_question_id_pk": {
+          "name": "incorrect_answers_student_id_question_id_pk",
+          "columns": [
+            "student_id",
+            "question_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.incorrect_questions": {
+      "name": "incorrect_questions",
+      "schema": "",
+      "columns": {
+        "student_id": {
+          "name": "student_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "exam_id": {
+          "name": "exam_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "question_id": {
+          "name": "question_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "question_type_id": {
+          "name": "question_type_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "incorrect_questions_student_id_user_id_fk": {
+          "name": "incorrect_questions_student_id_user_id_fk",
+          "tableFrom": "incorrect_questions",
+          "tableTo": "user",
+          "columnsFrom": [
+            "student_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "incorrect_questions_exam_id_exams_id_fk": {
+          "name": "incorrect_questions_exam_id_exams_id_fk",
+          "tableFrom": "incorrect_questions",
+          "tableTo": "exams",
+          "columnsFrom": [
+            "exam_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "incorrect_questions_question_id_questions_id_fk": {
+          "name": "incorrect_questions_question_id_questions_id_fk",
+          "tableFrom": "incorrect_questions",
+          "tableTo": "questions",
+          "columnsFrom": [
+            "question_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "incorrect_questions_question_type_id_question_types_id_fk": {
+          "name": "incorrect_questions_question_type_id_question_types_id_fk",
+          "tableFrom": "incorrect_questions",
+          "tableTo": "question_types",
+          "columnsFrom": [
+            "question_type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "incorrect_questions_student_id_question_id_pk": {
+          "name": "incorrect_questions_student_id_question_id_pk",
+          "columns": [
+            "student_id",
+            "question_id"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "public.password_reset_tokens": {

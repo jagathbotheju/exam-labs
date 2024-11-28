@@ -27,3 +27,7 @@ export {
   incorrectAnswers,
   incorrectAnswerRelations,
 } from "@/server/db/schema/incorrectAnswers";
+export {
+  incorrectQuestions,
+  incorrectQuestionRelations,
+} from "@/server/db/schema/incorrectQuestions";

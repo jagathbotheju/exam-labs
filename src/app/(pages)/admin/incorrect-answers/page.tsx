@@ -1,4 +1,4 @@
-import IncorrectAnswers from "@/components/questions/IncorrectAnswers";
+import IncorrectQuestions from "@/components/questions/IncorrectQuestions";
 import { auth } from "@/lib/auth";
 import { User } from "@/server/db/schema/users";
 import { redirect } from "next/navigation";
@@ -11,7 +11,7 @@ const IncorrectQuestionsPage = async () => {
 
   return (
     <div className="flex flex-col border rounded-md dark:border-primary/40 h-full p-4 w-full">
-      <IncorrectAnswers />
+      <IncorrectQuestions />
     </div>
   );
 };

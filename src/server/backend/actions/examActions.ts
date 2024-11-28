@@ -173,7 +173,7 @@ export const getExams = async () => {
       examQuestions: true,
       subjects: true,
     },
-    orderBy: desc(exams.id),
+    orderBy: desc(exams.createdAt),
   });
   return allExams as ExamExt[];
 };

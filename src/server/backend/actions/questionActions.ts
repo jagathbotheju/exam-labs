@@ -5,6 +5,7 @@ import {
   examQuestions,
   exams,
   incorrectAnswers,
+  incorrectQuestions,
   questions,
   studentAnswers,
   subjects,
@@ -21,25 +22,37 @@ import {
   IncorrectAnswer,
   IncorrectAnswerExt,
 } from "@/server/db/schema/incorrectAnswers";
+import {
+  IncorrectQuestion,
+  IncorrectQuestionExt,
+} from "@/server/db/schema/incorrectQuestions";
 
 //=====get incorrect questions by userId and subjectId
 export const getIncorrectQuestions = async ({
   studentId,
   subjectId,
 }: {
-  studentId: string;
-  subjectId: string;
+  studentId?: string;
+  subjectId?: string;
 }) => {
-  const incorrectQuestions = await db
-    .select()
-    .from(incorrectAnswers)
-    .where(
-      and(
-        eq(incorrectAnswers.studentId, studentId),
-        eq(incorrectAnswers.studentId, subjectId)
-      )
-    );
-  return incorrectQuestions as IncorrectAnswer[];
+  console.log(studentId, subjectId);
+  if (!studentId || !subjectId) return [];
+  const incorrect = await db.query.incorrectQuestions.findMany({
+    with: {
+      questions: true,
+    },
+  });
+  // console.log("incorrect", incorrect);
+  if (!_.isEmpty(incorrect)) {
+    const questionsBySubject = incorrect.map((item) => {
+      if (item.questions?.subjectId === subjectId) {
+        return item.questions;
+      }
+    });
+    return questionsBySubject as QuestionExt[];
+  }
+
+  return [];
 };
 
 //========answerQuestion================================================================================================
@@ -58,6 +71,7 @@ export const answerQuestion = async ({
   studentAnswer: string;
   questionAnswer: string;
 }) => {
+  console.log("answering question...");
   const answer = await db
     .insert(studentAnswers)
     .values({
@@ -79,33 +93,32 @@ export const answerQuestion = async ({
       },
     });
 
-  if (studentAnswer !== questionAnswer) {
-    const existIncorrect: IncorrectAnswer[] = await db
-      .select()
-      .from(incorrectAnswers)
+  const existIncorrect: IncorrectQuestion[] = await db
+    .select()
+    .from(incorrectQuestions)
+    .where(
+      and(
+        eq(incorrectQuestions.questionId, questionId),
+        eq(incorrectQuestions.studentId, studentId)
+      )
+    );
+  if (!_.isEmpty(existIncorrect) && studentAnswer === questionAnswer) {
+    await db
+      .delete(incorrectQuestions)
       .where(
         and(
-          eq(incorrectAnswers.questionId, questionId),
-          eq(incorrectAnswers.studentId, studentId)
+          eq(incorrectQuestions.questionId, questionId),
+          eq(incorrectQuestions.studentId, studentId)
         )
       );
-    if (existIncorrect) {
-      await db
-        .delete(incorrectAnswers)
-        .where(
-          and(
-            eq(incorrectAnswers.questionId, questionId),
-            eq(incorrectAnswers.studentId, studentId)
-          )
-        );
-    } else {
-      await db.insert(incorrectAnswers).values({
-        studentId,
-        examId,
-        questionId,
-        questionTypeId,
-      });
-    }
+  } else if (_.isEmpty(existIncorrect) && studentAnswer !== questionAnswer) {
+    console.log("adding incorrect question");
+    await db.insert(incorrectQuestions).values({
+      studentId,
+      examId,
+      questionId,
+      questionTypeId,
+    });
   }
 };
 

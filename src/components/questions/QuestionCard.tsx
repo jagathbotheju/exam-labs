@@ -35,18 +35,23 @@ import { useExamById, useExams } from "@/server/backend/queries/examQueries";
 import { Badge } from "../ui/badge";
 import { ExamExt } from "@/server/db/schema/exams";
 import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
+import { useStudents } from "@/server/backend/queries/studentQueries";
+import _ from "lodash";
 
 interface Props {
   question: QuestionExt;
   index: number;
   subjectId: string;
+  studentId?: string;
 }
 
-const QuestionCard = ({ question, index, subjectId }: Props) => {
+const QuestionCard = ({ question, index, subjectId, studentId }: Props) => {
   const router = useRouter();
   const [exam, setExam] = useState("");
   const [questionExams, setQuestionExams] = useState<ExamExt[] | undefined>();
 
+  const { data: students } = useStudents();
+  const student = students?.find((student) => student.id === studentId);
   const { mutate: deleteQuestion } = useDeleteQuestion();
   const { mutate: removeQuestionFromExam } = useRemoveQuestionFromExam();
   const { mutate: addQuestion } = useAddQuestionToExam();
@@ -69,9 +74,9 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
   };
 
   useEffect(() => {
-    const examIds = question.examQuestions.map((item) => item.examId);
+    const examIds = question.examQuestions?.map((item) => item.examId);
     const questionExams = exams?.filter((item) =>
-      examIds.find((id) => id === item.id)
+      examIds?.find((id) => id === item.id)
     );
     if (questionExams) setQuestionExams(questionExams);
   }, [exams, question.examQuestions]);
@@ -80,11 +85,21 @@ const QuestionCard = ({ question, index, subjectId }: Props) => {
     <Card className="dark:bg-slate-900 bg-slate-50">
       <CardContent className="p-0">
         <div className="flex flex-col hover:drop-shadow-xl p-2">
-          {questionType && (
-            <Badge variant="secondary" className="w-fit font-sinhala">
-              {questionType}
-            </Badge>
-          )}
+          <div className="flex justify-between">
+            {/* question type */}
+            {questionType && (
+              <Badge variant="secondary" className="w-fit font-sinhala">
+                {questionType}
+              </Badge>
+            )}
+            {/* if incorrect questions student name */}
+            {!_.isEmpty(student) && (
+              <Badge variant="outline" className="border border-primary">
+                {student.name}
+              </Badge>
+            )}
+          </div>
+
           <div className="flex justify-between h-full">
             <div className="flex gap-2 items-center h-full w-full">
               {/* <div className="dark:bg-slate-800 bg-slate-300 px-4 h-full font-bold rounded-tl-lg rounded-bl-lg flex items-center justify-center">

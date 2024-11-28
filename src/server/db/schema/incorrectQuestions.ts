@@ -11,9 +11,10 @@ import { InferSelectModel, relations } from "drizzle-orm";
 import { QuestionExt, questions } from "./questions";
 import { QuestionType, questionTypes } from "./questionTypes";
 import { User, users } from "./users";
+import { subjects } from "./subjects";
 
-export const incorrectAnswers = pgTable(
-  "incorrect_answers",
+export const incorrectQuestions = pgTable(
+  "incorrect_questions",
   {
     studentId: text("student_id").references(() => users.id),
     examId: text("exam_id").references(() => exams.id),
@@ -30,29 +31,34 @@ export const incorrectAnswers = pgTable(
   })
 );
 
-export const incorrectAnswerRelations = relations(
-  incorrectAnswers,
+export const incorrectQuestionRelations = relations(
+  incorrectQuestions,
   ({ many, one }) => ({
     exams: one(exams, {
-      fields: [incorrectAnswers.examId],
+      fields: [incorrectQuestions.examId],
       references: [exams.id],
     }),
     students: one(users, {
-      fields: [incorrectAnswers.studentId],
+      fields: [incorrectQuestions.studentId],
       references: [users.id],
     }),
     questionTypes: one(questionTypes, {
-      fields: [incorrectAnswers.questionTypeId],
+      fields: [incorrectQuestions.questionTypeId],
       references: [questionTypes.id],
     }),
-    questions: many(questions),
+    questions: one(questions, {
+      fields: [incorrectQuestions.questionId],
+      references: [questions.id],
+    }),
   })
 );
 
-export type IncorrectAnswer = InferSelectModel<typeof incorrectAnswers>;
-export type IncorrectAnswerExt = InferSelectModel<typeof incorrectAnswers> & {
+export type IncorrectQuestion = InferSelectModel<typeof incorrectQuestions>;
+export type IncorrectQuestionExt = InferSelectModel<
+  typeof incorrectQuestions
+> & {
   exams: Exam;
   students: User;
   questionTypes: QuestionType;
-  questions: QuestionExt[];
+  questions: QuestionExt;
 };

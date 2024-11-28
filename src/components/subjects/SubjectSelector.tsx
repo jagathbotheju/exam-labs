@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   setSubject: (subject: string) => void;
-  subjectId: string;
+  subjectId?: string;
 }
 
 const SubjectSelector = ({ setSubject, subjectId }: Props) => {

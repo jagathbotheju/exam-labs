@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  getIncorrectQuestions,
   getQuestionById,
   getQuestions,
   getQuestionsBySubject,
@@ -12,6 +13,19 @@ export const useQuestions = () => {
   return useQuery({
     queryKey: ["questions"],
     queryFn: () => getQuestions(),
+  });
+};
+
+export const useIncorrectQuestions = ({
+  studentId,
+  subjectId,
+}: {
+  studentId?: string;
+  subjectId?: string;
+}) => {
+  return useQuery({
+    queryKey: ["incorrect-questions"],
+    queryFn: () => getIncorrectQuestions({ studentId, subjectId }),
   });
 };
 
