@@ -49,6 +49,7 @@ const AllQuestions = () => {
     questionType,
     page,
   });
+
   const allPages =
     (questionsCount && Math.ceil(questionsCount.count / 10)) ?? 1;
   const subject = subjects?.find((subject) => subject.id === subjectId);
@@ -75,6 +76,8 @@ const AllQuestions = () => {
       });
     }
   }, [subjectId, questionType, queryClient, page]);
+
+  console.log("allPages", allPages);
 
   return (
     <div className="flex flex-col w-full">
@@ -133,10 +136,12 @@ const AllQuestions = () => {
         </div>
       )}
 
+      {/* pagination */}
       {!_.isEmpty(questions) && allPages > 1 && (
         <div className="mt-4 self-end">
           <Pagination>
             <PaginationContent>
+              {/* previous page */}
               <PaginationItem>
                 <PaginationPrevious
                   onClick={handlePreviousPage}
@@ -182,9 +187,9 @@ const AllQuestions = () => {
                 </PaginationItem>
               )}
 
+              {/* next page */}
               <PaginationItem>
                 <PaginationNext
-                  // onClick={handleNextPage}
                   onClick={
                     allPages && page < allPages ? handleNextPage : () => {}
                   }

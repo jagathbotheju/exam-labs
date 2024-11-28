@@ -151,68 +151,72 @@ const ExamQuestionCard = ({
                   </div>
 
                   {/* option-3 */}
-                  <div className="flex items-center space-x-2 relative">
-                    <RadioGroupItem
-                      disabled={role === "admin" || completed}
-                      className="w-5 h-5"
-                      value="option3"
-                      id="option3"
-                      {...(answer &&
-                        answer.studentAnswer === "option3" && {
-                          checked: true,
-                        })}
-                    />
-                    <Label htmlFor="option3">
-                      <p className="text-lg tracking-wide font-sinhala">
-                        {question.option3}
-                      </p>
-                    </Label>
+                  {question.option3 && (
+                    <div className="flex items-center space-x-2 relative">
+                      <RadioGroupItem
+                        disabled={role === "admin" || completed}
+                        className="w-5 h-5"
+                        value="option3"
+                        id="option3"
+                        {...(answer &&
+                          answer.studentAnswer === "option3" && {
+                            checked: true,
+                          })}
+                      />
+                      <Label htmlFor="option3">
+                        <p className="text-lg tracking-wide font-sinhala">
+                          {question.option3}
+                        </p>
+                      </Label>
 
-                    {!isAnswerCorrect &&
-                      completed &&
-                      answer &&
-                      answer.questionAnswer === "option3" && (
-                        <Image
-                          className="absolute -top-3 -left-7"
-                          src="/images/err-circle.png"
-                          alt="wrong answer"
-                          width={60}
-                          height={60}
-                        />
-                      )}
-                  </div>
+                      {!isAnswerCorrect &&
+                        completed &&
+                        answer &&
+                        answer.questionAnswer === "option3" && (
+                          <Image
+                            className="absolute -top-3 -left-7"
+                            src="/images/err-circle.png"
+                            alt="wrong answer"
+                            width={60}
+                            height={60}
+                          />
+                        )}
+                    </div>
+                  )}
 
                   {/* option-4 */}
-                  <div className="flex items-center space-x-2 relative">
-                    <RadioGroupItem
-                      disabled={role === "admin" || completed}
-                      className="w-5 h-5"
-                      value="option4"
-                      id="option4"
-                      {...(answer &&
-                        answer.studentAnswer === "option4" && {
-                          checked: true,
-                        })}
-                    />
-                    <Label htmlFor="option4">
-                      <p className="text-lg tracking-wide font-sinhala">
-                        {question.option4}
-                      </p>
-                    </Label>
+                  {question.option4 && (
+                    <div className="flex items-center space-x-2 relative">
+                      <RadioGroupItem
+                        disabled={role === "admin" || completed}
+                        className="w-5 h-5"
+                        value="option4"
+                        id="option4"
+                        {...(answer &&
+                          answer.studentAnswer === "option4" && {
+                            checked: true,
+                          })}
+                      />
+                      <Label htmlFor="option4">
+                        <p className="text-lg tracking-wide font-sinhala">
+                          {question.option4}
+                        </p>
+                      </Label>
 
-                    {!isAnswerCorrect &&
-                      completed &&
-                      answer &&
-                      answer.questionAnswer === "option4" && (
-                        <Image
-                          className="absolute -top-3 -left-7"
-                          src="/images/err-circle.png"
-                          alt="wrong answer"
-                          width={60}
-                          height={60}
-                        />
-                      )}
-                  </div>
+                      {!isAnswerCorrect &&
+                        completed &&
+                        answer &&
+                        answer.questionAnswer === "option4" && (
+                          <Image
+                            className="absolute -top-3 -left-7"
+                            src="/images/err-circle.png"
+                            alt="wrong answer"
+                            width={60}
+                            height={60}
+                          />
+                        )}
+                    </div>
+                  )}
                 </div>
               </RadioGroup>
             </div>
