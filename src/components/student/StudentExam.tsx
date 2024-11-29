@@ -62,7 +62,11 @@ const StudentExam = ({ examId, completed = false }: Props) => {
 
   const { mutate: answerQuestion } = useAnswerQuestion();
   const { mutate: cancelStudentExam } = useCancelStudentExam();
-  const { mutate: completeExamMut } = useCompleteExam();
+  const {
+    mutate: completeExamMut,
+    isSuccess: completeExamSuccess,
+    isPending: completeExamPending,
+  } = useCompleteExam();
   const { data: exam, isPending: isPendingExam } = useExamById(examId);
   const {
     data: studentExam,
@@ -106,6 +110,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
       duration: durationMin,
       completedAt: endTime.toISOString(),
     });
+
     router.push(
       `/student/completed-exam/${examId}?studentId=${studentId}&studentName=${studentName}&role=${role}`
     );
@@ -171,6 +176,17 @@ const StudentExam = ({ examId, completed = false }: Props) => {
       <div className="flex w-full mt-10 justify-center items-center">
         <h2 className="text-3xl text-muted-foreground font-semibold">
           No Exam Found
+        </h2>
+      </div>
+    );
+  }
+
+  if (completeExamPending) {
+    return (
+      <div className="flex w-full mt-10 justify-center items-center gap-2">
+        <Loader2 className="w-8 h-8 animate-spin" />
+        <h2 className="text-3xl text-muted-foreground font-semibold">
+          Please wait, Checking Answers.....!
         </h2>
       </div>
     );

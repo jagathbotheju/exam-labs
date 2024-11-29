@@ -4,7 +4,6 @@ import { db } from "../../db";
 import {
   examQuestions,
   exams,
-  incorrectAnswers,
   incorrectQuestions,
   questions,
   studentAnswers,
@@ -18,10 +17,7 @@ import { auth } from "@/lib/auth";
 import { QuestionType } from "@/server/db/schema/questionTypes";
 import { User } from "@/server/db/schema/users";
 import { useQuestionTypes } from "../queries/questionTypeQueries";
-import {
-  IncorrectAnswer,
-  IncorrectAnswerExt,
-} from "@/server/db/schema/incorrectAnswers";
+
 import {
   IncorrectQuestion,
   IncorrectQuestionExt,

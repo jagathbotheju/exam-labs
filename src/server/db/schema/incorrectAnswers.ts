@@ -45,7 +45,7 @@ export const incorrectAnswerRelations = relations(
       fields: [incorrectAnswers.questionTypeId],
       references: [questionTypes.id],
     }),
-    questions: many(questions),
+    // questions: many(questions),
   })
 );
 
@@ -54,5 +54,5 @@ export type IncorrectAnswerExt = InferSelectModel<typeof incorrectAnswers> & {
   exams: Exam;
   students: User;
   questionTypes: QuestionType;
-  questions: QuestionExt[];
+  // questions: QuestionExt[];
 };
