@@ -1,6 +1,7 @@
 import { InferSelectModel, relations } from "drizzle-orm";
 import {
   boolean,
+  doublePrecision,
   integer,
   PgInteger,
   pgTable,
@@ -25,7 +26,7 @@ export const questionsMonthHistory = pgTable(
     subjectId: text("subject_id").references(() => subjects.id, {
       onDelete: "cascade",
     }),
-    marks: integer("marks").default(0),
+    marks: doublePrecision("marks").default(0),
     day: integer("day").notNull(),
     month: integer("month").notNull(),
     year: integer("year").notNull(),

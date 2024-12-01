@@ -31,14 +31,12 @@ export const getIncorrectQuestions = async ({
   studentId?: string;
   subjectId?: string;
 }) => {
-  console.log(studentId, subjectId);
   if (!studentId || !subjectId) return [];
   const incorrect = await db.query.incorrectQuestions.findMany({
     with: {
       questions: true,
     },
   });
-  // console.log("incorrect", incorrect);
   if (!_.isEmpty(incorrect)) {
     const questionsBySubject = incorrect.map((item) => {
       if (item.questions?.subjectId === subjectId) {
@@ -67,7 +65,6 @@ export const answerQuestion = async ({
   studentAnswer: string;
   questionAnswer: string;
 }) => {
-  console.log("answering question...");
   const answer = await db
     .insert(studentAnswers)
     .values({
@@ -108,7 +105,6 @@ export const answerQuestion = async ({
         )
       );
   } else if (_.isEmpty(existIncorrect) && studentAnswer !== questionAnswer) {
-    console.log("adding incorrect question");
     await db.insert(incorrectQuestions).values({
       studentId,
       examId,

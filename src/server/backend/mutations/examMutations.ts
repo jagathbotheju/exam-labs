@@ -37,12 +37,6 @@ export const useCompleteExam = () => {
         marks,
         duration,
       }),
-    // onSuccess: (res) => {
-    //   console.log(res);
-    // },
-    // onError: (res) => {
-    //   console.log(res);
-    // },
   });
 };
 

@@ -17,6 +17,7 @@ const CustomTooltip = ({ timeFrame, active, payload }: Props) => {
   if (!active || !payload || payload.length === 0) return null;
   const data = payload[0].payload;
   const { marks, month, year, day } = data;
+
   const tipDate =
     timeFrame === "month" ? new Date(year, month, day) : new Date(year, month);
   const tipDateF =
@@ -47,7 +48,7 @@ const CustomTooltip = ({ timeFrame, active, payload }: Props) => {
               duration={0.5}
               preserveValue
               end={value}
-              decimals={0}
+              decimals={1}
               className="text-sm"
             />
           </div>

@@ -217,7 +217,7 @@ export const completeExam = async ({
       .where(
         and(
           eq(questionsMonthHistory.day, date.getUTCDate()),
-          eq(questionsMonthHistory.month, date.getUTCMonth()),
+          eq(questionsMonthHistory.month, date.getUTCMonth() + 1),
           eq(questionsMonthHistory.year, date.getUTCFullYear()),
           eq(questionsMonthHistory.subjectId, subjectId),
           eq(questionsMonthHistory.studentId, studentId)
@@ -247,7 +247,7 @@ export const completeExam = async ({
         .where(
           and(
             eq(questionsMonthHistory.day, date.getUTCDate()),
-            eq(questionsMonthHistory.month, date.getUTCMonth()),
+            eq(questionsMonthHistory.month, date.getUTCMonth() + 1),
             eq(questionsMonthHistory.year, date.getUTCFullYear()),
             eq(questionsMonthHistory.subjectId, subjectId)
           )
@@ -262,7 +262,7 @@ export const completeExam = async ({
           subjectId,
           marks,
           day: date.getUTCDate(),
-          month: date.getUTCMonth(),
+          month: date.getUTCMonth() + 1,
           year: date.getUTCFullYear(),
         })
         .returning();

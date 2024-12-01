@@ -1,0 +1,1 @@
+ALTER TABLE "questions_month_history" ALTER COLUMN "marks" SET DATA TYPE double precision;

@@ -1,6 +1,7 @@
 import { InferSelectModel, relations } from "drizzle-orm";
 import {
   boolean,
+  doublePrecision,
   integer,
   pgTable,
   primaryKey,
@@ -26,7 +27,7 @@ export const questionsYearHistory = pgTable(
       .references(() => users.id),
     month: integer("month").notNull(),
     year: integer("year").notNull(),
-    marks: integer("marks").default(0),
+    marks: doublePrecision("marks").default(0),
     createdAt: timestamp("created_at", { mode: "string" })
       .notNull()
       .defaultNow(),

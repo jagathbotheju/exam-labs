@@ -77,8 +77,6 @@ const AllQuestions = () => {
     }
   }, [subjectId, questionType, queryClient, page]);
 
-  console.log("allPages", allPages);
-
   return (
     <div className="flex flex-col w-full">
       <div className="flex justify-between">

@@ -28,9 +28,20 @@ export const getMonthHistoryData = async ({
     .where(
       and(
         eq(questionsMonthHistory.subjectId, subjectId),
-        eq(questionsMonthHistory.studentId, studentId)
+        eq(questionsMonthHistory.studentId, studentId),
+        eq(questionsMonthHistory.month, month)
       )
     );
+
+  // await db.insert(questionsMonthHistory).values({
+  //   examId: "4e2d5985-eddd-4454-90f0-65f19c2db747",
+  //   studentId: "afe02058-8d03-4813-a5b3-ee202806952f",
+  //   subjectId: "4edd48eb-1e17-41ac-adf4-40b9b07c17a4",
+  //   marks: 62.5,
+  //   day: 30,
+  //   month: 11,
+  //   year: 2024,
+  // });
 
   if (!_.isEmpty(result)) {
     const history: HistoryData[] = [];
@@ -50,6 +61,8 @@ export const getMonthHistoryData = async ({
         day: i,
       });
     }
+
+    const marksTest = history.find((item) => item.day === 29) as HistoryData;
     return history;
   }
 

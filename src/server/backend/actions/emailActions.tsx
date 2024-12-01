@@ -61,7 +61,6 @@ export const sendVerificationEmail = async ({
     // html: `<p>Click to <a href=${confirmLink}>Confirm your email</a></p>`,
     react: <VerifyEmailTemp url={confirmLink} />,
   });
-  // if (error) return console.log(error);
   if (data) return data;
 };
 
@@ -80,6 +79,5 @@ export const sendPasswordResetEmail = async ({
     // html: `<p>Click to <a href=${confirmLink}>Reset your password</a></p>`,
     react: <PasswordResetTemp url={confirmLink} />,
   });
-  if (error) return console.log(error);
   if (data) return data;
 };

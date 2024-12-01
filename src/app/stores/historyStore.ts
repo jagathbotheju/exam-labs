@@ -14,7 +14,7 @@ export const useHistoryStore = create<HistoryStore>()(
     (set, get) => ({
       timeFrame: "month",
       period: {
-        month: new Date().getMonth(),
+        month: new Date().getMonth() + 1,
         year: new Date().getFullYear(),
       },
       setTimeFrame: (timeFrame) => {

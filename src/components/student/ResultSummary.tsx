@@ -55,11 +55,11 @@ const ResultSummary = ({ student }: Props) => {
     });
 
   useEffect(() => {
-    if (subjectId && student) {
+    if (subjectId && student && period) {
       queryClient.invalidateQueries({ queryKey: ["month-history-data"] });
       queryClient.invalidateQueries({ queryKey: ["year-history-data"] });
     }
-  }, [subjectId, queryClient, student]);
+  }, [subjectId, queryClient, student, period]);
 
   return (
     <Card className="bg-transparent dark:border-primary/40">
@@ -94,7 +94,14 @@ const ResultSummary = ({ student }: Props) => {
               Please Select Subject
             </h2>
           </div>
-        ) : !_.isEmpty(yearHistoryData) || !_.isEmpty(monthHistoryData) ? (
+        ) : _.isEmpty(yearHistoryData) || _.isEmpty(monthHistoryData) ? (
+          <Card className="flex h-[300px] flex-col items-center justify-center bg-background dark:bg-transparent">
+            No Data for the selected period!
+            <p className="text-sm text-muted-foreground">
+              Try selecting different period or adding new Transactions
+            </p>
+          </Card>
+        ) : (
           <ResponsiveContainer width={"100%"} height={300}>
             <BarChart
               height={300}
@@ -155,13 +162,6 @@ const ResultSummary = ({ student }: Props) => {
               />
             </BarChart>
           </ResponsiveContainer>
-        ) : (
-          <Card className="flex h-[300px] flex-col items-center justify-center bg-background dark:bg-transparent">
-            No Data for the selected period!
-            <p className="text-sm text-muted-foreground">
-              Try selecting different period or adding new Transactions
-            </p>
-          </Card>
         )}
       </CardContent>
     </Card>

@@ -33,7 +33,7 @@ const MonthSelector = () => {
           );
 
           return (
-            <SelectItem key={month + index} value={month.toString()}>
+            <SelectItem key={month + index} value={(month + 1).toString()}>
               {monthStr}
             </SelectItem>
           );

@@ -8,6 +8,20 @@
       "when": 1732801364384,
       "tag": "0000_jazzy_thunderbolt",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1733031259557,
+      "tag": "0001_nappy_talisman",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1733031356139,
+      "tag": "0002_warm_landau",
+      "breakpoints": true
     }
   ]
 }
