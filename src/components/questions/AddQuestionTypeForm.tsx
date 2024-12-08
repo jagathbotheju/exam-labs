@@ -21,9 +21,13 @@ import { toast } from "sonner";
 import { useAddQuestionType } from "@/server/backend/mutations/questionTypeMutations";
 import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
 
-const AddQuestionTypeForm = () => {
+interface Props {
+  subjectId: string;
+}
+
+const AddQuestionTypeForm = ({ subjectId }: Props) => {
   const router = useRouter();
-  const { data: questionTypes, isLoading } = useQuestionTypes();
+  // const { data: questionTypes, isLoading } = useQuestionTypes();
   const { mutate: addQuestionType, isPending } = useAddQuestionType();
   const form = useForm<z.infer<typeof AddQuestionTypeSchema>>({
     resolver: zodResolver(AddQuestionTypeSchema),
@@ -34,12 +38,12 @@ const AddQuestionTypeForm = () => {
   });
 
   const onSubmit = (formData: z.infer<typeof AddQuestionTypeSchema>) => {
-    addQuestionType(formData);
+    addQuestionType({ type: formData.type, subjectId });
     form.reset();
   };
 
   return (
-    <div className="mt-2 w-full max-w-xl">
+    <div className="mt-2 w-full max-w-xl flex flex-col">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* question type */}
@@ -48,7 +52,7 @@ const AddQuestionTypeForm = () => {
             name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Subject Name</FormLabel>
+                <FormLabel>Question Type</FormLabel>
                 <FormControl>
                   <Input {...field} className="uppercase font-sinhala" />
                 </FormControl>

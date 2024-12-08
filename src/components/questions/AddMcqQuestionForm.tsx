@@ -38,7 +38,10 @@ import { useAddQuestion } from "@/server/backend/mutations/questionMutations";
 import { useQuestionById } from "@/server/backend/queries/questionQueries";
 import TipTap from "../Tiptap";
 import _ from "lodash";
-import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
+import {
+  useQuestionTypeBySubjectId,
+  useQuestionTypes,
+} from "@/server/backend/queries/questionTypeQueries";
 
 interface Props {
   questionId?: string;
@@ -46,14 +49,17 @@ interface Props {
 
 const AddMcqQuestionForm = ({ questionId }: Props) => {
   const router = useRouter();
+  const [subjectId, setSubjectId] = useState("");
+
   const { data: subjects } = useSubjects();
-  const { data: types } = useQuestionTypes();
+  const { mutate: addQuestion, isPending } = useAddQuestion();
+
   const [openSubject, setOpenSubject] = useState(false);
   const [openType, setOpenType] = useState(false);
   const [openGrade, setOpenGrade] = useState(false);
   const [openTerm, setOpenTerm] = useState(false);
   const [openAnswer, setOpenAnswer] = useState(false);
-  const { mutate: addQuestion, isPending } = useAddQuestion();
+
   const form = useForm<z.infer<typeof AddMcqQuestionSchema>>({
     resolver: zodResolver(AddMcqQuestionSchema),
     defaultValues: {
@@ -71,10 +77,14 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
     mode: "all",
   });
 
+  const { data: types, isLoading: isLoadingTypes } = useQuestionTypeBySubjectId(
+    form.getValues("subject")
+  );
   const { data: question } = useQuestionById(questionId ?? "");
 
   useEffect(() => {
     form.reset();
+
     if (question && !_.isEmpty(question)) {
       form.setValue("grade", question[0].grade);
       form.setValue("term", question[0].term);

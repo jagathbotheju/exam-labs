@@ -14,6 +14,15 @@ export const getQuestionTypes = async () => {
   return types as QuestionType[];
 };
 
+export const getQuestionTypeBySubjectId = async (subjectId: string) => {
+  const types = await db
+    .select()
+    .from(questionTypes)
+    .where(eq(questionTypes.subjectId, subjectId))
+    .orderBy(desc(questionTypes.createdAt));
+  return types as QuestionType[];
+};
+
 //======getQuestionTypeById==============================================================================================
 export const getQuestionTypeById = async (questionTypeId: string) => {
   const types = await db
@@ -40,7 +49,13 @@ export const deleteQuestionType = async (questionTypeId: string) => {
 };
 
 //======addQuestionType================================================================================================
-export const addQuestionType = async ({ type }: { type: string }) => {
+export const addQuestionType = async ({
+  type,
+  subjectId,
+}: {
+  type: string;
+  subjectId: string;
+}) => {
   try {
     const typeExist = await db
       .select()
@@ -49,7 +64,10 @@ export const addQuestionType = async ({ type }: { type: string }) => {
     if (!_.isEmpty(typeExist))
       return { error: "Could not add, Question Type already Exist" };
 
-    const newType = await db.insert(questionTypes).values({ type }).returning();
+    const newType = await db
+      .insert(questionTypes)
+      .values({ type, subjectId })
+      .returning();
     if (newType) return { success: "New Question Type added successfully" };
 
     return { error: "Could not add Question Type" };

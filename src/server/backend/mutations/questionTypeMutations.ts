@@ -10,12 +10,18 @@ import {
 export const useAddQuestionType = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (formData: z.infer<typeof AddQuestionTypeSchema>) =>
-      addQuestionType(formData),
+    mutationFn: ({ type, subjectId }: { type: string; subjectId: string }) =>
+      addQuestionType({
+        type,
+        subjectId,
+      }),
     onSuccess: async (res) => {
       if (res.success) {
         toast.success(res.success);
-        await queryClient.invalidateQueries({ queryKey: ["question-types"] });
+        queryClient.invalidateQueries({ queryKey: ["question-types"] });
+        queryClient.invalidateQueries({
+          queryKey: ["question-type-subject-id"],
+        });
       }
       if (res.error) {
         toast.error(res.error);

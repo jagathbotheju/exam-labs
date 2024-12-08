@@ -16,24 +16,35 @@ import {
 } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
+import {
+  useQuestionTypeBySubjectId,
+  useQuestionTypes,
+} from "@/server/backend/queries/questionTypeQueries";
 import { QuestionType } from "@/server/db/schema/questionTypes";
 
 interface Props {
   setQuestionType: (type: QuestionType) => void;
   questionType: QuestionType | undefined;
+  subjectId: string;
 }
 
-const QuestionsTypePicker = ({ setQuestionType, questionType }: Props) => {
+const QuestionsTypePicker = ({
+  setQuestionType,
+  questionType,
+  subjectId,
+}: Props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const { data: questionTypes } = useQuestionTypes();
+  // const { data: questionTypes } = useQuestionTypes();
+  const { data: questionTypes } = useQuestionTypeBySubjectId(subjectId);
 
-  useEffect(() => {
-    if (questionType) {
-      setValue(questionType.id);
-    }
-  }, [questionType]);
+  // useEffect(() => {
+  //   if (questionType) {
+  //     setValue(questionType.id);
+  //   }
+  // }, [questionType]);
+
+  // console.log("value", value);
 
   return (
     <div>
@@ -46,7 +57,9 @@ const QuestionsTypePicker = ({ setQuestionType, questionType }: Props) => {
               aria-expanded={open}
               className="w-[200px] justify-between font-sinhala"
             >
-              {value
+              {value === "all"
+                ? "All"
+                : questionTypes.find((type) => type.id === value)?.type
                 ? questionTypes.find((type) => type.id === value)?.type
                 : "filter with types..."}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -58,6 +71,28 @@ const QuestionsTypePicker = ({ setQuestionType, questionType }: Props) => {
               <CommandList>
                 <CommandEmpty>No subjects found.</CommandEmpty>
                 <CommandGroup>
+                  {/* all types */}
+                  <CommandItem
+                    className="font-sinhala"
+                    value="all"
+                    onSelect={(currentValue) => {
+                      const selectedType = questionTypes.find(
+                        (item) => item.id === currentValue
+                      );
+                      setValue(currentValue);
+                      setQuestionType(selectedType ?? ({} as QuestionType));
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value === "all" ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    All
+                  </CommandItem>
+
                   {questionTypes.map((type) => (
                     <CommandItem
                       className="font-sinhala"

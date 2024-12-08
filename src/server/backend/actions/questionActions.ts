@@ -258,7 +258,7 @@ export const getQuestionsCount = async ({
     .select({ count: count() })
     .from(questions)
     .where(
-      questionType && questionType.type !== "all"
+      !_.isEmpty(questionType)
         ? and(
             eq(questions.subjectId, subjectId),
             eq(questions.typeId, questionType.id)
@@ -295,13 +295,12 @@ export const getQuestionsBySubjectPagination = async ({
     with: {
       examQuestions: true,
     },
-    where:
-      questionType && questionType.type !== "all"
-        ? and(
-            eq(questions.subjectId, subjectId),
-            eq(questions.typeId, questionType.id)
-          )
-        : eq(questions.subjectId, subjectId),
+    where: !_.isEmpty(questionType)
+      ? and(
+          eq(questions.subjectId, subjectId),
+          eq(questions.typeId, questionType.id)
+        )
+      : eq(questions.subjectId, subjectId),
     orderBy: asc(questions.createdAt),
     limit: pageSize,
     offset: (page - 1) * pageSize,

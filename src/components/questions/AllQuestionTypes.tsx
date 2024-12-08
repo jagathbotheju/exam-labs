@@ -1,5 +1,9 @@
 "use client";
-import { useQuestionTypes } from "@/server/backend/queries/questionTypeQueries";
+import {
+  useQuestionTypeById,
+  useQuestionTypeBySubjectId,
+  useQuestionTypes,
+} from "@/server/backend/queries/questionTypeQueries";
 import {
   Table,
   TableBody,
@@ -13,14 +17,29 @@ import _ from "lodash";
 import AppDialog from "../AppDialog";
 import { useDeleteQuestionType } from "@/server/backend/mutations/questionTypeMutations";
 
-const AllQuestionTypes = () => {
-  const { data: types, isLoading } = useQuestionTypes();
+interface Props {
+  subjectId: string;
+}
+
+const AllQuestionTypes = ({ subjectId }: Props) => {
+  // const { data: types, isLoading } = useQuestionTypes();
+  const { data: types, isLoading } = useQuestionTypeBySubjectId(subjectId);
   const { mutate: deleteQuestionType } = useDeleteQuestionType();
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!subjectId) {
+    return (
+      <div className="flex items-center justify-center">
+        <h1 className="text-xl font-bold text-muted-foreground">
+          Please select Subject
+        </h1>
       </div>
     );
   }

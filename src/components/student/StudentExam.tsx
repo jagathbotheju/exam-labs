@@ -5,10 +5,10 @@ import {
   useStudentExam,
   useStudentExams,
 } from "@/server/backend/queries/examQueries";
-import { Loader2 } from "lucide-react";
+import { Loader2, Printer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import ExamQuestionCard from "../exams/ExamQuestionCard";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { StudentResponse } from "@/lib/types";
 import ExamTimer from "../exams/ExamTimer";
 import { Button } from "../ui/button";
@@ -34,6 +34,7 @@ import {
 import { cn } from "@/lib/utils";
 import { differenceInMinutes, format } from "date-fns";
 import Countdown, { zeroPad } from "react-countdown";
+import { useReactToPrint } from "react-to-print";
 
 type QType = {
   score: number;
@@ -48,6 +49,19 @@ interface Props {
 }
 
 const StudentExam = ({ examId, completed = false }: Props) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  // const contentRef = useRef();
+  const reactToPrintFn = useReactToPrint({
+    // contentRef,
+    contentRef,
+    fonts: [
+      {
+        family: "Noto_Sans_Sinhala",
+        source: "/fonts/NotoSansSinhala.ttf",
+      },
+    ],
+  });
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -241,57 +255,69 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     <div className="flex flex-col gap-8 relative">
       {!completed && examTimerMemo}
 
-      {completed && (
-        <Card className="dark:bg-transparent dark:border-primary/40">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold">Result Summary</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="font-semibold text-xl">
-                    Knowledge Area
-                  </TableHead>
-                  <TableHead className="font-semibold text-xl">Score</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {questionTypes &&
-                  studentAnswers &&
-                  questionTypes.map((item, index) => {
-                    const score = (
-                      (item.score / item.correctTypeLength) *
-                      100
-                    ).toFixed();
-                    return (
-                      <TableRow key={item.questionTypeId + index}>
-                        <TableCell className="font-sinhala text-xl">
-                          {item.questionType}
-                        </TableCell>
-                        <TableCell
-                          className={cn("text-xl font-semibold", {
-                            "text-green-700": +score > 70,
-                            "text-yellow-500": +score < 70,
-                            "text-red-700": +score < 40,
-                          })}
-                        >
-                          {(
-                            (item.score / item.correctTypeLength) *
-                            100
-                          ).toFixed()}
-                          %
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
+      <div ref={contentRef} className="flex flex-col gap-4">
+        {/* knowledge area */}
+        {completed && (
+          <Card className="dark:bg-transparent dark:border-primary/40">
+            <CardHeader>
+              <div className="flex justify-between">
+                <CardTitle className="text-2xl font-bold">
+                  Result Summary
+                </CardTitle>
 
-      <div>
+                <Printer
+                  className="cursor-pointer"
+                  onClick={() => reactToPrintFn()}
+                />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="font-semibold text-xl">
+                      Knowledge Area
+                    </TableHead>
+                    <TableHead className="font-semibold text-xl">
+                      Score
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {questionTypes &&
+                    studentAnswers &&
+                    questionTypes.map((item, index) => {
+                      const score = (
+                        (item.score / item.correctTypeLength) *
+                        100
+                      ).toFixed();
+                      return (
+                        <TableRow key={item.questionTypeId + index}>
+                          <TableCell className="font-sinhala text-xl">
+                            {item.questionType}
+                          </TableCell>
+                          <TableCell
+                            className={cn("text-xl font-semibold", {
+                              "text-green-700": +score > 70,
+                              "text-yellow-500": +score < 70,
+                              "text-red-700": +score < 40,
+                            })}
+                          >
+                            {(
+                              (item.score / item.correctTypeLength) *
+                              100
+                            ).toFixed()}
+                            %
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
+
         <Card className="flex flex-col justify-start dark:border-primary/40 dark:bg-transparent">
           <CardHeader>
             <CardTitle>
@@ -331,7 +357,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
               </div>
             )}
 
-            <div className="mt-8 flex gap-4 self-end">
+            <div className="mt-8 flex gap-4 self-end print:hidden">
               {/* cancel exam */}
               {!completed && (
                 <AppDialog

@@ -86,6 +86,7 @@ const AllQuestions = () => {
           {subject?.title === "sinhala" && (
             <QuestionsTypePicker
               questionType={questionType}
+              subjectId={subjectId}
               setQuestionType={setQuestionType}
             />
           )}
