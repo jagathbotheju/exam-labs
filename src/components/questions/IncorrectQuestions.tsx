@@ -52,10 +52,11 @@ const IncorrectQuestions = () => {
           <h1 className="text-3xl font-semibold">Incorrect Questions</h1>
 
           <div className="flex gap-4 items-center">
-            {subject?.title === "sinhala" && (
+            {subject?.title === "sinhala" && subjectId && (
               <QuestionsTypePicker
                 questionType={questionType}
                 setQuestionType={setQuestionType}
+                subjectId={subjectId}
               />
             )}
             <SubjectSelector setSubject={setSubjectId} subjectId={subjectId} />
