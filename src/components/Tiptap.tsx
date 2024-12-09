@@ -14,8 +14,15 @@ import {
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
 import Underline from "@tiptap/extension-underline";
+import { cn } from "@/lib/utils";
 
-const TipTap = ({ value }: { value: string }) => {
+const TipTap = ({
+  value,
+  className,
+}: {
+  value: string;
+  className?: string;
+}) => {
   const { setValue } = useFormContext();
   const editor = useEditor({
     immediatelyRender: false,
@@ -46,8 +53,10 @@ const TipTap = ({ value }: { value: string }) => {
     },
     editorProps: {
       attributes: {
-        class:
+        class: cn(
           "min-h-[150px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 tracking-widest dark:bg-slate-900 bg-slate-50 text-lg",
+          className
+        ),
       },
     },
     content: "",

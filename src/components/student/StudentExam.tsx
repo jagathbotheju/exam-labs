@@ -34,7 +34,7 @@ import {
 import { cn } from "@/lib/utils";
 import { differenceInMinutes, format } from "date-fns";
 import Countdown, { zeroPad } from "react-countdown";
-import { useReactToPrint } from "react-to-print";
+// import { useReactToPrint } from "react-to-print";
 
 type QType = {
   score: number;
@@ -50,17 +50,15 @@ interface Props {
 
 const StudentExam = ({ examId, completed = false }: Props) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  // const contentRef = useRef();
-  const reactToPrintFn = useReactToPrint({
-    // contentRef,
-    contentRef,
-    fonts: [
-      {
-        family: "Noto_Sans_Sinhala",
-        source: "/fonts/NotoSansSinhala.ttf",
-      },
-    ],
-  });
+  // const reactToPrintFn = useReactToPrint({
+  //   contentRef,
+  //   fonts: [
+  //     {
+  //       family: "Noto_Sans_Sinhala",
+  //       source: "/fonts/NotoSansSinhala.ttf",
+  //     },
+  //   ],
+  // });
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -101,13 +99,20 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     [examDurationMin]
   );
 
+  const correctAnswersTest =
+    studentAnswers?.reduce((acc, answer) => {
+      if (answer.questionAnswer === answer.studentAnswer) return acc + 1;
+      return acc;
+    }, 0) ?? 0;
+  console.log("correctAnswers", correctAnswersTest);
+
   const completeExam = () => {
     queryClient.invalidateQueries({ queryKey: ["student-answers"] });
     const endTime = new Date();
     const durationMin = differenceInMinutes(endTime, startTime);
 
     const correctAnswers =
-      studentResponse?.reduce((acc, answer) => {
+      studentAnswers?.reduce((acc, answer) => {
         if (answer.questionAnswer === answer.studentAnswer) return acc + 1;
         return acc;
       }, 0) ?? 0;
@@ -262,13 +267,14 @@ const StudentExam = ({ examId, completed = false }: Props) => {
             <CardHeader>
               <div className="flex justify-between">
                 <CardTitle className="text-2xl font-bold">
-                  Result Summary
+                  Result Summary {`,${studentName}`}
                 </CardTitle>
 
-                <Printer
+                {/* print */}
+                {/* <Printer
                   className="cursor-pointer"
                   onClick={() => reactToPrintFn()}
-                />
+                /> */}
               </div>
             </CardHeader>
             <CardContent>

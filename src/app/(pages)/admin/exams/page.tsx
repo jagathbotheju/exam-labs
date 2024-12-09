@@ -21,14 +21,7 @@ const ExamsPage = async () => {
         </CardContent>
       </Card>
 
-      <Card className="bg-transparent dark:border-primary/40">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">All Exams</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <AllExams />
-        </CardContent>
-      </Card>
+      <AllExams />
     </div>
   );
 };

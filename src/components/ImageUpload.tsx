@@ -10,7 +10,7 @@ interface Props {
   value?: string;
   onChange: (value: string) => void;
   setFiles: Dispatch<SetStateAction<File[]>>;
-  editMode: boolean;
+  editMode?: boolean;
 }
 
 const ImageUpload = ({

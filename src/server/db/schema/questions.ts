@@ -4,6 +4,7 @@ import { Subject, subjects } from "./subjects";
 import { Exam, ExamExt, exams } from "./exams";
 import { ExamQuestion, examQuestions } from "./examQuestions";
 import { questionTypes } from "./questionTypes";
+import { string } from "zod";
 
 export const questions = pgTable("questions", {
   id: text("id")
@@ -25,6 +26,7 @@ export const questions = pgTable("questions", {
   term: text("term").notNull().default("all"),
   answer: text("answer").notNull(),
   score: integer("score").default(2.5).notNull(),
+  image: text("image"),
   createdAt: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
 });

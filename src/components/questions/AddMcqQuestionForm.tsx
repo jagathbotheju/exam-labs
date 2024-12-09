@@ -42,6 +42,8 @@ import {
   useQuestionTypeBySubjectId,
   useQuestionTypes,
 } from "@/server/backend/queries/questionTypeQueries";
+import ImageUpload from "../ImageUpload";
+import { useUploadThing } from "@/lib/uploadthing";
 
 interface Props {
   questionId?: string;
@@ -60,6 +62,9 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
   const [openTerm, setOpenTerm] = useState(false);
   const [openAnswer, setOpenAnswer] = useState(false);
 
+  const [files, setFiles] = useState<File[]>([]);
+  const { startUpload } = useUploadThing("imageUploader");
+
   const form = useForm<z.infer<typeof AddMcqQuestionSchema>>({
     resolver: zodResolver(AddMcqQuestionSchema),
     defaultValues: {
@@ -73,6 +78,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
       subject: "",
       type: "",
       answer: "",
+      image: "",
     },
     mode: "all",
   });
@@ -96,6 +102,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
       form.setValue("option3", question[0].option3 ?? "");
       form.setValue("option4", question[0].option4 ?? "");
       form.setValue("answer", question[0].answer);
+      form.setValue("image", question[0].image ?? "");
     }
   }, [question, form]);
 
@@ -362,21 +369,41 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
             />
           </div>
 
-          {/* question body */}
-          <FormField
-            control={form.control}
-            name="body"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Question Text</FormLabel>
-                <FormControl>
-                  {/* <Textarea {...field} className="h-[150px]" /> */}
-                  <TipTap value={field.value} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex justify-between gap-5">
+            {/* question body */}
+            <FormField
+              control={form.control}
+              name="body"
+              render={({ field }) => (
+                <FormItem className="flex flex-col w-full h-[300]">
+                  <FormLabel>Question Text</FormLabel>
+                  <FormControl>
+                    <div className="w-full h-full">
+                      <TipTap value={field.value} className="h-[240px]" />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* image */}
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <ImageUpload
+                      value={field.value}
+                      onChange={(url) => field.onChange(url)}
+                      setFiles={setFiles}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
 
           {/* option-1 */}
           <FormField

@@ -146,6 +146,7 @@ export const addQuestion = async ({
           grade: validData.grade,
           subjectId: validData.subject,
           typeId: validData.type,
+          image: validData.image,
         })
         .where(eq(questions.id, questionId));
       if (updatedQuestion) {
@@ -163,6 +164,7 @@ export const addQuestion = async ({
         grade: validData.grade,
         subjectId: validData.subject,
         typeId: validData.type,
+        image: validData.image,
       });
       if (newQuestion) return { success: "Question added successfully" };
     }

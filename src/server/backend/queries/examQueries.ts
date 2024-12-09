@@ -43,7 +43,7 @@ export const useStudentExam = ({
 
 export const useExamsBySubject = (subjectId: string) => {
   return useQuery({
-    queryKey: ["exams-by-subject"],
+    queryKey: ["exams-by-subject", subjectId],
     queryFn: () => getExamsBySubject(subjectId),
   });
 };

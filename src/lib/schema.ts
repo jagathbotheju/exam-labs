@@ -93,6 +93,7 @@ export const AddMcqQuestionSchema = z.object({
   subject: z.string({ required_error: "please select a subject" }),
   type: z.string().min(1, "please select question type").nullable(),
   answer: z.string().min(1, "please select an Answer"),
+  image: z.string().optional(),
 });
 
 export const AddSubjectSchema = z.object({
