@@ -31,7 +31,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { answersMcq, grades, terms, types } from "@/lib/constants";
 import { useAddQuestion } from "@/server/backend/mutations/questionMutations";
@@ -107,6 +107,14 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
   }, [question, form]);
 
   const onSubmit = (questionData: z.infer<typeof AddMcqQuestionSchema>) => {
+    startTransition(async () => {
+      if (files.length > 0) {
+        const uploadedImages = await startUpload(files);
+        if (!uploadedImages) return;
+        questionData.image = uploadedImages[0].url;
+      }
+    });
+
     addQuestion({ questionData, questionId });
     router.push(`/admin/questions?subjectId=${form.getValues("subject")}`);
   };

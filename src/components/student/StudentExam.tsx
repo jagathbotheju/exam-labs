@@ -8,7 +8,7 @@ import {
 import { Loader2, Printer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import ExamQuestionCard from "../exams/ExamQuestionCard";
-import { useMemo, useRef, useState } from "react";
+import { startTransition, useMemo, useRef, useState } from "react";
 import { StudentResponse } from "@/lib/types";
 import ExamTimer from "../exams/ExamTimer";
 import { Button } from "../ui/button";

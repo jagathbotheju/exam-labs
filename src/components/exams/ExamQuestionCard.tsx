@@ -58,17 +58,18 @@ const ExamQuestionCard = ({
   )?.type;
 
   return (
-    <Card className="dark:bg-transparent dark:border-primary/40">
-      <CardContent className="p-0">
+    <Card className="dark:bg-transparent dark:border-primary/40 w-full">
+      <CardContent className="p-0 w-fll">
         <div className="flex flex-col hover:drop-shadow-xl relative">
           <div className="flex relative">
-            <div className="flex gap-2 items-center relative">
+            <div className="flex gap-2 items-center relative w-full">
               <div className="bg-slate-200 dark:bg-slate-800 p-4 font-bold rounded-tl-lg rounded-bl-lg h-full flex items-center justify-center">
                 {questionNumber}
               </div>
 
               {/* question */}
               <RadioGroup
+                className="w-full"
                 onValueChange={(value) => {
                   if (answerExamQuestion) {
                     answerExamQuestion({
@@ -80,10 +81,19 @@ const ExamQuestionCard = ({
                   }
                 }}
               >
-                <div className="flex flex-col gap-2 p-3">
+                <div className="flex flex-col gap-2 p-3 w-full">
                   {/* question body */}
-                  <div className="tracking-wide font-sinhala text-xl">
-                    {parse(question.body)}
+                  <div className="tracking-wide font-sinhala text-xl flex justify-between">
+                    <div>{parse(question.body)}</div>
+                    {question.image && (
+                      <Image
+                        alt="question image"
+                        src={question.image}
+                        width={200}
+                        height={200}
+                        className="object-cover"
+                      />
+                    )}
                   </div>
 
                   {/* option-1 */}
