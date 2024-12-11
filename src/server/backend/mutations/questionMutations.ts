@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 export const useAnswerQuestion = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({
       examId,
@@ -36,6 +38,9 @@ export const useAnswerQuestion = () => {
         studentAnswer,
         questionAnswer,
       }),
+    onSuccess: async (res) => {
+      await queryClient.invalidateQueries({ queryKey: ["student-answers"] });
+    },
   });
 };
 

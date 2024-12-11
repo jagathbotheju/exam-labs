@@ -7,6 +7,7 @@ import {
   Edit2,
   FilePenLine,
   FilePlus,
+  ImageIcon,
   Router,
   Trash2,
 } from "lucide-react";
@@ -138,7 +139,10 @@ const QuestionCard = ({ question, index, subjectId, studentId }: Props) => {
             </div>
 
             {/* actions */}
-            <div className="flex p-2 gap-2">
+            <div className="flex p-2 gap-2 items-center">
+              {/* image */}
+              {question.image && <ImageIcon />}
+
               {/* add to exam */}
               <div className="flex items-center hover:bg-opacity-70 cursor-pointer rounded-tr-lg">
                 <AlertDialog>

@@ -112,10 +112,13 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
         const uploadedImages = await startUpload(files);
         if (!uploadedImages) return;
         questionData.image = uploadedImages[0].url;
+        console.log("uploadedImage", uploadedImages[0].url);
+        addQuestion({ questionData, questionId });
+      } else {
+        addQuestion({ questionData, questionId });
       }
     });
 
-    addQuestion({ questionData, questionId });
     router.push(`/admin/questions?subjectId=${form.getValues("subject")}`);
   };
 

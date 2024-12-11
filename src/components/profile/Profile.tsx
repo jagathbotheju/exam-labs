@@ -69,7 +69,7 @@ const Profile = ({ student }: Props) => {
 
   return (
     <div className="flex w-full flex-col gap-4 mb-10 mt-4">
-      <Card>
+      <Card className="dark:bg-slate-900 border-primary/40">
         <CardHeader>
           <div className="flex justify-between w-full">
             <div className="flex flex-col gap-2">

@@ -99,33 +99,37 @@ const StudentExam = ({ examId, completed = false }: Props) => {
     [examDurationMin]
   );
 
-  const correctAnswersTest =
+  const correctAnswers =
     studentAnswers?.reduce((acc, answer) => {
       if (answer.questionAnswer === answer.studentAnswer) return acc + 1;
       return acc;
     }, 0) ?? 0;
-  console.log("correctAnswers", correctAnswersTest);
+  const marks =
+    correctAnswers && exam && exam.examQuestions
+      ? (correctAnswers / exam.examQuestions.length) * 100
+      : 0;
+  // console.log("marks", marks.toFixed(1));
 
   const completeExam = () => {
     queryClient.invalidateQueries({ queryKey: ["student-answers"] });
     const endTime = new Date();
     const durationMin = differenceInMinutes(endTime, startTime);
 
-    const correctAnswers =
-      studentAnswers?.reduce((acc, answer) => {
-        if (answer.questionAnswer === answer.studentAnswer) return acc + 1;
-        return acc;
-      }, 0) ?? 0;
-    const marks =
-      correctAnswers && exam && exam.examQuestions
-        ? (correctAnswers / exam.examQuestions.length) * 100
-        : 0;
+    // const correctAnswers =
+    //   studentAnswers?.reduce((acc, answer) => {
+    //     if (answer.questionAnswer === answer.studentAnswer) return acc + 1;
+    //     return acc;
+    //   }, 0) ?? 0;
+    // const marks =
+    //   correctAnswers && exam && exam.examQuestions
+    //     ? (correctAnswers / exam.examQuestions.length) * 100
+    //     : 0;
 
     completeExamMut({
       examId,
       subjectId: exam?.subjectId ?? "",
       studentId: studentId,
-      marks,
+      marks: +marks.toFixed(1),
       duration: durationMin,
       completedAt: endTime.toISOString(),
     });
