@@ -20,6 +20,7 @@ export const useAnswerQuestion = () => {
       studentId,
       questionId,
       questionTypeId,
+      subjectId,
       studentAnswer,
       questionAnswer,
     }: {
@@ -27,14 +28,16 @@ export const useAnswerQuestion = () => {
       studentId: string;
       questionId: string;
       questionTypeId: string | null;
+      subjectId: string;
       studentAnswer: string;
       questionAnswer: string;
     }) =>
       answerQuestion({
+        questionId,
         examId,
         studentId,
-        questionId,
         questionTypeId,
+        subjectId,
         studentAnswer,
         questionAnswer,
       }),
@@ -63,6 +66,7 @@ export const useAddQuestionToExam = () => {
           queryKey: ["questions-by-subject-pagination"],
         });
         queryClient.invalidateQueries({ queryKey: ["exams"] });
+        queryClient.invalidateQueries({ queryKey: ["incorrect-questions"] });
         toast.success(res.success);
       }
       if (res.error) {

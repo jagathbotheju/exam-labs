@@ -22,6 +22,10 @@ const Results = ({ admin }: Props) => {
       </div>
 
       <div className="mt-8">
+        {selectedStudent && <ResultSummary student={selectedStudent} />}
+      </div>
+
+      <div className="mt-8">
         {selectedStudent ? (
           <MyExams role={admin.role} student={selectedStudent} />
         ) : (
@@ -31,10 +35,6 @@ const Results = ({ admin }: Props) => {
             </h2>
           </div>
         )}
-      </div>
-
-      <div className="mt-8">
-        {selectedStudent && <ResultSummary student={selectedStudent} />}
       </div>
     </div>
   );

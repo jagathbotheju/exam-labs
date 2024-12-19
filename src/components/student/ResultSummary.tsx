@@ -65,15 +65,15 @@ const ResultSummary = ({ student }: Props) => {
     <Card className="bg-transparent dark:border-primary/40">
       <CardHeader>
         <CardTitle className="flex w-full flex-col">
-          <div className="flex justify-between">
+          <div className="flex justify-between flex-col">
             <p className="text-2xl font-bold">
-              Result Summary,{" "}
+              Result Summary {`,${student.name}`}
               <span className="text-primary font-semibold uppercase">
                 {subject?.title}
               </span>
             </p>
 
-            <div className="flex md:flex-col gap-4">
+            <div className="flex gap-4 mt-5 self-end">
               <SubjectSelector
                 setSubject={setSubjectId}
                 subjectId={subjectId}

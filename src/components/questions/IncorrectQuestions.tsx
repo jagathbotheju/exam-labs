@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SubjectSelector from "../subjects/SubjectSelector";
 import { UserExt } from "@/server/db/schema/users";
 import StudentSelector from "../student/StudentSelector";
@@ -10,12 +10,16 @@ import { useSubjects } from "@/server/backend/queries/subjectQueries";
 import QuestionsTypePicker from "./QuestionsTypePicker";
 import { QuestionType } from "@/server/db/schema/questionTypes";
 import {
+  useExamQuestions,
   useIncorrectQuestions,
   useQuestionsBySubjectPagination,
 } from "@/server/backend/queries/questionQueries";
 import { useQueryClient } from "@tanstack/react-query";
 import _ from "lodash";
 import QuestionCard from "./QuestionCard";
+import { useStudentExams } from "@/server/backend/queries/examQueries";
+import { QuestionExt } from "@/server/db/schema/questions";
+// import { useStudentExamsBySubject } from "@/server/backend/queries/examQueries";
 
 const IncorrectQuestions = () => {
   const queryClient = useQueryClient();
@@ -30,6 +34,22 @@ const IncorrectQuestions = () => {
     studentId: selectedStudent?.id,
     subjectId,
   });
+
+  const { data: examQuestions } = useExamQuestions();
+
+  const filteredIncorrectQuestions = useMemo(() => {
+    return incorrectQuestions?.map((incorrectQuestion) => {
+      const filteredExamQuestions = examQuestions?.filter(
+        (examQuestion) => examQuestion.questionId === incorrectQuestion.id
+      );
+      if (filteredExamQuestions) {
+        return {
+          ...incorrectQuestion,
+          examQuestions: filteredExamQuestions,
+        };
+      }
+    }) as QuestionExt[];
+  }, [examQuestions, incorrectQuestions]);
 
   useEffect(() => {
     if (subjectId && page && selectedStudent) {
@@ -71,10 +91,10 @@ const IncorrectQuestions = () => {
           </div>
         ) : (
           <div className="flex flex-col w-full gap-4 mt-10">
-            {incorrectQuestions &&
+            {filteredIncorrectQuestions &&
               !_.isEmpty(subject) &&
-              !_.isEmpty(incorrectQuestions) &&
-              incorrectQuestions.map((question, index) => {
+              !_.isEmpty(filteredIncorrectQuestions) &&
+              filteredIncorrectQuestions.map((question, index) => {
                 return (
                   <QuestionCard
                     key={question.id}

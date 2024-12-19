@@ -50,6 +50,7 @@ const QuestionCard = ({ question, index, subjectId, studentId }: Props) => {
   const router = useRouter();
   const [exam, setExam] = useState("");
   const [questionExams, setQuestionExams] = useState<ExamExt[] | undefined>();
+  // console.log("questionExams", questionExams);
 
   const { data: students } = useStudents();
   const student = students?.find((student) => student.id === studentId);
@@ -79,7 +80,9 @@ const QuestionCard = ({ question, index, subjectId, studentId }: Props) => {
     const questionExams = exams?.filter((item) =>
       examIds?.find((id) => id === item.id)
     );
-    if (questionExams) setQuestionExams(questionExams);
+    if (questionExams) {
+      setQuestionExams(questionExams);
+    }
   }, [exams, question.examQuestions]);
 
   return (

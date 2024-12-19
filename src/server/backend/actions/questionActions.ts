@@ -6,15 +6,16 @@ import {
   exams,
   incorrectQuestions,
   questions,
+  questionsTypeHistory,
   studentAnswers,
   subjects,
 } from "../../db/schema";
 import { z } from "zod";
-import { and, asc, desc, eq, count } from "drizzle-orm";
+import { and, asc, desc, eq, count, sql } from "drizzle-orm";
 import { Question, QuestionExt } from "../../db/schema/questions";
 import _ from "lodash";
 import { auth } from "@/lib/auth";
-import { QuestionType } from "@/server/db/schema/questionTypes";
+import { QuestionType, questionTypes } from "@/server/db/schema/questionTypes";
 import { User } from "@/server/db/schema/users";
 import { useQuestionTypes } from "../queries/questionTypeQueries";
 
@@ -22,6 +23,19 @@ import {
   IncorrectQuestion,
   IncorrectQuestionExt,
 } from "@/server/db/schema/incorrectQuestions";
+import { QuestionsTypeHistory } from "@/server/db/schema/questionsTypeHistory";
+import { Exam, ExamExt } from "@/server/db/schema/exams";
+import { ExamQuestion } from "@/server/db/schema/examQuestions";
+
+export const getExamQuestions = async () => {
+  const exams = await db.query.examQuestions.findMany({
+    with: {
+      exams: true,
+    },
+  });
+
+  return exams as ExamQuestion[];
+};
 
 //=====get incorrect questions by userId and subjectId
 export const getIncorrectQuestions = async ({
@@ -55,6 +69,7 @@ export const answerQuestion = async ({
   studentId,
   questionId,
   questionTypeId,
+  subjectId,
   studentAnswer,
   questionAnswer,
 }: {
@@ -62,6 +77,7 @@ export const answerQuestion = async ({
   studentId: string;
   questionId: string;
   questionTypeId: string | null;
+  subjectId: string;
   studentAnswer: string;
   questionAnswer: string;
 }) => {
@@ -95,7 +111,49 @@ export const answerQuestion = async ({
         eq(incorrectQuestions.studentId, studentId)
       )
     );
+
+  // const existQuestionTypeHistory = (await db
+  //   .select()
+  //   .from(questionsTypeHistory)
+  //   .where(
+  //     and(
+  //       eq(questionsTypeHistory.questionTypeId, questionTypeId ?? ""),
+  //       eq(questionsTypeHistory.studentId, studentId),
+  //       eq(questionsTypeHistory.questionId, questionId)
+  //     )
+  //   )) as QuestionsTypeHistory[];
+
+  //update QuestionTypeHistory
+  // if (
+  //   !_.isEmpty(existQuestionTypeHistory) &&
+  //   studentAnswer !== questionAnswer
+  // ) {
+  //   await db.update(questionsTypeHistory).set({
+  //     totalCorrectQuestions: sql`${questionsTypeHistory.totalCorrectQuestions}-1`,
+  //   });
+  // } else if (
+  //   _.isEmpty(existQuestionTypeHistory) &&
+  //   studentAnswer === questionAnswer
+  // ) {
+  //   await db.insert(questionsTypeHistory).values({
+  //     questionId,
+  //     questionTypeId: questionTypeId ?? "",
+  //     subjectId,
+  //     studentId,
+  //     totalCorrectQuestions: sql`${questionsTypeHistory.totalCorrectQuestions}+1`,
+  //     totalQuestions: sql`${questionsTypeHistory.totalQuestions}+1`,
+  //   });
+  // } else if (
+  //   _.isEmpty(existQuestionTypeHistory) &&
+  //   studentAnswer !== questionAnswer
+  // ) {
+  //   await db.update(questionsTypeHistory).set({
+  //     totalQuestions: sql`${questionsTypeHistory.totalQuestions}+1`,
+  //   });
+  // }
+
   if (!_.isEmpty(existIncorrect) && studentAnswer === questionAnswer) {
+    // update incorrect questions
     await db
       .delete(incorrectQuestions)
       .where(

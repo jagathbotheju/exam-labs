@@ -127,7 +127,7 @@ export const useAddExam = () => {
     onSuccess: async (res) => {
       const message = res?.success;
       toast.success(message);
-      await queryClient.invalidateQueries({ queryKey: ["exams"] });
+      await queryClient.invalidateQueries({ queryKey: ["exams-by-subject"] });
     },
     onError: (res) => {
       const err = res.message;

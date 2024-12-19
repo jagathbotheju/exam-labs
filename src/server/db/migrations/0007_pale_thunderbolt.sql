@@ -1,0 +1,2 @@
+ALTER TABLE "questions_type_history" DROP CONSTRAINT "questions_type_history_question_type_id_student_id_pk";--> statement-breakpoint
+ALTER TABLE "questions_type_history" ADD CONSTRAINT "questions_type_history_question_type_id_student_id_question_id_pk" PRIMARY KEY("question_type_id","student_id","question_id");

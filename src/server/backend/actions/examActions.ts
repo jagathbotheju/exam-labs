@@ -15,7 +15,7 @@ import {
   StudentExamExt,
   studentExams,
 } from "@/server/db/schema/studentExams";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import _ from "lodash";
 import { QuestionsYearHistory } from "@/server/db/schema/questionsYearHistory";
@@ -335,6 +335,46 @@ export const getStudentExams = async (studentId: string) => {
   });
 
   return exams as StudentExamExt[];
+};
+
+export const getStudentExamsPagination = async ({
+  studentId,
+  page,
+  pageSize = 10,
+}: {
+  studentId: string;
+  page: number;
+  pageSize?: number;
+}) => {
+  const exams = await db.query.studentExams.findMany({
+    where: eq(studentExams.studentId, studentId),
+    with: {
+      exams: {
+        with: {
+          studentAnswers: true,
+          examQuestions: {
+            with: {
+              questions: true,
+            },
+          },
+          subjects: true,
+        },
+      },
+    },
+    orderBy: [desc(studentExams.createdAt)],
+    limit: pageSize,
+    offset: (page - 1) * pageSize,
+  });
+  return exams as StudentExamExt[];
+};
+
+export const getStudentExamsCount = async (studentId: string) => {
+  const examsCount = await db
+    .select({ count: count() })
+    .from(studentExams)
+    .where(eq(studentExams.studentId, studentId));
+
+  return examsCount[0];
 };
 
 //=======getStudentExam================================================================================================

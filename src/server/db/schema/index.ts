@@ -26,10 +26,7 @@ export { sessions } from "@/server/db/schema/sessions";
 export { verificationTokens } from "@/server/db/schema/verificationTokens";
 export { authenticators } from "@/server/db/schema/authenticators";
 export { users, userRelations } from "@/server/db/schema/users";
-// export {
-//   incorrectAnswers,
-//   incorrectAnswerRelations,
-// } from "@/server/db/schema/incorrectAnswers";
+export { questionsTypeHistory } from "@/server/db/schema/questionsTypeHistory";
 export {
   incorrectQuestions,
   incorrectQuestionRelations,

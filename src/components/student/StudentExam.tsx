@@ -175,6 +175,7 @@ const StudentExam = ({ examId, completed = false }: Props) => {
       questionTypeId,
       studentAnswer,
       questionAnswer,
+      subjectId: exam?.subjectId ?? "",
     });
   };
 

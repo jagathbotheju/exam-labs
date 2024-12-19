@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  getExamQuestions,
   getIncorrectQuestions,
   getQuestionById,
   getQuestions,
@@ -8,6 +9,13 @@ import {
   getQuestionsCount,
 } from "../actions/questionActions";
 import { QuestionType } from "@/server/db/schema/questionTypes";
+
+export const useExamQuestions = () => {
+  return useQuery({
+    queryKey: ["exam-questions-by-question-id"],
+    queryFn: () => getExamQuestions(),
+  });
+};
 
 export const useQuestions = () => {
   return useQuery({

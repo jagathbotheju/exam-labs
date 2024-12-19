@@ -112,7 +112,7 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
         const uploadedImages = await startUpload(files);
         if (!uploadedImages) return;
         questionData.image = uploadedImages[0].url;
-        console.log("uploadedImage", uploadedImages[0].url);
+        // console.log("uploadedImage", uploadedImages[0].url);
         addQuestion({ questionData, questionId });
       } else {
         addQuestion({ questionData, questionId });
@@ -386,11 +386,11 @@ const AddMcqQuestionForm = ({ questionId }: Props) => {
               control={form.control}
               name="body"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-full h-[300]">
+                <FormItem className="flex flex-col w-full">
                   <FormLabel>Question Text</FormLabel>
                   <FormControl>
                     <div className="w-full h-full">
-                      <TipTap value={field.value} className="h-[240px]" />
+                      <TipTap value={field.value} />
                     </div>
                   </FormControl>
                   <FormMessage />

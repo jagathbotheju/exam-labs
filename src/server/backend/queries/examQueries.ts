@@ -5,7 +5,22 @@ import {
   getExamsBySubject,
   getStudentExams,
   getStudentExam,
+  getStudentExamsPagination,
+  getStudentExamsCount,
 } from "../actions/examActions";
+
+// export const useStudentExamsBySubject = ({
+//   studentId,
+//   subjectId,
+// }: {
+//   studentId: string;
+//   subjectId: string;
+// }) => {
+//   return useQuery({
+//     queryKey: ["student-exams-by-subject", studentId, subjectId],
+//     queryFn: () => getStudentExamsBySubject({ studentId, subjectId }),
+//   });
+// };
 
 export const useExamById = (examId: string) => {
   return useQuery({
@@ -23,8 +38,29 @@ export const useExams = () => {
 
 export const useStudentExams = (studentId: string) => {
   return useQuery({
-    queryKey: ["student-exams"],
+    queryKey: ["student-exams", studentId],
     queryFn: () => getStudentExams(studentId),
+  });
+};
+
+export const useStudentExamsPagination = ({
+  studentId,
+  page,
+}: {
+  studentId: string;
+  page: number;
+  pageSize?: number;
+}) => {
+  return useQuery({
+    queryKey: ["student-exams", studentId, page],
+    queryFn: () => getStudentExamsPagination({ studentId, page }),
+  });
+};
+
+export const useStudentExamsCount = (studentId: string) => {
+  return useQuery({
+    queryKey: ["student-exams-count", studentId],
+    queryFn: () => getStudentExamsCount(studentId),
   });
 };
 

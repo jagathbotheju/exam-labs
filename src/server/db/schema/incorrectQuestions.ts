@@ -12,6 +12,7 @@ import { QuestionExt, questions } from "./questions";
 import { QuestionType, questionTypes } from "./questionTypes";
 import { User, users } from "./users";
 import { subjects } from "./subjects";
+import { ExamQuestion, examQuestions } from "./examQuestions";
 
 export const incorrectQuestions = pgTable(
   "incorrect_questions",
@@ -61,4 +62,5 @@ export type IncorrectQuestionExt = InferSelectModel<
   students: User;
   questionTypes: QuestionType;
   questions: QuestionExt;
+  examQuestions: ExamQuestion[];
 };
